@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Emblema+One&display=swap');
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    background-color: #24252A;
+}
+
+li, a, button{
+    font-family: "Emblema One", sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: #edf0f1;
+    text-decoration: none;
+}
+
+header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 10%;
+}
+
+.logo{
+    cursor: pointer;
+    margin-right: auto;
+    height: 50px;
+    width: auto;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center; 
+    gap: 10px; 
+}
+
+.nav__links{
+    list-style: none;
+}
+
+.nav__links li{
+    display: inline-block;
+    padding: 0px 20px;
+}
+
+.nav__links li a{
+    transition: all 0.3 ease 0s;
+}
+
+.nav__links li a:hover{
+    color: #008a90;
+}
+
+button{
+    padding: 9px 25px;
+    background-color: rgba(72,126,181,1);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3 ease 0s;
+}
+
+button:hover{
+    background-color: rgba(72,126,181,0.8);
+}
+
+.quantapus-text {
+    font-family: 'Emblema One', cursive; /* Use the imported font */
+    font-size: 32px; /* Adjust font size */
+    color: #edf0f1; /* Text color */
+    margin-left: auto; /* Push to the right */
+    cursor: pointer;
+    padding-left: 20px; /* Add some spacing */
+}
+
+.problem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #2c2d33; 
+    border-radius: 8px; 
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.problem:hover {
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+.problem-name {
+    font-family: "Emblema One", sans-serif;
+    font-size: 18px;
+    color: #edf0f1;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.problem-difficulty {
+    font-family: "Emblema One", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 12px; 
+}
+
+/* Difficulty Colors */
+.easy {
+    background-color: #7abd7e;
+}
+
+.medium {
+    background-color: #f8d66d; 
+}
+
+.hard {
+    background-color: #ff6961; 
+}
+
