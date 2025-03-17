@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem Details</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <header>
+        <header>
+            <a href="index.html" class="logo-container">
+                <img class="logo" src="images/logo.svg" alt="logo">
+                <div class="quantapus-text">Quantapus</div>
+            </a>
+        </header>        
+        <a class="cta" href="#"><button>Sign In</button></a>
+    </header>
+
+    <div id="problem-details">
+        <!-- Problem details will be dynamically inserted here -->
+    </div>
+
+    <script>
+        // Get the problem ID from the query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const problemId = urlParams.get('id');
+
+        // Fetch the problem details from the backend
+        async function fetchProblemDetails(id) {
+            try {
+                const response = await fetch(`http://api.quantapus.com/api/problems/${id}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const problem = await response.json();
+                renderProblemDetails(problem);
+            } catch (error) {
+                console.error('Error fetching problem details:', error);
+                renderError('Failed to load problem details. Please try again later.');
+            }
+        }
+
+        // Render the problem details
+        // Render the problem details
+function renderProblemDetails(problem) {
+    const problemDetailsContainer = document.getElementById('problem-details');
+    problemDetailsContainer.innerHTML = `
+        <div class="problem-container">
+            <!-- Problem Title -->
+            <div class="title-container">
+                <h1 id="problem-title">QP #${problem.id}: ${problem.title || 'Untitled'}</h1>
+                <a href="index.html" class="back-button-inline">← Back</a>
+            </div>
+
+            <!-- Difficulty and Category -->
+            <div class="meta-info">
+                <span id="difficulty" class="difficulty ${problem.difficulty?.toLowerCase() || 'unknown'}">${problem.difficulty || 'Unknown'}</span>
+                <span id="category">${problem.category || 'Uncategorized'}</span>
+            </div>
+
+            <!-- Problem Description -->
+            <div id="description" class="description">
+                <p>${problem.description || 'No description available.'}</p>
+            </div>
+
+            <!-- Solution Button -->
+            <button id="solution-button" class="solution-button">Show Solution</button>
+
+            <!-- Solution and Explanation (Hidden by Default) -->
+            <div id="solution" class="solution hidden">
+                <h2>Solution</h2>
+                <pre id="solution-code"><code>${problem.solution || 'No solution available.'}</code></pre>
+
+                <h2>Explanation</h2>
+                <p id="explanation">${problem.explanation || 'No explanation available.'}</p>
+
+                <!-- YouTube Link (Embedded Video) -->
+                <div id="youtube-link" class="youtube-container">
+                    <iframe
+                        width="560"
+                        height="315"
+                        src="${problem.yt_link}"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Add event listener to the solution button
+    const solutionButton = document.getElementById('solution-button');
+    const solutionSection = document.getElementById('solution');
+    solutionButton.addEventListener('click', () => {
+        solutionSection.classList.toggle('hidden');
+        solutionButton.textContent = solutionSection.classList.contains('hidden') ? 'Show Solution' : 'Hide Solution';
+    });
+}
+
+
+        // Render an error message
+        function renderError(message) {
+            const problemDetailsContainer = document.getElementById('problem-details');
+            problemDetailsContainer.innerHTML = `<p style="color: red;">${message}</p>`;
+        }
+
+        // Fetch and render the problem details when the page loads
+        if (problemId) {
+            fetchProblemDetails(problemId);
+        } else {
+            renderError('Problem ID not found.');
+        }
+    </script>
+</body>
+</html>

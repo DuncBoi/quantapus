@@ -1,28 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Emblema+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
 
-*{
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+body {
     background-color: #24252A;
-}
-
-li, a, button{
-    font-family: "Emblema One", sans-serif;
-    font-weight: 500;
-    font-size: 16px;
     color: #edf0f1;
-    text-decoration: none;
+    font-family: "Sour Gummy", sans-serif;
 }
 
-header{
+/* Header Styles */
+header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 30px 10%;
+    padding: 30px 5%;
 }
 
-.logo{
+.logo {
     cursor: pointer;
     margin-right: auto;
     height: 50px;
@@ -31,94 +29,226 @@ header{
 
 .logo-container {
     display: flex;
-    align-items: center; 
-    gap: 10px; 
+    align-items: center;
+    gap: 10px;
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Keep text color consistent */
 }
 
-.nav__links{
-    list-style: none;
+.logo-container:hover {
+    opacity: 0.8; /* Optional hover effect */
 }
 
-.nav__links li{
-    display: inline-block;
-    padding: 0px 20px;
-}
-
-.nav__links li a{
-    transition: all 0.3 ease 0s;
-}
-
-.nav__links li a:hover{
-    color: #008a90;
-}
-
-button{
+button {
+    font-family: "Sour Gummy";
     padding: 9px 25px;
-    background-color: rgba(72,126,181,1);
+    background-color: rgba(72, 126, 181, 1);
     border: none;
+    color: #edf0f1;
     border-radius: 50px;
     cursor: pointer;
-    transition: all 0.3 ease 0s;
+    transition: all 0.3s ease 0s;
 }
 
-button:hover{
-    background-color: rgba(72,126,181,0.8);
+button:hover {
+    background-color: rgba(72, 126, 181, 0.8);
 }
 
 .quantapus-text {
-    font-family: 'Emblema One', cursive; /* Use the imported font */
-    font-size: 32px; /* Adjust font size */
-    color: #edf0f1; /* Text color */
-    margin-left: auto; /* Push to the right */
+    font-family: 'Sour Gummy', sans-serif;
+    font-size: 3rem;
+    color: #edf0f1;
+    margin-left: auto;
     cursor: pointer;
-    padding-left: 20px; /* Add some spacing */
+    padding-left: 20px;
+}
+
+/* Problem Details Container */
+#problem-details {
+    width: 90%; /* Full width look */
+    max-width: 1200px; /* Keep it reasonable on huge screens */
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #2c2d33;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Problem Title */
+#problem-title {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+
+/* Meta Info */
+.meta-info {
+    margin-bottom: 20px;
+}
+
+.difficulty {
+    padding: 6px 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    display: inline-block;
+}
+
+.easy { background-color: #7abd7e; }
+.medium { background-color: #f8d66d; }
+.hard { background-color: #ff6961; }
+
+#category {
+    margin-left: 12px;
+    font-size: 1.2rem;
+}
+
+/* Description */
+.description {
+    margin-bottom: 30px;
+    font-size: 18px;
+}
+
+/* Solution Button */
+.solution-button {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: rgba(72, 126, 181, 1);
+    padding: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 50px;
+    margin: 20px 0;
+    transition: all 0.3s ease 0s;
+}
+
+.solution-button:hover {
+    background-color: rgba(72, 126, 181, 0.8);
+}
+
+/* Solution Section */
+.solution {
+    margin-top: 30px;
+    background-color: transparent; /* Remove inner box color */
+    padding: 0; /* Remove extra padding */
+    border-radius: 0; /* Remove border radius */
+    box-shadow: none; 
+}
+
+.solution.hidden {
+    display: none;
+}
+
+
+.solution pre {
+    background: none; 
+    padding: 0;
+    margin: 0 0 20px 0;
+    border: none;
+    overflow-x: auto;
+}
+
+.solution code {
+    font-family: 'Sour Gummy', Courier, monospace;
+    font-size: 16px;
+    color: #edf0f1;
+    white-space: pre-wrap;
+}
+
+/* Explanation */
+.solution p {
+    margin: 15px 0;
+    font-size: 18px;
+}
+
+/* YouTube Video */
+.youtube-container {
+    margin-top: 30px;
+}
+
+.youtube-container iframe {
+    width: 100%; /* Full width */
+    height: 500px;
+    border: none;
+    border-radius: 12px;
 }
 
 .problem {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-between;  
+    align-items: center;            
     padding: 15px;
     margin-bottom: 10px;
-    background-color: #2c2d33; 
-    border-radius: 8px; 
+    background-color: #2c2d33;
+    border-radius: 8px;
     transition: all 0.3s ease;
     cursor: pointer;
+    width: 95%;
+    margin: 10px auto;
 }
 
 .problem:hover {
-    transform: translateY(-2px); 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.problem-left {
+    display: flex;      
+    align-items: center;
+}
+
+.problem-id {
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 18px;
 }
 
 .problem-name {
-    font-family: "Emblema One", sans-serif;
     font-size: 18px;
-    color: #edf0f1;
     font-weight: 500;
-    cursor: pointer;
-    background-color: transparent;
 }
 
 .problem-difficulty {
-    font-family: "Emblema One", sans-serif;
     font-size: 14px;
     font-weight: 600;
-    cursor: pointer;
     padding: 5px 10px;
-    border-radius: 12px; 
+    border-radius: 12px;
 }
 
-/* Difficulty Colors */
-.easy {
-    background-color: #7abd7e;
+
+
+
+/* Error Message */
+#error-message {
+    color: red;
+    text-align: center;
+    margin-top: 20px;
 }
 
-.medium {
-    background-color: #f8d66d; 
+/* Title and inline back button container */
+.title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
-.hard {
-    background-color: #ff6961; 
+/* Inline Back button */
+.back-button-inline {
+    font-size: 16px;
+    color: #edf0f1;
+    background: none;
+    border: 2px solid rgba(72, 126, 181, 1);
+    padding: 5px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
 }
+
+.back-button-inline:hover {
+    background: rgba(72, 126, 181, 1);
+    color: white;
+}
+
 
