@@ -137,42 +137,6 @@
         const form = document.getElementById('problem-form');
         const statusDiv = document.getElementById('status-message');
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            try {
-                const formData = {
-                    secretKey: form.secretKey.value,
-                    id: parseInt(form.id.value),
-                    title: form.title.value,
-                    difficulty: form.difficulty.value,
-                    category: form.category.value,
-                    description: form.description.value,
-                    solution: form.solution.value,
-                    explanation: form.explanation.value,
-                    yt_link: form.yt_link.value || null
-                };
-
-                const response = await fetch('https://api.quantapus.com/admin/post', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                if (response.ok) {
-                    showMessage('✅ Problem added successfully!', 'success');
-                    form.reset();
-                } else {
-                    const errorData = await response.json();
-                    showMessage(`❌ Error: ${errorData.error}`, 'error');
-                }
-            } catch (error) {
-                showMessage(`⚠️ Network error: ${error.message}`, 'error');
-            }
-        });
-
         function showMessage(text, type) {
             statusDiv.textContent = text;
             statusDiv.className = type;
@@ -238,11 +202,21 @@
         
         const method = form.id.value ? 'PUT' : 'POST';
         const url = form.id.value 
-            ? `http://api.quantapus.com/problems/${form.id.value}`
-            : 'http://api.quantapus.com/admin/post';
+            ? `https://api.quantapus.com/problems/${form.id.value}`
+            : 'https://api.quantapus.com/admin/post';
 
         try {
-            const formData = { /* keep existing form data logic */ };
+            const formData = {
+                    secretKey: form.secretKey.value,
+                    id: parseInt(form.id.value),
+                    title: form.title.value,
+                    difficulty: form.difficulty.value,
+                    category: form.category.value,
+                    description: form.description.value,
+                    solution: form.solution.value,
+                    explanation: form.explanation.value,
+                    yt_link: form.yt_link.value || null
+                };
             
             const response = await fetch(url, {
                 method: method,
