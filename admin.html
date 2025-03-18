@@ -116,7 +116,7 @@
         </div>
 
         <div class="form-group">
-            <label for="solution">Solution Code:</label>
+            <label for="solution">Solution:</label>
             <input type="text" id="solution" name="solution" required>
         </div>
 
@@ -130,7 +130,14 @@
             <input type="url" id="yt_link" name="yt_link">
         </div>
 
+        <div class="form-group">
+            <label for="update-mode">
+                <input type="checkbox" id="update-mode"> Update Existing Problem
+            </label>
+        </div>
+
         <button type="submit">Submit Problem</button>
+        
     </form>
 
     <script>
@@ -200,10 +207,11 @@
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const method = form.id.value ? 'PUT' : 'POST';
-        const url = form.id.value 
+        const isUpdate = document.getElementById("update-mode").checked; // Check if the checkbox is checked
+        const method = isUpdate ? "PUT" : "POST";
+        const url = isUpdate
             ? `https://api.quantapus.com/problems/${form.id.value}`
-            : 'https://api.quantapus.com/admin/post';
+            : "https://api.quantapus.com/admin/post";
 
         try {
             const formData = {
