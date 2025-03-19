@@ -10,20 +10,29 @@
     <link rel="stylesheet" href="styles.css">
     <style>
         /* Navbar Styling */
+        /* Navbar Styling */
         .navbar {
-            position: sticky;
-            top: 10;
-            background: rgba(20, 20, 30, 0.5); /* Slightly dark background */
-            border: 3px solid rgba(72, 126, 181, 0.8); /* Border color */
-            border-radius: 12px; /* Rounded edges */
+            position: fixed;
+            top: 10px; /* Space from top */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            z-index: 1000;
+            background: rgba(20, 20, 30, 1);
+            border: 3px solid rgba(72, 126, 181, 0.8);
+            border-radius: 12px;
             padding: 15px 30px;
-            margin: 10px auto; /* Adds spacing around the navbar */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Soft shadow */
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            max-width: 95%;
         }
+
+    /* Add this to push content down below navbar */
+    body {
+        padding-top: 90px; /* Match navbar height */
+    }
 
         /* Logo Container */
         .logo-container {
