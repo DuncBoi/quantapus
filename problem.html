@@ -12,7 +12,7 @@
     <style>
         /* Navbar Styling */
         .navbar {
-            background: rgba(20, 20, 30, 0.9); /* Slightly dark background */
+            background: rgba(20, 20, 30, 0.5); /* Slightly dark background */
             border: 3px solid rgba(72, 126, 181, 0.8); /* Border color */
             border-radius: 12px;
             padding: 15px 30px;
@@ -105,7 +105,11 @@
                 <div class="problem-container">
                     <!-- Problem Title -->
                     <div class="title-container">
-                        <h1 id="problem-title">QP #${problem.id}: ${problem.title || 'Untitled'}</h1>
+                    <h1 id="problem-title">
+                        <span class="qp-label">QP</span>
+                        <span class="problem-id" style="font-size: 3rem;">#${problem.id}</span>
+                        <span class="title-colon">:</span> ${problem.title || 'Untitled'}
+                    </h1>
                         <a href="index.html" class="back-button-inline">← Back</a>
                     </div>
 
@@ -127,7 +131,7 @@
                     <div id="solution" class="solution hidden">
                         <h2>Solution</h2>
                         <p id="solution-code">
-                            $$ ${problem.solution} $$
+                             ${problem.solution} 
                         </p>
 
                         <h2>Explanation</h2>

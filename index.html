@@ -11,6 +11,8 @@
     <style>
         /* Navbar Styling */
         .navbar {
+            position: sticky;
+            top: 10;
             background: rgba(20, 20, 30, 0.5); /* Slightly dark background */
             border: 3px solid rgba(72, 126, 181, 0.8); /* Border color */
             border-radius: 12px; /* Rounded edges */
@@ -68,33 +70,36 @@
 
         /* Animated Heading */
         .animated-heading {
-            font-size: 5rem;
+            font-size: clamp(2rem, 8vw, 5rem); /* Scales with window */
             font-weight: bold;
             text-align: center;
-            margin: 20px 0;
+            margin: 20px auto; 
             opacity: 0;
             transform: translateY(-20px);
             animation: fadeInSlide 1.5s ease-out forwards;
             letter-spacing: 2px;
             position: relative;
+            max-width: 90vw; /* Ensures it stays inside viewport */
+            overflow-wrap: break-word; /* Breaks long words */
         }
 
         .stylized-text {
-    background: linear-gradient(90deg, #4848b5, #48b5b5, #4848b5);
-    background-size: 300% 300%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradientMove 6s ease-in-out infinite alternate;
-}
+            background: linear-gradient(90deg, #4848b5, #48b5b5, #4848b5);
+            background-size: 200% auto; /* Moves more smoothly */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 5s ease-in-out infinite alternate;
+            display: inline-block; /* Ensures gradient covers entire text */
+        }
 
-@keyframes gradientMove {
-    0% {
-        background-position: 0% 50%;
-    }
-    100% {
-        background-position: 100% 50%;
-    }
-}
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 100% 50%;
+            }
+        }
 
 
         @keyframes fadeInSlide {
@@ -212,6 +217,7 @@
 
         // Fetch problems on page load
         document.addEventListener('DOMContentLoaded', fetchProblems);
+        
     </script>
 
 </body>
