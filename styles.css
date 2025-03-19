@@ -34,6 +34,8 @@ header {
     box-shadow: 0 4px 8px rgba(0, 0, 0, .8); /*  shadow */
     width: 100%;
     font-size: 1.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 
@@ -172,10 +174,11 @@ button:hover {
     display: block; /* Ensure MathJax works properly */
     margin: 0 auto; /* Center horizontally */
     padding: 20px; /* Add padding inside the box */
+    overflow-y: hidden;
+    overflow-x: auto;       /* Enables horizontal scrolling */
     border: 2px solid rgba(72, 181, 181, 0.8);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Add a shadow for depth */
     position: relative; /* For pseudo-elements */
-    overflow: hidden; /* Hide overflow */
 }
 
 /* Apply the pulsing border animation */
