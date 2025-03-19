@@ -31,8 +31,9 @@ header {
     background-color: rgba(0, 0, 0, 0.2); /* Light grey background */
     padding: 10px; /* Space inside the box */
     border-radius: 5px; /* Slightly rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, .8); /* Soft shadow */
-    display: inline-block; /* Ensures it wraps around content */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .8); /*  shadow */
+    width: 100%;
+    font-size: 1.5rem;
 }
 
 
