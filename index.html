@@ -8,6 +8,63 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .animated-heading {
+            font-size: 5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeInSlide 1.5s ease-out forwards;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .stylized-text {
+            background: linear-gradient(90deg, #ff8c00, #ff2e63);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes fadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes circleMove {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .logo-container .logo {
+            opacity: 0;
+            transform: rotate(0deg);
+            animation: logoSpin 1.5s ease-out forwards;
+        }
+
+        @keyframes logoSpin {
+            0% {
+                opacity: 1;
+                transform: rotate(0deg);
+            }
+            100% {
+                opacity: 1;
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -17,6 +74,13 @@
         </div>
         <a class="cta" href="#"><button>Sign In</button></a>
     </header>
+
+    <h1 class="animated-heading">
+        <span class="stylized-text">Quantitative</span> Finance Interview Questions
+    </h1>
+</body>
+</html>
+
 
     <div class="problems-container" id="problems-container">
         <!-- Problems dynamically inserted here -->

@@ -74,7 +74,9 @@ function renderProblemDetails(problem) {
             <!-- Solution and Explanation (Hidden by Default) -->
             <div id="solution" class="solution hidden">
                 <h2>Solution</h2>
-                <pre id="solution-code"><code>${problem.solution || 'No solution available.'}</code></pre>
+                <p id="solution-code">
+                            $$ ${problem.solution} $$
+                        </p>
 
                 <h2>Explanation</h2>
                 <p id="explanation">${problem.explanation || 'No explanation available.'}</p>
@@ -94,12 +96,15 @@ function renderProblemDetails(problem) {
         </div>
     `;
 
+    MathJax.typeset();
+
     // Add event listener to the solution button
     const solutionButton = document.getElementById('solution-button');
     const solutionSection = document.getElementById('solution');
     solutionButton.addEventListener('click', () => {
         solutionSection.classList.toggle('hidden');
         solutionButton.textContent = solutionSection.classList.contains('hidden') ? 'Show Solution' : 'Hide Solution';
+        MathJax.typeset();
     });
 }
 

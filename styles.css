@@ -106,7 +106,7 @@ button:hover {
 /* Description */
 .description {
     margin-bottom: 30px;
-    font-size: 18px;
+    font-size: 1.5rem;
 }
 
 /* Solution Button */
@@ -129,6 +129,7 @@ button:hover {
 
 /* Solution Section */
 .solution {
+    font-size: 2rem;
     margin-top: 30px;
     background-color: transparent; /* Remove inner box color */
     padding: 0; /* Remove extra padding */
@@ -140,28 +141,58 @@ button:hover {
     display: none;
 }
 
-
 .solution pre {
-    background: none; 
     padding: 0;
-    margin: 0 0 20px 0;
-    border: none;
     overflow-x: auto;
 }
 
-.solution code {
+#solution-code {
     font-family: 'Sour Gummy', Courier, monospace;
-    font-size: 16px;
-    color: #edf0f1;
-    white-space: pre-wrap;
+    font-size: 2rem; /* Adjust text size */
+    color: #edf0f1; /* Text color */
+    white-space: normal; /* Allows text wrapping */
+    text-align: left; /* Align text to the left */
+    background: linear-gradient(90deg, rgba(40, 20, 3, 0.5), rgba(255, 140, 0, 0.12), rgba(40, 20, 3, 0.5)); /* Dark background with slight transparency */
+    border-radius: 12px; /* Rounded corners */
+    display: block; /* Ensure MathJax works properly */
+    margin: 0 auto; /* Center horizontally */
+    padding: 20px; /* Add padding inside the box */
+    border: 2px solid transparent; /* Transparent border initially */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Add a shadow for depth */
+    position: relative; /* For pseudo-elements */
+    overflow: hidden; /* Hide overflow */
+    animation: gradient-shift 10s ease infinite, pulse-border 5s ease infinite;
 }
 
-/* Explanation */
-.solution p {
-    margin: 15px 0;
-    font-size: 18px;
+@keyframes gradient-shift {
+    0% {
+        background-position: 0% 50%; /* Start position */
+    }
+    50% {
+        background-position: 100% 50%; /* Middle position */
+    }
+    100% {
+        background-position: 0% 50%; /* End position */
+    }
 }
 
+/* Pulsing border animation */
+@keyframes pulse-border {
+    0% {
+        border-color: rgba(255, 140, 0, 0.8); /* Start with #ff8c00 */
+    }
+    50% {
+        border-color: rgba(255, 46, 99, 0.8); /* Transition to #ff2e63 */
+    }
+    100% {
+        border-color: rgba(255, 140, 0, 0.8); /* Return to #ff8c00 */
+    }
+}
+
+/* Apply the pulsing border animation */
+#solution-code {
+    animation: pulse-border 3s infinite; /* Smooth pulse animation */
+}
 /* YouTube Video */
 .youtube-container {
     margin-top: 30px;
@@ -216,9 +247,6 @@ button:hover {
     border-radius: 12px;
 }
 
-
-
-
 /* Error Message */
 #error-message {
     color: red;
@@ -239,7 +267,7 @@ button:hover {
     font-size: 16px;
     color: #edf0f1;
     background: none;
-    border: 2px solid rgba(72, 126, 181, 1);
+    border: 2px solid rgb(255, 93, 50);
     padding: 5px 15px;
     border-radius: 8px;
     text-decoration: none;
@@ -247,7 +275,7 @@ button:hover {
 }
 
 .back-button-inline:hover {
-    background: rgba(72, 126, 181, 1);
+    background: linear-gradient(90deg, #ff8c00, #ff2e63);
     color: white;
 }
 
