@@ -9,6 +9,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles.css">
     <style>
+        /* Navbar Styling */
+        .navbar {
+            background: rgba(20, 20, 30, 0.5); /* Slightly dark background */
+            border: 3px solid rgba(72, 126, 181, 0.8); /* Border color */
+            border-radius: 12px; /* Rounded edges */
+            padding: 15px 30px;
+            margin: 10px auto; /* Adds spacing around the navbar */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Soft shadow */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 95%;
+        }
+
+        /* Logo Container */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #edf0f1;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Spinning Logo */
+        .logo {
+            height: 50px;
+            width: auto;
+            margin-right: 10px;
+            animation: logoSpin 10s linear infinite;
+        }
+
+        @keyframes logoSpin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Sign-In Button */
+        .cta button {
+            background: linear-gradient(90deg, #4848b5, #48b5b5);
+            border: none;
+            padding: 10px 12px;
+            color: white;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .cta button:hover {
+            opacity: 0.8;
+        }
+
+        /* Animated Heading */
         .animated-heading {
             font-size: 5rem;
             font-weight: bold;
@@ -22,11 +80,22 @@
         }
 
         .stylized-text {
-            background: linear-gradient(90deg, #ff8c00, #ff2e63);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-        }
+    background: linear-gradient(90deg, #4848b5, #48b5b5, #4848b5);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientMove 6s ease-in-out infinite alternate;
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
 
         @keyframes fadeInSlide {
             from {
@@ -38,50 +107,25 @@
                 transform: translateY(0);
             }
         }
-
-        @keyframes circleMove {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .logo-container .logo {
-            opacity: 0;
-            transform: rotate(0deg);
-            animation: logoSpin 1.5s ease-out forwards;
-        }
-
-        @keyframes logoSpin {
-            0% {
-                opacity: 1;
-                transform: rotate(0deg);
-            }
-            100% {
-                opacity: 1;
-                transform: rotate(360deg);
-            }
-        }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo-container">
-            <img class="logo" src="images/logo.svg" alt="logo">
-            <div class="quantapus-text">Quantapus</div>
-        </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="#" class="logo-container">
+            <img src="images/logo.svg" alt="Quantapus Logo" class="logo">
+            <span>Quantapus</span>
+        </a>
         <a class="cta" href="#"><button>Sign In</button></a>
-    </header>
+    </nav>
 
+    <!-- Animated Heading -->
     <h1 class="animated-heading">
-        <span class="stylized-text">Quantitative</span> Finance Interview Questions
+        <span class="stylized-text">Quantitative</span> Finance Interview Problems
     </h1>
-</body>
-</html>
 
-
+    <!-- Problems Container -->
     <div class="problems-container" id="problems-container">
         <!-- Problems dynamically inserted here -->
     </div>
@@ -91,7 +135,7 @@
 
         // Function to fetch problems from the backend
         async function fetchProblems() {
-            try{
+            try {
                 console.log('Fetching problems from:', BACKEND_URL);
                 const response = await fetch(BACKEND_URL);
                 console.log('Response status:', response.status);
@@ -111,56 +155,54 @@
 
         // Function to render problems in the DOM
         function renderProblems(problems) {
-        const problemsContainer = document.getElementById('problems-container');
-        problemsContainer.innerHTML = ''; // Clear existing content
+            const problemsContainer = document.getElementById('problems-container');
+            problemsContainer.innerHTML = ''; // Clear existing content
 
-        if (!problems || problems.length === 0) {
-            problemsContainer.innerHTML = '<p>No problems found.</p>';
-            return;
-        }
+            if (!problems || problems.length === 0) {
+                problemsContainer.innerHTML = '<p>No problems found.</p>';
+                return;
+            }
 
-        problems.forEach(problem => {
-            const problemDiv = document.createElement('div');
-            problemDiv.className = 'problem';
+            problems.forEach(problem => {
+                const problemDiv = document.createElement('div');
+                problemDiv.className = 'problem';
 
-            // Create problem left container
-            const problemLeft = document.createElement('div');
-            problemLeft.className = 'problem-left';
+                // Create problem left container
+                const problemLeft = document.createElement('div');
+                problemLeft.className = 'problem-left';
 
-            // Create problem ID
-            const problemId = document.createElement('span');
-            problemId.className = 'problem-id';
-            problemId.textContent = `#${problem.id}`; // Assuming problem.id is available
+                // Create problem ID
+                const problemId = document.createElement('span');
+                problemId.className = 'problem-id';
+                problemId.textContent = `#${problem.id}`;
 
-            // Create problem name
-            const problemName = document.createElement('span');
-            problemName.className = 'problem-name';
-            problemName.textContent = problem.title || 'Untitled'; // Fallback for null title
+                // Create problem name
+                const problemName = document.createElement('span');
+                problemName.className = 'problem-name';
+                problemName.textContent = problem.title || 'Untitled';
 
-            // Append problem ID and name to the problem left container
-            problemLeft.appendChild(problemId);
-            problemLeft.appendChild(problemName);
+                // Append problem ID and name to the left container
+                problemLeft.appendChild(problemId);
+                problemLeft.appendChild(problemName);
 
-            // Create problem difficulty
-            const problemDifficulty = document.createElement('span');
-            problemDifficulty.className = `problem-difficulty ${problem.difficulty ? problem.difficulty.toLowerCase() : 'unknown'}`;
-            problemDifficulty.textContent = problem.difficulty || 'Unknown'; // Fallback for null difficulty
+                // Create problem difficulty
+                const problemDifficulty = document.createElement('span');
+                problemDifficulty.className = `problem-difficulty ${problem.difficulty ? problem.difficulty.toLowerCase() : 'unknown'}`;
+                problemDifficulty.textContent = problem.difficulty || 'Unknown';
 
-            // Append problem left and difficulty to the problem div
-            problemDiv.appendChild(problemLeft);
-            problemDiv.appendChild(problemDifficulty);
+                // Append left section and difficulty
+                problemDiv.appendChild(problemLeft);
+                problemDiv.appendChild(problemDifficulty);
 
-            // Append the problem div to the container
-            problemsContainer.appendChild(problemDiv);
+                // Append problem div to the container
+                problemsContainer.appendChild(problemDiv);
 
-            // Add click event listener to the problem div
-            problemDiv.addEventListener('click', () => {
-                // Navigate to the problem details page with the problem ID
-                window.location.href = `problem.html?id=${problem.id}`;
+                // Add click event listener
+                problemDiv.addEventListener('click', () => {
+                    window.location.href = `problem.html?id=${problem.id}`;
+                });
             });
-        });
-
-}
+        }
 
         // Function to render an error message
         function renderError(message) {
@@ -168,8 +210,9 @@
             problemsContainer.innerHTML = `<p style="color: red;">${message}</p>`;
         }
 
-        // Fetch and render problems when the page loads
+        // Fetch problems on page load
         document.addEventListener('DOMContentLoaded', fetchProblems);
     </script>
+
 </body>
 </html>

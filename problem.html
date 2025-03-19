@@ -8,18 +8,71 @@
 
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Navbar Styling */
+        .navbar {
+            background: rgba(20, 20, 30, 0.9); /* Slightly dark background */
+            border: 3px solid rgba(72, 126, 181, 0.8); /* Border color */
+            border-radius: 12px;
+            padding: 15px 30px;
+            margin: 10px auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 95%;
+        }
+
+        /* Logo Container */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #edf0f1;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Spinning Logo */
+        .logo {
+            height: 50px;
+            width: auto;
+            margin-right: 10px;
+        }
+
+        /* Sign-In Button */
+        .cta button {
+            background: linear-gradient(90deg, #4848b5, #48b5b5);
+            border: none;
+            padding: 10px 12px;
+            color: white;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .cta button:hover {
+            opacity: 0.8;
+        }
+
+        /* Hidden Class */
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
-    <header>
-        <header>
-            <a href="index.html" class="logo-container">
-                <img class="logo" src="images/logo.svg" alt="logo">
-                <div class="quantapus-text">Quantapus</div>
-            </a>
-        </header>        
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="index.html" class="logo-container">
+            <img src="images/logo.svg" alt="Quantapus Logo" class="logo">
+            <span>Quantapus</span>
+        </a>
         <a class="cta" href="#"><button>Sign In</button></a>
-    </header>
+    </nav>
 
     <div id="problem-details">
         <!-- Problem details will be dynamically inserted here -->
@@ -46,68 +99,66 @@
         }
 
         // Render the problem details
-        // Render the problem details
-function renderProblemDetails(problem) {
-    const problemDetailsContainer = document.getElementById('problem-details');
-    problemDetailsContainer.innerHTML = `
-        <div class="problem-container">
-            <!-- Problem Title -->
-            <div class="title-container">
-                <h1 id="problem-title">QP #${problem.id}: ${problem.title || 'Untitled'}</h1>
-                <a href="index.html" class="back-button-inline">← Back</a>
-            </div>
+        function renderProblemDetails(problem) {
+            const problemDetailsContainer = document.getElementById('problem-details');
+            problemDetailsContainer.innerHTML = `
+                <div class="problem-container">
+                    <!-- Problem Title -->
+                    <div class="title-container">
+                        <h1 id="problem-title">QP #${problem.id}: ${problem.title || 'Untitled'}</h1>
+                        <a href="index.html" class="back-button-inline">← Back</a>
+                    </div>
 
-            <!-- Difficulty and Category -->
-            <div class="meta-info">
-                <span id="difficulty" class="difficulty ${problem.difficulty?.toLowerCase() || 'unknown'}">${problem.difficulty || 'Unknown'}</span>
-                <span id="category">${problem.category || 'Uncategorized'}</span>
-            </div>
+                    <!-- Difficulty and Category -->
+                    <div class="meta-info">
+                        <span id="difficulty" class="difficulty ${problem.difficulty?.toLowerCase() || 'unknown'}">${problem.difficulty || 'Unknown'}</span>
+                        <span id="category">${problem.category || 'Uncategorized'}</span>
+                    </div>
 
-            <!-- Problem Description -->
-            <div id="description" class="description">
-                <p>${problem.description || 'No description available.'}</p>
-            </div>
+                    <!-- Problem Description -->
+                    <div id="description" class="description">
+                        <p>${problem.description || 'No description available.'}</p>
+                    </div>
 
-            <!-- Solution Button -->
-            <button id="solution-button" class="solution-button">Show Solution</button>
+                    <!-- Solution Button -->
+                    <button id="solution-button" class="solution-button">Show Solution</button>
 
-            <!-- Solution and Explanation (Hidden by Default) -->
-            <div id="solution" class="solution hidden">
-                <h2>Solution</h2>
-                <p id="solution-code">
+                    <!-- Solution and Explanation (Hidden by Default) -->
+                    <div id="solution" class="solution hidden">
+                        <h2>Solution</h2>
+                        <p id="solution-code">
                             $$ ${problem.solution} $$
                         </p>
 
-                <h2>Explanation</h2>
-                <p id="explanation">${problem.explanation || 'No explanation available.'}</p>
+                        <h2>Explanation</h2>
+                        <p id="explanation">${problem.explanation || 'No explanation available.'}</p>
 
-                <!-- YouTube Link (Embedded Video) -->
-                <div id="youtube-link" class="youtube-container">
-                    <iframe
-                        width="560"
-                        height="315"
-                        src="${problem.yt_link}"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
+                        <!-- YouTube Link (Embedded Video) -->
+                        <div id="youtube-link" class="youtube-container">
+                            <iframe
+                                width="560"
+                                height="315"
+                                src="${problem.yt_link}"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    `;
+            `;
 
-    MathJax.typeset();
+            MathJax.typeset();
 
-    // Add event listener to the solution button
-    const solutionButton = document.getElementById('solution-button');
-    const solutionSection = document.getElementById('solution');
-    solutionButton.addEventListener('click', () => {
-        solutionSection.classList.toggle('hidden');
-        solutionButton.textContent = solutionSection.classList.contains('hidden') ? 'Show Solution' : 'Hide Solution';
-        MathJax.typeset();
-    });
-}
-
+            // Add event listener to the solution button
+            const solutionButton = document.getElementById('solution-button');
+            const solutionSection = document.getElementById('solution');
+            solutionButton.addEventListener('click', () => {
+                solutionSection.classList.toggle('hidden');
+                solutionButton.textContent = solutionSection.classList.contains('hidden') ? 'Show Solution' : 'Hide Solution';
+                MathJax.typeset();
+            });
+        }
 
         // Render an error message
         function renderError(message) {
@@ -122,5 +173,6 @@ function renderProblemDetails(problem) {
             renderError('Problem ID not found.');
         }
     </script>
+
 </body>
 </html>

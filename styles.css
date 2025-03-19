@@ -65,8 +65,7 @@ button:hover {
 
 /* Problem Details Container */
 #problem-details {
-    width: 90%; /* Full width look */
-    max-width: 1200px; /* Keep it reasonable on huge screens */
+    max-width: 95%; /* Keep it reasonable on huge screens */
     margin: 40px auto;
     padding: 30px;
     background-color: #2c2d33;
@@ -94,9 +93,9 @@ button:hover {
     display: inline-block;
 }
 
-.easy { background-color: #7abd7e; }
-.medium { background-color: #f8d66d; }
-.hard { background-color: #ff6961; }
+.easy { background-color: #48B572; }
+.medium { background-color: #B5A848; }
+.hard { background-color: #B54848; }
 
 #category {
     margin-left: 12px;
@@ -152,41 +151,21 @@ button:hover {
     color: #edf0f1; /* Text color */
     white-space: normal; /* Allows text wrapping */
     text-align: left; /* Align text to the left */
-    background: linear-gradient(90deg, rgba(40, 20, 3, 0.5), rgba(255, 140, 0, 0.12), rgba(40, 20, 3, 0.5)); /* Dark background with slight transparency */
-    border-radius: 12px; /* Rounded corners */
+    background: linear-gradient(
+        90deg,
+        rgba(20, 10, 2, 0.85),  /* Very dark base */
+        rgba(72, 126, 181, 0.15), /* Hint of #487EB5 */
+        rgba(72, 72, 181, 0.12),  /* Hint of #4848B5 */
+        rgba(72, 181, 181, 0.15), /* Hint of #48B5B5 */
+        rgba(20, 10, 2, 0.85)  /* Very dark base */
+      );    border-radius: 12px; /* Rounded corners */
     display: block; /* Ensure MathJax works properly */
     margin: 0 auto; /* Center horizontally */
     padding: 20px; /* Add padding inside the box */
-    border: 2px solid transparent; /* Transparent border initially */
+    border: 2px solid rgba(72, 181, 181, 0.8);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Add a shadow for depth */
     position: relative; /* For pseudo-elements */
     overflow: hidden; /* Hide overflow */
-    animation: gradient-shift 10s ease infinite, pulse-border 5s ease infinite;
-}
-
-@keyframes gradient-shift {
-    0% {
-        background-position: 0% 50%; /* Start position */
-    }
-    50% {
-        background-position: 100% 50%; /* Middle position */
-    }
-    100% {
-        background-position: 0% 50%; /* End position */
-    }
-}
-
-/* Pulsing border animation */
-@keyframes pulse-border {
-    0% {
-        border-color: rgba(255, 140, 0, 0.8); /* Start with #ff8c00 */
-    }
-    50% {
-        border-color: rgba(255, 46, 99, 0.8); /* Transition to #ff2e63 */
-    }
-    100% {
-        border-color: rgba(255, 140, 0, 0.8); /* Return to #ff8c00 */
-    }
 }
 
 /* Apply the pulsing border animation */
@@ -225,23 +204,49 @@ button:hover {
 }
 
 .problem-left {
+    gap: 15px;
     display: flex;      
     align-items: center;
 }
 
 .problem-id {
     font-weight: bold;
-    margin-right: 10px;
-    font-size: 18px;
+    font-size: 1.5rem;
+    padding: 10px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background: radial-gradient(circle, #1cb5e0, #0082c8);
+    background-size: 300% 300%;
+    animation: circularPulse 6s infinite linear;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
+/* Hover effect: Slightly enlarge and intensify glow */
+.problem-id:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 25px rgba(72, 72, 181, 0.9);
+}
+
+/* Circular background animation */
+@keyframes circularPulse {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
+
 .problem-name {
-    font-size: 18px;
+    font-size: 1.5rem;
     font-weight: 500;
 }
 
 .problem-difficulty {
-    font-size: 14px;
+    font-size: 1.2rem;
     font-weight: 600;
     padding: 5px 10px;
     border-radius: 12px;
@@ -267,7 +272,7 @@ button:hover {
     font-size: 16px;
     color: #edf0f1;
     background: none;
-    border: 2px solid rgb(255, 93, 50);
+    border: 2px solid #48b5b5;
     padding: 5px 15px;
     border-radius: 8px;
     text-decoration: none;
@@ -275,7 +280,7 @@ button:hover {
 }
 
 .back-button-inline:hover {
-    background: linear-gradient(90deg, #ff8c00, #ff2e63);
+    background: linear-gradient(90deg, #4848b5, #48b5b5);
     color: white;
 }
 
