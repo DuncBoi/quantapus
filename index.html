@@ -7,7 +7,7 @@
     <title>Quantapus</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
     <style>
         /* Navbar Styling */
         /* Navbar Styling */
@@ -29,10 +29,10 @@
             justify-content: space-between;
         }
 
-    /* Add this to push content down below navbar */
-    body {
-        padding-top: 90px; /* Match navbar height */
-    }
+        /* Add this to push content down below navbar */
+        body {
+            padding-top: 90px; /* Match navbar height */
+        }
 
         /* Logo Container */
         .logo-container {
@@ -44,22 +44,31 @@
             font-weight: bold;
         }
 
-        /* Spinning Logo */
+        /* Octopus Entrance Animation */
         .logo {
             height: 50px;
-            width: auto;
-            margin-right: 10px;
-            animation: logoSpin 10s linear infinite;
-        }
+        width: auto;
+        margin-right: 10px;
+        animation: octopusEntrance 2s ease-out;
+    }
 
-        @keyframes logoSpin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
+    @keyframes octopusEntrance {
+        0% {
+            opacity: 0;
+            transform: translateY(30px) scale(0.8) rotate(-10deg);
         }
+        40% {
+            opacity: 1;
+            transform: translateY(-5px) scale(1.1) rotate(5deg);
+        }
+        70% {
+            transform: translateY(0px) scale(0.95) rotate(-3deg);
+        }
+        100% {
+            transform: translateY(0) scale(1) rotate(0deg);
+        }
+    }
+
 
         /* Sign-In Button */
         .cta button {

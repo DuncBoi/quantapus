@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap');
 
 * {
     box-sizing: border-box;
@@ -9,7 +9,7 @@
 body {
     background-color: #24252A;
     color: #edf0f1;
-    font-family: "Sour Gummy", sans-serif;
+    font-family: "Roboto Flex", sans-serif;
 }
 
 /* Header Styles */
@@ -52,7 +52,7 @@ header {
 }
 
 button {
-    font-family: "Sour Gummy";
+    font-family: "Roboto Flex";
     padding: 9px 25px;
     background-color: rgba(72, 126, 181, 1);
     border: none;
@@ -223,26 +223,27 @@ button:hover {
 }
 
 .problem-id {
-    font-weight: bold;
-    font-size: 1.5rem;
-    padding: 10px;
-    border-radius: 50%;
+    font-weight: 500; /* Medium weight for a refined look */
+    font-size: 1.2rem; /* Slightly smaller for subtlety */
+    padding: 4px 8px;
+    border-radius: 4px; /* Soft corners for a clean design */
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    background: radial-gradient(circle, #1cb5e0, #0082c8);
-    background-size: 300% 300%;
-    animation: circularPulse 6s infinite linear;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    font-style: italic; /* Adds sophistication */
+    color: white; /* Keeps the text white */
+    background: none; /* Removes any distracting background */
+    border: 5px solid rgba(72, 126, 181, 0.5); 
+    transition: border-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+    opacity: 0.8; 
 }
 
-/* Hover effect: Slightly enlarge and intensify glow */
 .problem-id:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 25px rgba(72, 72, 181, 0.9);
+    border-color: rgba(72, 126, 181, 1); 
+    opacity: 1; 
 }
+
+
 
 /* Circular background animation */
 @keyframes circularPulse {
