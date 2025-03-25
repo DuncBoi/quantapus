@@ -9,7 +9,7 @@
 body {
     background-color: #24252A;
     color: #edf0f1;
-    font-family: "Roboto Flex", sans-serif;
+    font-family: 'Roboto Flex';
 }
 
 /* Header Styles */
@@ -28,10 +28,10 @@ header {
 }
 
 #explanation {
-    background-color: rgba(0, 0, 0, 0.2); /* Light grey background */
-    padding: 10px; /* Space inside the box */
-    border-radius: 5px; /* Slightly rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, .8); /*  shadow */
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px; 
+    border-radius: 5px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .8); 
     width: 100%;
     font-size: 1.5rem;
     overflow-x: auto;
@@ -67,7 +67,7 @@ button:hover {
 }
 
 .quantapus-text {
-    font-family: 'Sour Gummy', sans-serif;
+    font-family: 'Roboto Flex', sans-serif;
     font-size: 3rem;
     color: #edf0f1;
     margin-left: auto;
@@ -158,32 +158,32 @@ button:hover {
 }
 
 #solution-code {
-    font-family: 'Sour Gummy', Courier, monospace;
-    font-size: 2rem; /* Adjust text size */
-    color: #edf0f1; /* Text color */
-    white-space: normal; /* Allows text wrapping */
-    text-align: left; /* Align text to the left */
+    font-family: 'Roboto Flex';
+    font-size: 2rem; 
+    color: #edf0f1; 
+    white-space: normal; 
+    text-align: left; 
     background: linear-gradient(
         90deg,
-        rgba(20, 10, 2, 0.85),  /* Very dark base */
+        rgba(20, 10, 2, 0.85),  
         rgba(72, 126, 181, 0.15), /* Hint of #487EB5 */
         rgba(72, 72, 181, 0.12),  /* Hint of #4848B5 */
         rgba(72, 181, 181, 0.15), /* Hint of #48B5B5 */
-        rgba(20, 10, 2, 0.85)  /* Very dark base */
-      );    border-radius: 12px; /* Rounded corners */
+        rgba(20, 10, 2, 0.85)  
+      );    border-radius: 12px; 
     display: block; /* Ensure MathJax works properly */
-    margin: 0 auto; /* Center horizontally */
-    padding: 20px; /* Add padding inside the box */
+    margin: 0 auto; 
+    padding: 20px; 
     overflow-y: hidden;
-    overflow-x: auto;       /* Enables horizontal scrolling */
+    overflow-x: auto;  /* Enables horizontal scrolling */
     border: 2px solid rgba(72, 181, 181, 0.8);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Add a shadow for depth */
-    position: relative; /* For pseudo-elements */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+    position: relative; 
 }
 
 /* Apply the pulsing border animation */
 #solution-code {
-    animation: pulse-border 3s infinite; /* Smooth pulse animation */
+    animation: pulse-border 3s infinite; 
 }
 /* YouTube Video */
 .youtube-container {
@@ -223,26 +223,25 @@ button:hover {
 }
 
 .problem-id {
-    font-weight: 500; /* Medium weight for a refined look */
-    font-size: 1.2rem; /* Slightly smaller for subtlety */
-    padding: 4px 8px;
-    border-radius: 4px; /* Soft corners for a clean design */
+    font-weight: 500;
+    font-size: 1.2rem; 
+    padding: 4px 12px 4px 10px; 
+    border-radius: 10px; 
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-style: italic; /* Adds sophistication */
-    color: white; /* Keeps the text white */
-    background: none; /* Removes any distracting background */
+    font-style: italic;
+    color: white; 
+    background: none;
     border: 5px solid rgba(72, 126, 181, 0.5); 
     transition: border-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
-    opacity: 0.8; 
 }
 
 .problem-id:hover {
+    background: rgba(72, 126, 181, 1);
     border-color: rgba(72, 126, 181, 1); 
     opacity: 1; 
 }
-
 
 
 /* Circular background animation */
