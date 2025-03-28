@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Add these sections ABOVE the existing form -->
 <div class="management-section">
     <h2>Manage Existing Problems</h2>
     
@@ -131,6 +130,11 @@
         </div>
 
         <div class="form-group">
+            <label for="roadmap">Roadmap (varchar 50):</label>
+            <input type="text" id="roadmap" name="roadmap" required maxlength="50">
+        </div>
+
+        <div class="form-group">
             <label for="update-mode">
                 <input type="checkbox" id="update-mode"> Update Existing Problem
             </label>
@@ -177,6 +181,7 @@
         form.solution.value = data.solution;
         form.explanation.value = data.explanation;
         form.yt_link.value = data.yt_link || '';
+        form.roadmap.value = data.roadmap || '';
     }
     async function deleteProblem() {
         const problemId = document.getElementById('manage-id').value;
@@ -215,16 +220,19 @@
 
         try {
             const formData = {
-                    secretKey: form.secretKey.value,
+                secretKey: form.secretKey.value,
+                problem: {
                     id: parseInt(form.id.value),
                     title: form.title.value,
                     difficulty: form.difficulty.value,
                     category: form.category.value,
+                    roadmap: form.roadmap.value, // New field
                     description: form.description.value,
                     solution: form.solution.value,
                     explanation: form.explanation.value,
                     yt_link: form.yt_link.value || null
-                };
+                }
+        };
             
             const response = await fetch(url, {
                 method: method,

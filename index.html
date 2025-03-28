@@ -1,243 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- All external scripts -->
     <link rel="icon" type="image/svg+xml" href="images/logo.svg">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quantapus</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="./css/styles.css">
-    <style>
-        /* Navbar Styling */
-        /* Navbar Styling */
-        .navbar {
-            position: fixed;
-            top: 10px; /* Space from top */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 95%;
-            z-index: 1000;
-            background: rgba(20, 20, 30, 1);
-            border: 3px solid rgba(72, 126, 181, 0.8);
-            border-radius: 12px;
-            padding: 15px 30px;
-            margin: 0 auto;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        /* Add this to push content down below navbar */
-        body {
-            padding-top: 90px; /* Match navbar height */
-        }
-
-        /* Logo Container */
-        .logo-container {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: #edf0f1;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        /* Octopus Entrance Animation */
-        .logo {
-            height: 50px;
-        width: auto;
-        margin-right: 10px;
-        animation: octopusEntrance 2s ease-out;
-    }
-
-    @keyframes octopusEntrance {
-        0% {
-            opacity: 0;
-            transform: translateY(30px) scale(0.8) rotate(-10deg);
-        }
-        40% {
-            opacity: 1;
-            transform: translateY(-5px) scale(1.1) rotate(5deg);
-        }
-        70% {
-            transform: translateY(0px) scale(0.95) rotate(-3deg);
-        }
-        100% {
-            transform: translateY(0) scale(1) rotate(0deg);
-        }
-    }
-
-
-        /* Sign-In Button */
-        .cta button {
-            background: linear-gradient(90deg, #4848b5, #48b5b5);
-            border: none;
-            padding: 10px 12px;
-            color: white;
-            font-size: 1rem;
-            border-radius: 8px;
-            font-family: 'Roboto Flex';
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .cta button:hover {
-            opacity: 0.8;
-        }
-
-        /* Animated Heading */
-        .animated-heading {
-            font-size: clamp(2rem, 8vw, 5rem); /* Scales with window */
-            font-weight: bold;
-            text-align: center;
-            margin: 20px auto; 
-            opacity: 0;
-            transform: translateY(-20px);
-            animation: fadeInSlide 1.5s ease-out forwards;
-            letter-spacing: 2px;
-            position: relative;
-            max-width: 90vw; /* Ensures it stays inside viewport */
-            overflow-wrap: break-word; /* Breaks long words */
-        }
-
-        .stylized-text {
-            background: linear-gradient(90deg, #4848b5, #48b5b5, #4848b5);
-            background-size: 200% auto; /* Moves more smoothly */
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientMove 5s ease-in-out infinite alternate;
-            display: inline-block; /* Ensures gradient covers entire text */
-        }
-
-        @keyframes gradientMove {
-            0% {
-                background-position: 0% 50%;
-            }
-            100% {
-                background-position: 100% 50%;
-            }
-        }
-
-
-        @keyframes fadeInSlide {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="#" class="logo-container">
-            <img src="images/logo.svg" alt="Quantapus Logo" class="logo">
-            <span>Quantapus</span>
-        </a>
-        <a class="cta" href="#"><button>Sign In</button></a>
-    </nav>
-
-    <!-- Animated Heading -->
-    <h1 class="animated-heading">
-        <span class="stylized-text">Quantitative</span> Finance Interview Problems
-    </h1>
-
-    <!-- Problems Container -->
-    <div class="problems-container" id="problems-container">
-        <!-- Problems dynamically inserted here -->
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reactflow@11.11.4/dist/umd/index.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reactflow@11.11.4/dist/style.min.css">
+    <link rel="stylesheet" href="css/styles.css">
 
     <script>
-        const BACKEND_URL = 'https://api.quantapus.com/problems';
-
-        // Function to fetch problems from the backend
-        async function fetchProblems() {
-            try {
-                console.log('Fetching problems from:', BACKEND_URL);
-                const response = await fetch(BACKEND_URL);
-                console.log('Response status:', response.status);
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const problems = await response.json();
-                console.log('Problems received:', problems);
-                renderProblems(problems);
-                
-            } catch (error) {
-                console.error('Error fetching problems:', error);
-                renderError('Failed to load problems. Please try again later.');
+        // Handle redirects
+        document.addEventListener('DOMContentLoaded', () => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const redirect = urlParams.get('redirect');
+          
+          if (redirect) {
+            // Clean up URL
+            history.replaceState({}, '', redirect);
+            
+            // Initialize your router
+            if (window.handleNavigation) {
+              window.handleNavigation(redirect);
             }
-        }
+          }
+        });
+      </script>
+    
+    <!-- All scripts -->
+    <script src="js/auth.js" defer type="module"></script>
+    <script src="js/allproblems.js" defer></script>
+    <script src="js/roadmap.js" defer></script>
+    <script src="js/getproblem.js" defer></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="left-group">
+            <a href="/roadmap" class="logo-container">
+                <img src="images/logo.svg" alt="Quantapus Logo" class="logo">
+            </a>
+            <div class="nav-links">
+                <a href="/roadmap" class="nav-item">Roadmap</a>
+                <a href="/" class="nav-item">All Problems</a>
+            </div>
+        </div>
+        <div class="cta">
+            <button id="signInButton"></button>
+            <div id="dropdownMenu" class="dropdown">
+                <a href="#" id="signOutLink">Sign Out</a>
+            </div>
+        </div>
+    </nav>
 
-        // Function to render problems in the DOM
-        function renderProblems(problems) {
-            const problemsContainer = document.getElementById('problems-container');
-            problemsContainer.innerHTML = ''; // Clear existing content
+    <!-- Dynamic Content Container -->
+    <div id="content-container"></div>
 
-            if (!problems || problems.length === 0) {
-                problemsContainer.innerHTML = '<p>No problems found.</p>';
-                return;
-            }
-
-            problems.forEach(problem => {
-                const problemDiv = document.createElement('div');
-                problemDiv.className = 'problem';
-
-                // Create problem left container
-                const problemLeft = document.createElement('div');
-                problemLeft.className = 'problem-left';
-
-                // Create problem ID
-                const problemId = document.createElement('span');
-                problemId.className = 'problem-id';
-                problemId.textContent = `#${problem.id}`;
-
-                // Create problem name
-                const problemName = document.createElement('span');
-                problemName.className = 'problem-name';
-                problemName.textContent = problem.title || 'Untitled';
-
-                // Append problem ID and name to the left container
-                problemLeft.appendChild(problemId);
-                problemLeft.appendChild(problemName);
-
-                // Create problem difficulty
-                const problemDifficulty = document.createElement('span');
-                problemDifficulty.className = `problem-difficulty ${problem.difficulty ? problem.difficulty.toLowerCase() : 'unknown'}`;
-                problemDifficulty.textContent = problem.difficulty || 'Unknown';
-
-                // Append left section and difficulty
-                problemDiv.appendChild(problemLeft);
-                problemDiv.appendChild(problemDifficulty);
-
-                // Append problem div to the container
-                problemsContainer.appendChild(problemDiv);
-
-                // Add click event listener
-                problemDiv.addEventListener('click', () => {
-                    window.location.href = `problem.html?id=${problem.id}`;
-                });
-            });
-        }
-
-        // Function to render an error message
-        function renderError(message) {
-            const problemsContainer = document.getElementById('problems-container');
-            problemsContainer.innerHTML = `<p style="color: red;">${message}</p>`;
-        }
-
-        // Fetch problems on page load
-        document.addEventListener('DOMContentLoaded', fetchProblems);
-        
-    </script>
-
+    <!-- Content Loading Script -->
+    <script src="js/app.js" type="module"></script>
 </body>
 </html>
