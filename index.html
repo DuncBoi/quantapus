@@ -13,26 +13,9 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reactflow@11.11.4/dist/style.min.css">
     <link rel="stylesheet" href="css/styles.css">
-
-    <script>
-        // Handle redirects
-        document.addEventListener('DOMContentLoaded', () => {
-          const urlParams = new URLSearchParams(window.location.search);
-          const redirect = urlParams.get('redirect');
-          
-          if (redirect) {
-            // Clean up URL
-            history.replaceState({}, '', redirect);
-            
-            // Initialize your router
-            if (window.handleNavigation) {
-              window.handleNavigation(redirect);
-            }
-          }
-        });
-      </script>
     
     <!-- All scripts -->
+    <script src="js/redirect.js" defer></script>
     <script src="js/auth.js" defer type="module"></script>
     <script src="js/allproblems.js" defer></script>
     <script src="js/roadmap.js" defer></script>
