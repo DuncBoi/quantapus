@@ -3,7 +3,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstati
 
 const firebaseConfig = {
     apiKey: "AIzaSyAOSxXEAlWwuvWqWbNCVDBSjvFepVgn8jc",
-    authDomain: "quantapus.com",
+    authDomain: "qp-auth-d9e52.firebaseapp.com",
     projectId: "qp-auth-d9e52",
     storageBucket: "qp-auth-d9e52.firebasestorage.app",
     messagingSenderId: "119036334637",
