@@ -1,8 +1,31 @@
 <section class="page-content">
-    <h1 class="animated-heading">
-        <span class="stylized-text">Quantitative</span> Finance Interview Problems
-    </h1>
-    <div class="problems-container" id="problems-container">
-        <!-- Problems will be dynamically inserted here -->
+    <div class="selector">
+        <!-- Difficulty Dropdown -->
+        <div class="dropdown-container">
+            <span class="dropdown2" id="difficulty-dropdown">All</span>
+            <div class="dropdown-menu" id="difficulty-menu">
+                <div class="dropdown-item" data-value="All">All</div>
+                <div class="dropdown-item" data-value="Easy">Easy</div>
+                <div class="dropdown-item" data-value="Medium">Medium</div>
+                <div class="dropdown-item" data-value="Hard">Hard</div>
+            </div>
+        </div>
+        
+        <!-- Type Dropdown -->
+        <div class="dropdown-container">
+            <span class="dropdown2" id="type-dropdown">Types Of</span>
+            <div class="dropdown-menu" id="type-menu">
+                <div class="dropdown-item" data-value="Types Of">Types Of</div>
+                <div class="dropdown-item" data-value="Brainteaser">Brainteaser</div>
+                <div class="dropdown-item" data-value="Conditional Probability">Conditional Probability</div>
+            </div>
+        </div>
+        
+        <span>Problems</span>
+
+        <div class="problems-container" id="problems-container">
+            <!-- Problems will be dynamically inserted here -->
+        </div>
     </div>
 </section>
+

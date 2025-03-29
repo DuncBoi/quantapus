@@ -1,14 +1,23 @@
 const routes = {
-    '/': '/content/allproblems.html',
+    '/': '/content/intro.html',
     '/roadmap': '/content/roadmap.html',
-    '/problem': '/content/problem.html'
+    '/problem': '/content/problem.html',
+    '/problems': '/content/allproblems.html'
 };
 
 function handleNavigation(path) {
+    //cleanup previous window 
+    console.log('--- Cleaning up previous route ---');
+    try {
+        window.currentCleanup();
+    } catch (e) {
+        console.error('Cleanup error:', e);
+    }
+
     // Extract base path without query params
     const [basePath] = path.split('?');
     
-    // Clean up previous content
+    // Remove previous content
     const container = document.getElementById('content-container');
     container.innerHTML = '';
 
@@ -25,14 +34,16 @@ function handleNavigation(path) {
             
             // Initialize based on route
             if (basePath === '/roadmap') {
-                initRoadmap();
+                window.currentCleanup = initRoadmap();
             } else if (basePath === '/problem') {
                 // Get problem ID from URL
                 const urlParams = new URLSearchParams(window.location.search);
                 const problemId = urlParams.get('id');
-                initProblem(problemId); // Make sure this exists in getproblem.js
-            } else {
-                initProblems();
+                window.currentCleanup = initProblem(problemId); 
+            } else if (basePath === '/problems'){
+                window.currentCleanup = initProblems();
+            } else{
+                window.currentCleanup = initBackground();
             }
         });
 }

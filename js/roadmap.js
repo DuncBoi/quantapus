@@ -143,9 +143,20 @@ let reactRoot = null;
 // Initialize function
 window.initRoadmap = function() {
     const container = document.getElementById('root');
-    if (!container) return;
-    
-    container.innerHTML = ''; // Clear previous content
-    reactRoot = ReactDOM.createRoot(container);
+    if (!container) return () => {};
+
+    container.innerHTML = ''; 
+    const reactRoot = ReactDOM.createRoot(container);
     reactRoot.render(React.createElement(App));
+
+    return function cleanupRoadmap() {
+        console.log('Cleaning up React Flow resources');
+        
+        reactRoot.unmount();
+        
+        if (window.reactFlowInstance) {
+            window.reactFlowInstance.destroy();
+            delete window.reactFlowInstance;
+        }
+    };
 };

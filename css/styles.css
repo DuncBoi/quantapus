@@ -32,11 +32,16 @@ header {
     align-items: center;
     gap: 10px;
     text-decoration: none; /* Remove underline */
-    color: inherit; /* Keep text color consistent */
+    color: inherit; 
 }
 
 .logo-container:hover {
     opacity: 0.8; /* Optional hover effect */
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(-50%) translateY(0px); }
+    50% { transform: translateY(-50%) translateY(-20px); }
 }
 
 button {
@@ -72,7 +77,7 @@ button:hover {
 
 /* Problem Details Container */
 #problem-details {
-    max-width: 95%; /* Keep it reasonable on huge screens */
+    max-width: 95%; 
     margin: 40px auto;
     padding: 30px;
     background-color: #2c2d33;
@@ -192,7 +197,7 @@ button:hover {
 }
 
 .youtube-container iframe {
-    width: 100%; /* Full width */
+    width: 100%; 
     height: 500px;
     border: none;
     border-radius: 12px;
@@ -387,31 +392,44 @@ button:hover {
     to { width: 100%; }
 }
 
-#content {
-    margin-top: 80px; /* Adjust based on navbar height */
-    padding: 20px;
-}
-
-
-
 /***********/
 /***********/
 /* HEADING */
 /***********/
 /***********/
 
+.intro-logo-container {
+    position: absolute;
+    left: calc(50% + 25%); /* Positions between text and right edge */
+    top: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    animation: float 4s ease-in-out infinite;
+}
+
+.right-logo {
+    width: 200px;
+    height: 200px;
+    transition: transform 0.3s ease;
+}
+
+.right-logo:hover {
+    transform: scale(1.1);
+}
+
 .animated-heading {
-    font-size: clamp(2rem, 8vw, 5rem); /* Scales with window */
+    font-size: clamp(2rem, 8vw, 5rem);
     font-weight: bold;
-    text-align: center;
-    margin: 20px auto; 
-    opacity: 0;
-    transform: translateY(-20px);
+    text-align: left;
+    margin: auto 0 auto 10%; 
     animation: fadeInSlide 1.5s ease-out forwards;
     letter-spacing: 2px;
-    position: relative;
-    max-width: 90vw; /* Ensures it stays inside viewport */
-    overflow-wrap: break-word; /* Breaks long words */
+    position: absolute;
+    left: 0;
+    top: 30%;
+    max-width: 50vw; 
+    overflow-wrap: break-word;
+    box-sizing: border-box;
 }
 
 body {
@@ -621,8 +639,118 @@ body {
 }
 
 .dropdown a:hover {
-    background: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
+    background: rgba(255, 255, 255, 0.1);
 }
+
+#vanta-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.selector {
+    text-align: center;
+    font-size: 70px; 
+    padding: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.dropdown2 {
+    text-decoration: underline;
+    cursor: pointer;
+    color: white;
+    transition: color 0.3s ease;
+    position: relative;
+    padding-right: 15px; /* Space for the arrow */
+}
+
+.dropdown2::after {
+    content: " ▼"; /* Downward arrow */
+    font-size: 0.4em;
+}
+
+.dropdown2:hover {
+    color: #487EB5;
+}
+
+/* Add these styles */
+.dropdown-container {
+    position: relative;
+    text-align: center;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    font-size: 2rem;
+    background: #000000;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 1);
+    border-radius: 8px;
+    min-width: none;
+    z-index: 1000;
+    margin-top: 10px;
+}
+
+.dropdown-menu.show {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.dropdown-item {
+    padding: 12px 20px;
+    color: white;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s ease;
+}
+
+.dropdown-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: #3d3d3d;
+}
+
+.dropdown-item[data-value="Easy"] {
+    color: #48B572;
+}
+
+.dropdown-item[data-value="Medium"] {
+    color: #B5A848;
+}
+
+.dropdown-item[data-value="Hard"] {
+    color: #B54848;
+}
+
+.dropdown-item:hover {
+    background: #3d3d3d;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+
+
 
 
 

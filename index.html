@@ -9,14 +9,18 @@
     <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reactflow@11.11.4/dist/umd/index.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.topology.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reactflow@11.11.4/dist/style.min.css">
     <link rel="stylesheet" href="css/styles.css">
     
-    <!-- All scripts -->
+    <!-- Index scripts -->
+    <script src="js/vantabg.js" defer></script>
     <script src="js/redirect.js" defer></script>
     <script src="js/auth.js" defer type="module"></script>
+    <!-- Content scripts -->
     <script src="js/allproblems.js" defer></script>
     <script src="js/roadmap.js" defer></script>
     <script src="js/getproblem.js" defer></script>
@@ -25,12 +29,12 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="left-group">
-            <a href="/roadmap" class="logo-container">
+            <a href="/" class="logo-container">
                 <img src="images/logo.svg" alt="Quantapus Logo" class="logo">
             </a>
             <div class="nav-links">
                 <a href="/roadmap" class="nav-item">Roadmap</a>
-                <a href="/" class="nav-item">All Problems</a>
+                <a href="/problems" class="nav-item">All Problems</a>
             </div>
         </div>
         <div class="cta">
