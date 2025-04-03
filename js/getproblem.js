@@ -21,6 +21,9 @@ function renderProblemDetails(problem) {
                     <!-- Problem Title -->
                     <div class="title-container">
                     <h1 id="problem-title">
+                            <span class="checkmark-box" style="margin-left: 5px; margin-right: 15px;">
+                            <span class="checkmark" style="width: 32px; height: 32px; border-width: 3px;"></span>
+                        </span>
                         <span class="qp-label">QP</span>
                         <span class="problem-id" style="font-size: 3rem; ">#${problem.id}</span>
                         <span class="title-colon">:</span> ${problem.title || 'Untitled'}
@@ -69,6 +72,33 @@ function renderProblemDetails(problem) {
 
     MathJax.typeset();
 
+    const checkmark = problemDetailsContainer.querySelector('.checkmark');
+    const checkmarkBox = problemDetailsContainer.querySelector('.checkmark-box');
+
+    function checkCompletionStatus(){
+        fetch(`https://api.quantapus.com/completed-problems/check?userId=${window.currentUser.uid}&problemId=${problem.id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.completed) {
+                    checkmark.classList.add('completed');
+                }
+            })
+            .catch(error => console.error('Completion check failed:', error));
+    }
+
+    if (window.currentUser) {
+        checkCompletionStatus();
+    }
+
+    // Add toggle functionality
+    checkmarkBox.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const result = await toggleCompletion(problem.id);
+        if (result) {
+            checkmark.classList.toggle('completed');
+        }
+    });
+
     // Add event listener to the solution button
     const solutionButton = document.getElementById('solution-button');
     const solutionSection = document.getElementById('solution');
@@ -91,14 +121,46 @@ function renderError(message) {
     problemDetailsContainer.innerHTML = `<p style="color: red;">${message}</p>`;
 }
 
-window.initProblem = function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const problemId = urlParams.get('id');
-    
+async function toggleCompletion(problemId) {
+    if (!window.currentUser){
+        notyf.error("Sign In to Track Progress");
+        return false;
+    }
+    userId = window.currentUser.uid;
+    try {
+      const response = await fetch('https://api.quantapus.com/toggle-complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, problemId })
+      });
+      
+      if (!response.ok) throw new Error('Toggle failed');
+      return await response.json();
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
+  }
+
+window.initProblem = function(problemId) {
     if (problemId) {
         fetchProblemDetails(problemId);
     } else {
         renderError('No problem ID specified');
     }
+
+    window.addEventListener("userSignedOut", () => {
+        fetchProblemDetails(problemId); // Refresh problems list when the user signs out
+    });
+    
+    window.addEventListener("userSignedIn", () => {
+        fetchProblemDetails(problemId); // Refresh problems when user signs in
+    });
+
+    return () => {
+        window.removeEventListener("userSignedOut");
+        window.removeEventListener("userSignedIn");
+    };
+    
 };
 

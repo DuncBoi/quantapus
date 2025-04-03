@@ -1,6 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
 
+const notyf = new Notyf();
+
 const firebaseConfig = {
     apiKey: "AIzaSyAOSxXEAlWwuvWqWbNCVDBSjvFepVgn8jc",
     authDomain: "qp-auth-d9e52.firebaseapp.com",
@@ -15,6 +17,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 auth.languageCode = 'en';
 const provider = new GoogleAuthProvider();
+window.currentUser = null;
 
 //timeout reference for dropdown
 let hideTimeout;
@@ -25,7 +28,9 @@ const signOutLink = document.getElementById("signOutLink");
 
 // Persist Sign-In State on Page Refresh
 auth.onAuthStateChanged(user => {
+    window.currentUser = user;
     if (user) {
+        notyf.success("Signed In");
         updateToInitials(user);
     }
     else{
@@ -43,17 +48,34 @@ const updateToInitials = (user) => {
 
 // Handle Sign-In
 googleLogin.addEventListener("click", async function(){
-    if (auth.currentUser) return; 
+    if (auth.currentUser) {
+        dropdownMenu.style.display = "block";
+        return;
+    } 
     try {
         const result = await signInWithPopup(auth, provider);
         console.log("User signed in:", result.user);
         updateToInitials(result.user);
+
+        const uid = result.user.uid;
+        
+        const response = await fetch('https://api.quantapus.com/log-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uid }),
+        });
+
+        if (!response.ok) throw new Error('Failed to log user');
+        
+        console.log('User UID logged in backend');
+
+        window.dispatchEvent(new Event("userSignedIn"));
     } catch (error) {
         console.error("Error during sign-in:", error);
     }
 });
 
-signInButton.addEventListener("mouseenter", function () {
+googleLogin.addEventListener("mouseenter", function () {
     if (auth.currentUser) {
         dropdownMenu.style.display = "block";
     }
@@ -73,12 +95,16 @@ function hideDropdown() {
 signInButton.addEventListener("mouseleave", hideDropdown);
 dropdownMenu.addEventListener("mouseleave", hideDropdown);
 
-
 signOutLink.addEventListener("click", function(event) {
     event.preventDefault(); 
     auth.signOut().then(() => {
+        window.currentUser = null;
         dropdownMenu.style.display = "none";
         signInButton.textContent = "Sign In"; 
+        notyf.success("Signed Out");
+        window.dispatchEvent(new Event("userSignedOut"));
+    }).catch(error => {
+        console.error("Error signing out:", error);
     });
 });
 

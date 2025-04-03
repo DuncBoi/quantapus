@@ -18,6 +18,51 @@ function Flow() {
     const [problems, setProblems] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
+    const [nodes, setNodes] = React.useState(initialNodes); 
+
+    const fetchProgress = async () => {
+        if (window.currentUser?.uid) {
+            try {
+                const response = await fetch(`https://api.quantapus.com/roadmap-progress?userId=${window.currentUser.uid}`);
+                const progressData = await response.json();
+                
+                setNodes(prevNodes => prevNodes.map(node => ({
+                    ...node,
+                    data: {
+                        ...node.data,
+                        progress: progressData[node.data.label.toLowerCase()] || 0
+                    }
+                })))
+            } catch (error) {
+                console.error('Progress fetch failed:', error);
+            }
+        }
+    };
+
+    React.useEffect(() => {
+        fetchProgress();
+    }, [window.currentUser]);
+
+    React.useEffect(() => {
+        const handleAuthChange = (event) => {
+            if (event.type === "userSignedOut") {
+                // Reset all progress to 0
+                setNodes(prevNodes => prevNodes.map(node => ({
+                    ...node,
+                    data: {
+                        ...node.data,
+                        progress: 0
+                    }
+                })));
+            } else if (event.type === "userSignedIn") {
+                // Refresh progress for new user
+                fetchProgress();
+            }
+        };
+    
+        window.addEventListener("userSignedIn", handleAuthChange);
+        window.addEventListener("userSignedOut", handleAuthChange);
+    }, []);
 
     const handleNodeClick = async (node) => {
         setSelectedNode(node);
@@ -30,6 +75,19 @@ function Flow() {
             if (!response.ok) throw new Error('Failed to fetch problems');
             const data = await response.json();
             setProblems(data);
+            // 2. Immediately update checkmarks
+            if (window.currentUser) {
+                const completedIds = await fetchCompletedProblems(window.currentUser.uid);
+                const completedSet = new Set(completedIds);
+                
+                setTimeout(() => {
+                    document.querySelectorAll('.problem').forEach(problemDiv => {
+                        const problemId = Number(problemDiv.querySelector('.problem-id').textContent.replace("#", ""));
+                        const checkmark = problemDiv.querySelector('.checkmark');
+                        checkmark?.classList.toggle('completed', completedSet.has(problemId));
+                    });
+                }, 50); // Short delay to allow React render
+            }
         } catch (err) {
             setError(err.message);
         } finally {
@@ -37,9 +95,33 @@ function Flow() {
         }
     };
 
+    const toggleCompletion = async (problemId) => {
+        if (!window.currentUser) {
+            notyf.error("Sign In to Track Progress");
+            return false;
+        }
+
+        try {
+            const response = await fetch('https://api.quantapus.com/toggle-complete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    userId: window.currentUser.uid, 
+                    problemId 
+                })
+            });
+            
+            if (!response.ok) throw new Error('Toggle failed');
+            return await response.json();
+        } catch (error) {
+            console.error('Error:', error);
+            return null;
+        }
+    };
+
     return React.createElement(React.Fragment, null,
         React.createElement(ReactFlow, {
-            nodes: initialNodes,
+            nodes: nodes,
             edges: initialEdges,
             nodeTypes: { customNode: CustomNode },
             fitView: true,
@@ -48,17 +130,16 @@ function Flow() {
         
         selectedNode && React.createElement('div', { 
             className: 'modal-overlay',
-            onClick: () => setSelectedNode(null) // Add this line
+            onClick: () => setSelectedNode(null)
         },
             React.createElement('div', { 
                 className: 'modal-content',
-                onClick: (e) => e.stopPropagation() // Add this line
+                onClick: (e) => e.stopPropagation()
             },
                 React.createElement('button', {
                     className: 'modal-close',
                     onClick: () => setSelectedNode(null)
                 }, 'X'),
-        
                 
                 React.createElement('h1', { className: 'modal-title' }, selectedNode.data.label),
                 
@@ -77,6 +158,28 @@ function Flow() {
                             onClick: () => window.handleNavigation(`/problem?id=${problem.id}`)
                         },
                             React.createElement('div', { className: 'problem-left' },
+                                React.createElement('div', { 
+                                    className: 'checkmark-box',
+                                    onClick: async (e) => {
+                                        e.stopPropagation();
+                                        if (!window.currentUser) {
+                                            notyf.error("Sign In to Track Progress");
+                                            return;
+                                        }
+                                        const checkmark = e.currentTarget.querySelector('.checkmark');
+
+                                        const result = await toggleCompletion(problem.id);
+                                        if (result) {
+                                            checkmark.classList.toggle('completed');
+                                        }
+                                        await fetchProgress();
+                                    }
+                                },
+                                    React.createElement('span', { 
+                                        className: 'checkmark' + 
+                                            (problem.completed ? ' completed' : '') 
+                                    })
+                                ),
                                 React.createElement('span', { className: 'problem-id' }, `#${problem.id}`),
                                 React.createElement('span', { className: 'problem-name' }, problem.title || 'Untitled')
                             ),
@@ -153,6 +256,8 @@ window.initRoadmap = function() {
         console.log('Cleaning up React Flow resources');
         
         reactRoot.unmount();
+        window.removeEventListener("userSignedIn", handleAuthChange);
+        window.removeEventListener("userSignedOut", handleAuthChange);
         
         if (window.reactFlowInstance) {
             window.reactFlowInstance.destroy();
@@ -160,3 +265,13 @@ window.initRoadmap = function() {
         }
     };
 };
+
+async function fetchCompletedProblems(userId) {
+    try {
+        const response = await fetch(`https://api.quantapus.com/completed-problems?userId=${userId}`);
+        return await response.json();
+    } catch (error) {
+        return [];
+    }
+}
+

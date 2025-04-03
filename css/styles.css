@@ -10,6 +10,7 @@ body {
     background-color: #24252A;
     color: #edf0f1;
     font-family: 'Roboto Flex';
+    padding-top: 70px;
 }
 
 /* Header Styles */
@@ -31,12 +32,12 @@ header {
     display: flex;
     align-items: center;
     gap: 10px;
-    text-decoration: none; /* Remove underline */
+    text-decoration: none; 
     color: inherit; 
 }
 
 .logo-container:hover {
-    opacity: 0.8; /* Optional hover effect */
+    opacity: 0.8; 
 }
 
 @keyframes float {
@@ -209,6 +210,50 @@ button:hover {
 /****************/
 /****************/
 
+.checkmark-box {
+    display: flex;
+    align-items: center;
+}
+
+.checkmark {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 2px solid white;
+    border-radius: 6px;
+    background-color: rgba(72, 181, 114, 0.1);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.checkmark.completed {
+    background: linear-gradient(90deg, #4848b5, #48b5b5);
+    border-color: white;
+}
+
+.checkmark.completed::after {
+    transform: translate(-50%, -50%) scale(1.2);
+    text-shadow: 0 0 8px rgba(72, 181, 114, 0.5);
+}
+
+.checkmark:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(72, 181, 114, 0.2);
+}
+
 .problem {
     display: flex;
     justify-content: space-between;  
@@ -268,6 +313,13 @@ button:hover {
 }
 
 /* Title and inline back button container */
+.title-container h1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 .title-container {
     display: flex;
     justify-content: space-between;
@@ -304,13 +356,13 @@ button:hover {
     top: 0px;
     left: 50%;
     transform: translateX(-50%);
-    width: 100%;
+    width: 99%;
     background-color: #24252A;
     z-index: 1000;
     border-radius: 12px;
     padding: 15px 30px;
     margin: 0 auto;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -325,7 +377,6 @@ button:hover {
     font-weight: bold;
 }
 
-/* Octopus Entrance Animation */
 .logo {
     height: 50px;
     width: auto;
@@ -336,6 +387,7 @@ button:hover {
     background: linear-gradient(90deg, #4848b5, #48b5b5);
     border: none;
     padding: 10px 12px;
+    min-width: 40px;
     color: white;
     font-size: 1rem;
     border-radius: 8px;
@@ -353,7 +405,6 @@ button:hover {
     align-items: center;
     gap: 50px; /* Space between logo and nav links */
 }
-
 
 .nav-links {
     display: flex;
@@ -398,11 +449,25 @@ button:hover {
 /***********/
 /***********/
 
+.page-content2 {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;    
+    margin-top: -70px; 
+}
+
+.content {
+    flex: 1;
+    position: relative;
+}
+
 .intro-logo-container {
     position: absolute;
-    left: calc(50% + 25%); /* Positions between text and right edge */
+    right: 5%; 
     top: 50%;
-    transform: translateX(-50%);
+    transform: translateY(-50%);
     z-index: 2;
     animation: float 4s ease-in-out infinite;
 }
@@ -421,19 +486,13 @@ button:hover {
     font-size: clamp(2rem, 8vw, 5rem);
     font-weight: bold;
     text-align: left;
-    margin: auto 0 auto 10%; 
-    animation: fadeInSlide 1.5s ease-out forwards;
     letter-spacing: 2px;
     position: absolute;
-    left: 0;
-    top: 30%;
-    max-width: 50vw; 
-    overflow-wrap: break-word;
-    box-sizing: border-box;
-}
-
-body {
-    padding-top: 90px;
+    left: 5%;
+    top: 50%;
+    transform: translateY(-50%); 
+    max-width: 45%; 
+    animation: fadeInSlide 1.2s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .stylized-text {
@@ -446,22 +505,31 @@ body {
 }
 
 @keyframes gradientMove {
-    0% {
-        background-position: 0% 50%;
-    }
-    100% {
-        background-position: 100% 50%;
-    }
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
 }
 
 @keyframes fadeInSlide {
-    from {
+    0% {
         opacity: 0;
-        transform: translateY(-20px);
+        transform: translateY(-15px) scale(0.98);
     }
-    to {
+    100% {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(-50%) scale(1);
+    }
+}
+
+/* Keep octopus properly aligned on mobile */
+@media (max-width: 768px) {
+    .animated-heading {
+        max-width: 80%;
+        left: 10%;
+    }
+    
+    .intro-logo-container {
+        right: 10%;
+        transform: translateY(-50%) scale(0.8);
     }
 }
 
@@ -479,43 +547,45 @@ body {
     border: 2px solid white;
     cursor: pointer;
     border-radius: 8px;
-    width: 120px; /* Fixed width */
-    height: 15px; /* Fixed height */
+    width: 120px; 
+    height: 40px; 
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    position: relative; /* For absolute positioning of children */
-    padding: 15px;
+    justify-content: start;
+    position: relative; 
+    padding: 8px 10px 12px 10px;    
     text-align: center;
     font-weight: bold;
-    font-size: 15px;
+    font-size: 14px;
     box-shadow: 3px 3px 10px rgba(255, 255, 255, 0.3);
-    overflow: hidden; /* For status bar positioning */
+    overflow: hidden; 
 }
 
-/* Status bar container */
 .custom-node::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+    bottom: 3px; 
+    left: 8px; 
+    width: calc(100% - 16px); 
     height: 6px;
-    background: rgba(0, 0, 0, 0.2); /* Background of status bar */
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    z-index: 1;
 }
 
-/* Progress bar */
+/* Progress bar (foreground) */
 .custom-node::before {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: var(--progress, 0%); /* dynamic width */
+    bottom: 3px; 
+    left: 8px;
+    width: calc(var(--progress, 0%) - 16px); 
+    max-width: calc(100% - 16px); 
     height: 6px;
-    background: #4848b5; /* Progress color */
-    z-index: 1;
-    transition: width 0.3s ease;
+    background: linear-gradient(90deg, #2fa84c, #48b572); 
+    border-radius: 4px;
+    z-index: 2;
 }
 
 /* Modal Styles */
@@ -531,6 +601,12 @@ body {
     align-items: center;
     z-index: 1000;
 }
+
+.modal-title {
+    text-align: center;
+    font-size: 4rem;
+    margin-bottom: 1rem; 
+  }
 
 .modal-content {
     background: #24252A;
@@ -745,7 +821,6 @@ body {
 @media (max-width: 768px) {
     .dropdown-menu {
         left: 50%;
-        transform: translateX(-50%);
     }
 }
 

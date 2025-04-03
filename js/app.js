@@ -11,7 +11,7 @@ function handleNavigation(path) {
     try {
         window.currentCleanup();
     } catch (e) {
-        console.error('Cleanup error:', e);
+        console.error('Nothing to cleanup', e);
     }
 
     // Extract base path without query params
