@@ -23,6 +23,7 @@ window.initProblems = function() {
   }
 
   if (window.selectedCategory !== 'Types Of') {
+    categoryDropdown.style.color = '#487EB5';
     categoryDropdown.textContent = window.selectedCategory;
   } else {
     categoryDropdown.textContent = 'Types Of';
@@ -51,6 +52,7 @@ window.initProblems = function() {
       // Handle filter selection
       if (e.target.classList.contains('dropdown-item')) {
         const dropdown = e.target.closest('.dropdown-container').querySelector('.dropdown2');
+
         const value = e.target.dataset.value;
 
         // Reset to default text color
@@ -60,6 +62,10 @@ window.initProblems = function() {
         if (value === 'Easy') dropdown.style.color = '#48B572';
         if (value === 'Medium') dropdown.style.color = '#B5A848';
         if (value === 'Hard') dropdown.style.color = '#B54848';
+
+        if (dropdown.id === 'type-dropdown' && value !== 'Types Of') {
+          dropdown.style.color = '#487EB5';
+        }
 
         // Update the button text
         dropdown.textContent = value;
