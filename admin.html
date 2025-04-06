@@ -130,8 +130,13 @@
         </div>
 
         <div class="form-group">
-            <label for="roadmap">Roadmap (varchar 50):</label>
+            <label for="roadmap">Roadmap Category:</label>
             <input type="text" id="roadmap" name="roadmap" required maxlength="50">
+        </div>
+
+        <div class="form-group">
+            <label for="roadmap_num">Roadmap Number (ordering):</label>
+            <input type="number" id="roadmap_num" name="roadmap_num" min="0">
         </div>
 
         <div class="form-group">
@@ -182,6 +187,7 @@
         form.explanation.value = data.explanation;
         form.yt_link.value = data.yt_link || '';
         form.roadmap.value = data.roadmap || '';
+        form.roadmap_num.value = data.roadmap_num ?? ''; // New
     }
     async function deleteProblem() {
         const problemId = document.getElementById('manage-id').value;
@@ -226,7 +232,8 @@
                     title: form.title.value,
                     difficulty: form.difficulty.value,
                     category: form.category.value,
-                    roadmap: form.roadmap.value, // New field
+                    roadmap: form.roadmap.value,
+                    roadmap_num: form.roadmap_num.value ? parseInt(form.roadmap_num.value) : null,
                     description: form.description.value,
                     solution: form.solution.value,
                     explanation: form.explanation.value,

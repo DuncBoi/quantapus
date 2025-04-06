@@ -1,5 +1,8 @@
 // Fetch the problem details from the backend
 async function fetchProblemDetails(id) {
+    const container = document.getElementById('problem-details');
+    // loading spinner
+    container.innerHTML = `<div class="loading-container"><div class="loading-spinner"></div></div>`;
     try {
         const response = await fetch(`https://api.quantapus.com/problems/${id}`);
         if (!response.ok) {
@@ -24,8 +27,7 @@ function renderProblemDetails(problem) {
                             <span class="checkmark-box" style="margin-left: 5px; margin-right: 15px;">
                             <span class="checkmark" style="width: 32px; height: 32px; border-width: 3px;"></span>
                         </span>
-                        <span class="qp-label">QP</span>
-                        <span class="problem-id" style="font-size: 3rem; ">#${problem.id}</span>
+                        <span class="problem-id" style="font-size: 3rem; ">QP #${problem.id}</span>
                         <span class="title-colon">:</span> ${problem.title || 'Untitled'}
                     </h1>
                         <button class="back-button-inline">← Back</button>
@@ -34,7 +36,7 @@ function renderProblemDetails(problem) {
                     <!-- Difficulty and Category -->
                     <div class="meta-info">
                         <span id="difficulty" class="difficulty ${problem.difficulty?.toLowerCase() || 'unknown'}">${problem.difficulty || 'Unknown'}</span>
-                        <span id="category">${problem.category || 'Uncategorized'}</span>
+                        <span id="category-container"></span>
                     </div>
 
                     <!-- Problem Description -->
@@ -71,6 +73,34 @@ function renderProblemDetails(problem) {
             `;
 
     MathJax.typeset();
+
+    // Render comma-separated, clickable category tags
+    const categoryContainer = document.getElementById('category-container');
+    const rawCategory = problem.category || 'Uncategorized';
+    const categories = rawCategory.split(',').map(cat => cat.trim());
+
+    categoryContainer.innerHTML = ''; // Clear existing
+
+    categories.forEach((cat, index) => {
+        const span = document.createElement('span');
+        // Add comma inside span if not last item
+        span.textContent = index !== categories.length - 1 ? `${cat},` : cat;
+        span.classList.add('clickable-tag');
+        span.setAttribute('data-value', cat);
+      
+        span.addEventListener('click', () => {
+          localStorage.setItem('selectedCategory', cat);
+          localStorage.removeItem('selectedDifficulty');
+          window.location.href = '/problems';
+        });
+      
+        categoryContainer.appendChild(span);
+      
+        // Add a space *after* the span (not before the comma)
+        if (index !== categories.length - 1) {
+          categoryContainer.appendChild(document.createTextNode(' '));
+        }
+      });
 
     const checkmark = problemDetailsContainer.querySelector('.checkmark');
     const checkmarkBox = problemDetailsContainer.querySelector('.checkmark-box');
@@ -149,17 +179,17 @@ window.initProblem = function(problemId) {
         renderError('No problem ID specified');
     }
 
-    window.addEventListener("userSignedOut", () => {
-        fetchProblemDetails(problemId); // Refresh problems list when the user signs out
-    });
-    
-    window.addEventListener("userSignedIn", () => {
-        fetchProblemDetails(problemId); // Refresh problems when user signs in
-    });
+    const onSignedOut = () => fetchProblemDetails(problemId);
+    const onSignedIn = () => fetchProblemDetails(problemId);
 
+    // Register listeners
+    window.addEventListener("userSignedOut", onSignedOut);
+    window.addEventListener("userSignedIn", onSignedIn);
+
+    // Return proper cleanup function
     return () => {
-        window.removeEventListener("userSignedOut");
-        window.removeEventListener("userSignedIn");
+        window.removeEventListener("userSignedOut", onSignedOut);
+        window.removeEventListener("userSignedIn", onSignedIn);
     };
     
 };

@@ -19,6 +19,7 @@ function Flow() {
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
     const [nodes, setNodes] = React.useState(initialNodes); 
+    const [completedCount, setCompletedCount] = React.useState(0);
 
     const fetchProgress = async () => {
         if (window.currentUser?.uid) {
@@ -36,6 +37,14 @@ function Flow() {
             } catch (error) {
                 console.error('Progress fetch failed:', error);
             }
+        } else{
+            setNodes(prevNodes => prevNodes.map(node => ({
+                ...node,
+                data: {
+                    ...node.data,
+                    progress: 0
+                }
+            })));
         }
     };
 
@@ -44,25 +53,14 @@ function Flow() {
     }, [window.currentUser]);
 
     React.useEffect(() => {
-        const handleAuthChange = (event) => {
-            if (event.type === "userSignedOut") {
-                // Reset all progress to 0
-                setNodes(prevNodes => prevNodes.map(node => ({
-                    ...node,
-                    data: {
-                        ...node.data,
-                        progress: 0
-                    }
-                })));
-            } else if (event.type === "userSignedIn") {
-                // Refresh progress for new user
-                fetchProgress();
-            }
-        };
+        const refresh = () => fetchProgress();
+        window.addEventListener("refreshProgressInReactFlow", refresh);
     
-        window.addEventListener("userSignedIn", handleAuthChange);
-        window.addEventListener("userSignedOut", handleAuthChange);
+        return () => {
+            window.removeEventListener("refreshProgressInReactFlow", refresh);
+        };
     }, []);
+    
 
     const handleNodeClick = async (node) => {
         setSelectedNode(node);
@@ -81,12 +79,19 @@ function Flow() {
                 const completedSet = new Set(completedIds);
                 
                 setTimeout(() => {
+                    let count = 0;
+                
                     document.querySelectorAll('.problem').forEach(problemDiv => {
                         const problemId = Number(problemDiv.querySelector('.problem-id').textContent.replace("#", ""));
                         const checkmark = problemDiv.querySelector('.checkmark');
-                        checkmark?.classList.toggle('completed', completedSet.has(problemId));
+                
+                        const isCompleted = completedSet.has(problemId);
+                        checkmark?.classList.toggle('completed', isCompleted);
+                        if (isCompleted) count++;
                     });
-                }, 50); // Short delay to allow React render
+                
+                    setCompletedCount(count);
+                }, 50);
             }
         } catch (err) {
             setError(err.message);
@@ -141,8 +146,20 @@ function Flow() {
                     onClick: () => setSelectedNode(null)
                 }, 'X'),
                 
-                React.createElement('h1', { className: 'modal-title' }, selectedNode.data.label),
+                React.createElement(React.Fragment, null,
+                    React.createElement('h1', { className: 'modal-title' }, selectedNode.data.label),
                 
+                    React.createElement('div', { className: 'modal-progress-container' },
+                        React.createElement('div', { className: 'progress-label' }, `( ${completedCount} / ${problems.length} )`),
+                        React.createElement('div', { className: 'progress-bar' },
+                            React.createElement('div', { 
+                                className: 'progress-bar-fill', 
+                                style: { width: `${problems.length > 0 ? (completedCount / problems.length) * 100 : 0}%` } 
+                            })
+                        )
+                    )
+                ),                
+                                
                 React.createElement('div', { className: 'problems-list' },
                     loading && React.createElement('div', { className: 'loading-container' },
                         React.createElement('div', { className: 'loading-spinner' })
@@ -170,7 +187,9 @@ function Flow() {
 
                                         const result = await toggleCompletion(problem.id);
                                         if (result) {
+                                            const isNowCompleted = !checkmark.classList.contains('completed');
                                             checkmark.classList.toggle('completed');
+                                            setCompletedCount(prev => prev + (isNowCompleted ? 1 : -1));
                                         }
                                         await fetchProgress();
                                     }
@@ -248,23 +267,33 @@ window.initRoadmap = function() {
     const container = document.getElementById('root');
     if (!container) return () => {};
 
-    container.innerHTML = ''; 
+    container.innerHTML = '';
     const reactRoot = ReactDOM.createRoot(container);
     reactRoot.render(React.createElement(App));
 
+    const handleAuthChange = (event) => {
+        const refreshEvent = new CustomEvent("refreshProgressInReactFlow");
+        window.dispatchEvent(refreshEvent);
+    };
+
+    window.addEventListener("userSignedIn", handleAuthChange);
+    window.addEventListener("userSignedOut", handleAuthChange);
+
     return function cleanupRoadmap() {
         console.log('Cleaning up React Flow resources');
-        
+
         reactRoot.unmount();
+
         window.removeEventListener("userSignedIn", handleAuthChange);
         window.removeEventListener("userSignedOut", handleAuthChange);
-        
+
         if (window.reactFlowInstance) {
             window.reactFlowInstance.destroy();
             delete window.reactFlowInstance;
         }
     };
 };
+
 
 async function fetchCompletedProblems(userId) {
     try {

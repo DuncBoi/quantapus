@@ -7,18 +7,21 @@ window.initBackground = function() {
     }
 
     // Create new instance
-    vantaInstance = VANTA.TOPOLOGY({
+    vantaInstance = VANTA.WAVES({
         el: "#vanta-bg",
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
+        mouseControls: false,
+        touchControls: false,
+        gyroControls: true,
         minHeight: 200.00,
         minWidth: 200.00,
         scale: 1.00,
         scaleMobile: 1.00,
-        backgroundColor: 0x24252A,
-        color: 0x487EB5
-    });
+        shininess: 10.00,
+        waveSpeed: 0.5,
+        waveHeight: 20,
+        zoom: 0.65,
+        color: 0x24252A,
+      })
 
     // Return cleanup function
     return () => {

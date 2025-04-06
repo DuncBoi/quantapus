@@ -1,6 +1,26 @@
 const BACKEND_URL = 'https://api.quantapus.com/problems';
 const notyf = new Notyf();
 
+function generateCategoryDropdown(categories) {
+  const categoryMenu = document.getElementById('type-menu');
+  categoryMenu.innerHTML = ''; // Clear static/default items
+
+  const defaultItem = document.createElement('div');
+  defaultItem.className = 'dropdown-item';
+  defaultItem.dataset.value = 'Types Of';
+  defaultItem.textContent = 'Types Of';
+  categoryMenu.appendChild(defaultItem);
+
+  //sorted list of unique categories
+  Array.from(categories).sort().forEach(category => {
+    const item = document.createElement('div');
+    item.className = 'dropdown-item';
+    item.dataset.value = category;
+    item.textContent = category;
+    categoryMenu.appendChild(item);
+  });
+}
+
 window.initProblems = function() {
   let clickHandler = null;
 
@@ -22,12 +42,14 @@ window.initProblems = function() {
     difficultyDropdown.style.color = '';
   }
 
+  categoryDropdown.classList.remove('gradient-text');
+  categoryDropdown.style.color = '';
+  
   if (window.selectedCategory !== 'Types Of') {
-    categoryDropdown.style.color = '#487EB5';
     categoryDropdown.textContent = window.selectedCategory;
+    categoryDropdown.classList.add('gradient-text');
   } else {
     categoryDropdown.textContent = 'Types Of';
-    categoryDropdown.style.color = '';
   }
 
   const handleDropdowns = () => {
@@ -63,8 +85,13 @@ window.initProblems = function() {
         if (value === 'Medium') dropdown.style.color = '#B5A848';
         if (value === 'Hard') dropdown.style.color = '#B54848';
 
-        if (dropdown.id === 'type-dropdown' && value !== 'Types Of') {
-          dropdown.style.color = '#487EB5';
+        if (dropdown.id === 'type-dropdown') {
+          dropdown.classList.remove('gradient-text');
+          dropdown.style.color = '';
+        
+          if (value !== 'Types Of') {
+            dropdown.classList.add('gradient-text');
+          }
         }
 
         // Update the button text
@@ -88,33 +115,31 @@ window.initProblems = function() {
     document.addEventListener('click', clickHandler);
   };
 
-  // Run the dropdown handler init
   handleDropdowns();
-
-  // Now fetch and render problems
   fetchProblems();
 
-  // Cleanup function for single-page apps
+  const onSignedOut = () => fetchProblems();
+  const onSignedIn = () => fetchProblems();
+
+  window.addEventListener("userSignedOut", onSignedOut);
+  window.addEventListener("userSignedIn", onSignedIn);
+
+  // Cleanup function
   return () => {
-    console.log('Cleaning up Dropdowns');
+    console.log('Cleaning up Dropdowns and Events');
     document.removeEventListener('click', clickHandler);
+    window.removeEventListener("userSignedOut", onSignedOut);
+    window.removeEventListener("userSignedIn", onSignedIn);
     delete window.selectedDifficulty;
     delete window.selectedCategory;
   };
 };
 
-// Refresh problems list when the user signs out
-window.addEventListener("userSignedOut", () => {
-  fetchProblems(); 
-});
-
-// Refresh problems when user signs in
-window.addEventListener("userSignedIn", () => {
-  fetchProblems();
-});
-
 // Fetch problems from the backend
 async function fetchProblems() {
+  // loading spinner
+  const problemsContainer = document.getElementById('problems-container');
+  problemsContainer.innerHTML = '<div class="loading-container"><div class="loading-spinner"></div></div>';
   try {
     console.log('Fetching problems from:', BACKEND_URL);
     const response = await fetch(BACKEND_URL);
@@ -125,6 +150,15 @@ async function fetchProblems() {
     console.log('Problems received:', problems);
 
     renderProblems(problems);
+
+    const categories = new Set();
+    problems.forEach(problem => {
+      if (problem.category) {
+        problem.category.split(',').forEach(cat => categories.add(cat.trim()));
+      }
+    });
+
+    generateCategoryDropdown(categories);
 
     if (window.currentUser) {
       updateCompletedProblems(window.currentUser.uid);

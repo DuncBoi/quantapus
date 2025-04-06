@@ -312,17 +312,30 @@
  
  /* Animated heading (desktop) */
  .animated-heading {
-   font-size: clamp(2rem, 8vw, 5rem);
-   font-weight: bold;
    text-align: left;
    letter-spacing: 2px;
    position: absolute;
    left: 5%;
    top: 50%;
    transform: translateY(-50%);
-   max-width: 45%;
+   max-width: 75%;
    animation: fadeInSlide 1.2s cubic-bezier(0.33, 1, 0.68, 1) forwards;
  }
+
+ .big-title {
+    font-weight: 800;
+    font-size: clamp(3rem, 9vw, 9rem);
+    line-height: 1.1;
+    display: inline-block;
+  }
+
+ .small-subtitle {
+    font-size: clamp(1rem, 2.5vw, 4rem);
+    color: white;
+    font-weight: 600;
+    display: block;
+    margin-top: 0.5rem;
+  }  
  
  .stylized-text {
    background: linear-gradient(90deg, #4848b5, #48b5b5, #4848b5);
@@ -372,16 +385,17 @@
    align-items: center;
    margin-bottom: 10px;
  }
- .title-container h1 {
-   display: flex;
-   align-items: center;
-   gap: 10px;
-   flex-wrap: wrap;
- }
  
  /********************************************
   * PROBLEM DETAILS
   ********************************************/
+  .title-container h1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
  #problem-details {
    max-width: 95%;
    margin: 40px auto;
@@ -407,11 +421,27 @@
    font-size: 1.2rem;
    display: inline-block;
  }
- 
- #category {
-   margin-left: 12px;
-   font-size: 1.2rem;
- }
+
+ .clickable-tag {
+    font-style: italic;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 4px;
+    font-size: 1.2rem;
+    transition: color 0.2s;
+    display: inline-block;
+  }
+  
+  .clickable-tag:hover {
+    color: #61a9f1;
+    text-decoration: underline;
+    transform: scale(1.05);
+  }
+  
+  #category-container {
+    margin-left: 12px;
+    display: inline;
+  }
  
  .description {
    margin-bottom: 30px;
@@ -428,6 +458,10 @@
    overflow-x: auto;
    overflow-y: hidden;
  }
+
+ .solution h2 {
+    margin-top: 30px;
+  }
  
  /********************************************
   * SOLUTION & CODE
@@ -439,6 +473,7 @@
     background-color: rgba(72, 126, 181, 1);
     padding: 15px;
     font-size: 20px;
+    font-weight: bold;
     cursor: pointer;
     border-radius: 50px;
     margin: 20px 0;
@@ -492,30 +527,29 @@
  }
 
  .back-button-inline {
-    font-size: 16px;
+    font-size: 1.2rem;
     color: #edf0f1;
+    font-weight: 800;
     background: none;
-    border: 2px solid #48b5b5;
     cursor: pointer;
     padding: 5px 15px;
     border-radius: 8px;
-    text-decoration: none;
+    text-decoration: underline;
     transition: all 0.3s ease;
 }
 
 .back-button-inline:hover {
-    background: linear-gradient(90deg, #4848b5, #48b5b5);
-    color: white;
+    transform: scale(1.1);
 }
  
  /********************************************
-  * PROBLEM LIST
+  * All Problems
   ********************************************/
  .problem {
    display: flex;
    justify-content: space-between;
    align-items: center;
-   padding: 15px;
+   padding: 20px;
    margin: 10px auto;
    width: 95%;
    background-color: #2c2d33;
@@ -535,24 +569,12 @@
  }
  
  .problem-id {
-   font-weight: 500;
-   font-size: 1.2rem;
-   padding: 4px 12px 4px 10px;
-   border-radius: 10px;
-   display: inline-flex;
-   align-items: center;
-   justify-content: center;
-   font-style: italic;
-   color: white;
-   background: none;
-   border: 5px solid rgba(72, 126, 181, 0.5);
-   transition: border-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
- }
- .problem-id:hover {
-   background: rgba(72, 126, 181, 1);
-   border-color: rgba(72, 126, 181, 1);
-   opacity: 1;
- }
+    font-size: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+  }
  
  .problem-name {
    font-size: 1.5rem;
@@ -572,57 +594,78 @@
  /********************************************
   * CHECKMARK
   ********************************************/
- .checkmark-box {
-   display: flex;
-   align-items: center;
-   position: relative;
- }
- .checkmark-box::before {
-   content: "";
-   position: absolute;
-   top: -20px;
-   left: -20px;
-   width: 60px;
-   height: 60px;
-   background: transparent;
-   cursor: pointer;
-   z-index: 1;
- }
- .checkmark {
-   display: inline-block;
-   width: 24px;
-   height: 24px;
-   border: 2px solid white;
-   border-radius: 6px;
-   background-color: rgba(72, 181, 114, 0.1);
-   cursor: pointer;
-   position: relative;
-   transition: all 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
- }
- .checkmark::after {
-   content: '✓';
-   position: absolute;
-   top: 50%;
-   left: 50%;
-   transform: translate(-50%, -50%) scale(0);
-   color: white;
-   font-size: 16px;
-   font-weight: bold;
-   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
- }
- .checkmark.completed {
-   background: linear-gradient(90deg, #4848b5, #48b5b5);
-   border-color: white;
- }
- .checkmark.completed::after {
-   transform: translate(-50%, -50%) scale(1.2);
-   text-shadow: 0 0 8px rgba(72, 181, 114, 0.5);
- }
- .checkmark:hover {
-   transform: scale(1.05);
-   box-shadow: 0 2px 8px rgba(72, 181, 114, 0.2);
- }
- 
+  .checkmark-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .checkmark-box::before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    width: 60px;
+    height: 60px;
+    background: transparent;
+    cursor: pointer;
+    z-index: 1;
+  }
+  
+  .checkmark {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border: 3px solid white;
+    border-radius: 6px;
+    background-color: rgba(93, 211, 158, 0.1); /* light minty green tint */
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .checkmark.completed {
+    background: linear-gradient(135deg, #5dd39e, #38b88f);
+    border-color: white;
+    box-shadow: 0 0 10px rgba(56, 184, 143, 0.4);
+    animation: pulse 1s ease-out;
+  }
+  
+  .checkmark.completed::after {
+    transform: translate(-50%, -50%) scale(1.2);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
+  }
+  
+  .checkmark-box:hover .checkmark {
+    transform: scale(1.1);
+    box-shadow: 0 2px 12px rgba(93, 211, 158, 0.3);
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(56, 184, 143, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(56, 184, 143, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(56, 184, 143, 0);
+    }
+  }
+  
  /********************************************
   * YOUTUBE
   ********************************************/
@@ -658,7 +701,7 @@
    border-radius: 8px;
    width: 80%;
    max-width: 80%;
-   max-height: 50%;
+   max-height: 75%;
    overflow-y: auto;
    position: relative;
  }
@@ -666,8 +709,39 @@
  .modal-title {
    text-align: center;
    font-size: 4rem;
-   margin-bottom: 1rem;
  }
+
+ .modal-progress-container {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.progress-label {
+    font-style: italic;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #ccc;
+}
+
+.progress-bar {
+    width: 70%;             
+    height: 18px;             
+    background-color: #f0f0f0;
+    border-radius: 9px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #5dd39e 0%, #38b88f 100%);
+    transition: width 0.3s ease;
+    border-radius: 9px 0 0 9px; /* rounded left edge */
+}
+
  
  .modal-close {
    position: absolute;
@@ -688,10 +762,10 @@
   * ROADMAP / CUSTOM NODES
   ********************************************/
  .custom-node {
-   background: linear-gradient(90deg, #48b5b5, #4848b5);
+   background: #1e3353;
    background-size: 200% 100%;
    color: white;
-   border: 2px solid white;
+   border: 2px solid #61a9f1;
    cursor: pointer;
    border-radius: 8px;
    width: 120px;
@@ -714,8 +788,9 @@
    left: 8px;
    width: calc(100% - 16px);
    height: 6px;
-   background: white;
+   background: #132238;
    border-radius: 4px;
+   transition: width 0.4s ease-in-out;
    z-index: 1;
  }
  .custom-node::before {
@@ -726,7 +801,7 @@
    width: calc(var(--progress, 0%) - 16px);
    max-width: calc(100% - 16px);
    height: 6px;
-   background: linear-gradient(90deg, #2fa84c, #48b572);
+   background: linear-gradient(90deg, #5dd39e 0%, #38b88f 100%);
    border-radius: 4px;
    z-index: 2;
  }
@@ -759,7 +834,7 @@
    width: 50px;
    height: 50px;
    border: 4px solid #f3f3f3;
-   border-top: 4px solid black;
+   border-top: 4px solid #487EB5;
    border-radius: 50%;
    animation: spin 1s linear infinite;
  }
@@ -878,5 +953,32 @@
    .dropdown-menu {
     font-size: 1rem;
   }
+
+  .title-container .problem-id {
+    font-size: 2rem !important;
+  }
+  
+  .title-container .qp-label,
+  .title-container .title-colon {
+    font-size: 2rem;
+  }
+
+  .back-button-inline {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
  }
+
+ .gradient-text {
+    background-image: linear-gradient(180deg, #4848b5, #48b5b5);
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    text-decoration: underline;
+    text-decoration-color: #48b5b5; /* Or a fallback solid color */
+  }
+
+  .gradient-text:hover {
+    text-decoration-color: #487EB5; /* or any alternate hover color */
+  }
  
