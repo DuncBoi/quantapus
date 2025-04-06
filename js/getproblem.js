@@ -27,7 +27,8 @@ function renderProblemDetails(problem) {
                             <span class="checkmark-box" style="margin-left: 5px; margin-right: 15px;">
                             <span class="checkmark" style="width: 32px; height: 32px; border-width: 3px;"></span>
                         </span>
-                        <span class="problem-id" style="font-size: 3rem; ">QP #${problem.id}</span>
+                        <span class = "qp">QP</span>
+                        <span class="problem-id" style="font-size: 3rem; "> #${problem.id}</span>
                         <span class="title-colon">:</span> ${problem.title || 'Untitled'}
                     </h1>
                         <button class="back-button-inline">← Back</button>
@@ -91,7 +92,7 @@ function renderProblemDetails(problem) {
         span.addEventListener('click', () => {
           localStorage.setItem('selectedCategory', cat);
           localStorage.removeItem('selectedDifficulty');
-          window.location.href = '/problems';
+          window.handleNavigation('/problems');
         });
       
         categoryContainer.appendChild(span);

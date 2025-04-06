@@ -41,13 +41,10 @@ window.initProblems = function() {
     difficultyDropdown.textContent = 'All';
     difficultyDropdown.style.color = '';
   }
-
-  categoryDropdown.classList.remove('gradient-text');
-  categoryDropdown.style.color = '';
   
   if (window.selectedCategory !== 'Types Of') {
     categoryDropdown.textContent = window.selectedCategory;
-    categoryDropdown.classList.add('gradient-text');
+    categoryDropdown.style.color = '#61a9f1';
   } else {
     categoryDropdown.textContent = 'Types Of';
   }
@@ -85,13 +82,8 @@ window.initProblems = function() {
         if (value === 'Medium') dropdown.style.color = '#B5A848';
         if (value === 'Hard') dropdown.style.color = '#B54848';
 
-        if (dropdown.id === 'type-dropdown') {
-          dropdown.classList.remove('gradient-text');
-          dropdown.style.color = '';
-        
-          if (value !== 'Types Of') {
-            dropdown.classList.add('gradient-text');
-          }
+        if (dropdown.id === 'type-dropdown' && value != 'Types Of') {
+          dropdown.style.color = '#61a9f1'
         }
 
         // Update the button text

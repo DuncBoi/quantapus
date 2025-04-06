@@ -207,20 +207,34 @@
  }
  
  .dropdown2 {
-   text-decoration: underline;
-   cursor: pointer;
-   color: white;
-   transition: color 0.3s ease;
-   position: relative;
-   padding-right: 15px;
- }
- .dropdown2::after {
-   content: " ▼";
-   font-size: 0.4em;
- }
- .dropdown2:hover {
-   color: #487EB5;
- }
+    text-decoration: underline;
+    cursor: pointer;
+    color: white;
+    position: relative;
+    padding: 4px 12px;
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    z-index: 0;
+  }
+  
+  .dropdown2::after {
+    content: " ▼";
+    font-size: 0.4em;
+  }
+  
+  .dropdown2:hover {
+    color: white;
+    transform: scale(1.12) rotate(0.5deg);
+    /* text-shadow:
+      0 0 5px #61a9f1,
+      0 0 10px #487EB5,
+      0 0 20px #61a9f1,
+      0 0 30px #487EB5,
+      0 0 40px #61a9f1; */
+    letter-spacing: 1.2px;
+    transition: all 0.3s ease, text-shadow 0.4s ease-in-out;
+  }
+  
  
  .dropdown-menu {
    display: none;
@@ -527,14 +541,13 @@
  }
 
  .back-button-inline {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     color: #edf0f1;
     font-weight: 800;
     background: none;
     cursor: pointer;
     padding: 5px 15px;
     border-radius: 8px;
-    text-decoration: underline;
     transition: all 0.3s ease;
 }
 
@@ -569,16 +582,28 @@
  }
  
  .problem-id {
+    font-weight: 500;
     font-size: 1.5rem;
     display: inline-flex;
+    padding: 4px 12px 4px 10px;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
+    color: white;
+    background: none;
+    border: 5px solid rgba(72, 126, 181, 0.5);
+    border-radius: 10px;
+    transition: border-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  }
+
+  .problem-id:hover {
+    background: rgba(72, 126, 181, 1);
+    border-color: rgba(72, 126, 181, 1);
+    opacity: 1;
   }
  
  .problem-name {
    font-size: 1.5rem;
-   font-weight: 500;
+   font-weight: 800;
  }
  
  .problem-difficulty {
@@ -968,17 +993,4 @@
     padding: 6px 12px;
   }
  }
-
- .gradient-text {
-    background-image: linear-gradient(180deg, #4848b5, #48b5b5);
-    color: transparent;
-    background-clip: text;
-    -webkit-background-clip: text;
-    text-decoration: underline;
-    text-decoration-color: #48b5b5; /* Or a fallback solid color */
-  }
-
-  .gradient-text:hover {
-    text-decoration-color: #487EB5; /* or any alternate hover color */
-  }
  
