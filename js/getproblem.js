@@ -118,10 +118,8 @@ function renderProblemDetails(problem) {
     }
 
     if (window.currentUser) {
-        requestAnimationFrame(() => {
-            setTimeout(() => {
-                checkCompletionStatus();
-            }, 50);
+        waitForProblemsToRender(() => {
+            checkCompletionStatus();
         });
     }
 
@@ -198,4 +196,15 @@ window.initProblem = function(problemId) {
     };
     
 };
+
+function waitForProblemsToRender(callback) {
+    function check() {
+      if (document.querySelectorAll('.checkmark')) {
+        callback();
+      } else {
+        requestAnimationFrame(check);
+      }
+    }
+    requestAnimationFrame(check);
+  }
 

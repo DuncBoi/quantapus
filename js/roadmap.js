@@ -101,7 +101,7 @@ function Flow() {
                 const completedIds = await fetchCompletedProblems(window.currentUser.uid);
                 const completedSet = new Set(completedIds);
                 
-                setTimeout(() => {
+                waitForProblemsToRender(() => {
                     let count = 0;
                 
                     document.querySelectorAll('.problem').forEach(problemDiv => {
@@ -114,7 +114,7 @@ function Flow() {
                     });
                 
                     setCompletedCount(count);
-                }, 50);
+                });                
             }
         } catch (err) {
             setError(err.message);
@@ -326,4 +326,16 @@ async function fetchCompletedProblems(userId) {
         return [];
     }
 }
+
+//wait until dom is rendered
+function waitForProblemsToRender(callback) {
+    function check() {
+      if (document.querySelectorAll('.problem').length > 0) {
+        callback(); // finally safe to run checkmark logic
+      } else {
+        requestAnimationFrame(check); // try again on next render frame
+      }
+    }
+    requestAnimationFrame(check); // start the checking loop
+  }
 
