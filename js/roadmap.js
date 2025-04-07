@@ -40,15 +40,17 @@ function Flow() {
     
                 //Small delay to force re-render before applying progress
                 setTimeout(() => {
-                    setNodes(prevNodes =>
-                        prevNodes.map(node => ({
-                            ...node,
-                            data: {
-                                ...node.data,
-                                progress: progressData[node.data.label.toLowerCase()] || 0
-                            }
-                        }))
-                    );
+                    requestAnimationFrame(() => {
+                        setNodes(prevNodes =>
+                            prevNodes.map(node => ({
+                                ...node,
+                                data: {
+                                    ...node.data,
+                                    progress: progressData[node.data.label.toLowerCase()] || 0
+                                }
+                            }))
+                        );
+                    });
                 }, 50); // 50ms delay
     
             } catch (error) {

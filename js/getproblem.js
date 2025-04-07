@@ -119,7 +119,9 @@ function renderProblemDetails(problem) {
 
     if (window.currentUser) {
         requestAnimationFrame(() => {
-            checkCompletionStatus();
+            setTimeout(() => {
+                checkCompletionStatus();
+            }, 50);
         });
     }
 

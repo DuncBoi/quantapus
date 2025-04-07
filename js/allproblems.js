@@ -282,7 +282,11 @@ function renderProblems(problems) {
   filterProblems();
 
   if (window.currentUser) {
-    updateCompletedProblems(window.currentUser.uid);
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+          updateCompletedProblems();
+      }, 50);
+  });
   }
 }
 
