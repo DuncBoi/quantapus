@@ -32,8 +32,8 @@ auth.onAuthStateChanged(user => {
     if (user) {
         notyf.success("Signed In");
         updateToInitials(user);
-        window.dispatchEvent("userSignedIn");
         console.log("this should work now");
+        window.dispatchEvent(new Event("userSignedIn"));
     }
     else{
         googleLogin.textContent = "Sign In";
