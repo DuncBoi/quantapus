@@ -118,7 +118,9 @@ function renderProblemDetails(problem) {
     }
 
     if (window.currentUser) {
-        checkCompletionStatus();
+        requestAnimationFrame(() => {
+            checkCompletionStatus();
+        });
     }
 
     // Add toggle functionality

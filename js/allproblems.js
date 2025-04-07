@@ -152,9 +152,6 @@ async function fetchProblems() {
 
     generateCategoryDropdown(categories);
 
-    if (window.currentUser) {
-      updateCompletedProblems(window.currentUser.uid);
-    }
   } catch (error) {
     console.error('Error fetching problems:', error);
     renderError('Failed to load problems. Please try again later.');
@@ -283,6 +280,10 @@ function renderProblems(problems) {
 
   // After rendering, apply the current filters
   filterProblems();
+
+  if (window.currentUser) {
+    updateCompletedProblems(window.currentUser.uid);
+  }
 }
 
 // Render an error message

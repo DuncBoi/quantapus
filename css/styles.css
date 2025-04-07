@@ -224,14 +224,12 @@
   
   .dropdown2:hover {
     color: white;
-    transform: scale(1.12) rotate(0.5deg);
-    /* text-shadow:
+    text-shadow:
       0 0 5px #61a9f1,
       0 0 10px #487EB5,
       0 0 20px #61a9f1,
       0 0 30px #487EB5,
-      0 0 40px #61a9f1; */
-    letter-spacing: 1.2px;
+      0 0 40px #61a9f1;
     transition: all 0.3s ease, text-shadow 0.4s ease-in-out;
   }
   
@@ -585,20 +583,24 @@
     font-weight: 500;
     font-size: 1.5rem;
     display: inline-flex;
-    padding: 4px 12px 4px 10px;
+    padding: 6px 4px 4px 6px;
     align-items: center;
     justify-content: center;
     color: white;
     background: none;
     border: 5px solid rgba(72, 126, 181, 0.5);
-    border-radius: 10px;
+    border-radius: 10px;  
     transition: border-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
   }
 
   .problem-id:hover {
-    background: rgba(72, 126, 181, 1);
+    background-color: rgba(72, 126, 181, 0.25);
     border-color: rgba(72, 126, 181, 1);
+    box-shadow: 0 0 12px rgba(72, 126, 181, 0.6),
+                0 0 20px rgba(72, 126, 181, 0.4) inset;
+    transform: scale(1.05);
     opacity: 1;
+    cursor: pointer;
   }
  
  .problem-name {
@@ -815,7 +817,6 @@
    height: 6px;
    background: #132238;
    border-radius: 4px;
-   transition: width 0.4s ease-in-out;
    z-index: 1;
  }
  .custom-node::before {

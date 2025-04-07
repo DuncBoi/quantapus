@@ -26,27 +26,48 @@ function Flow() {
             try {
                 const response = await fetch(`https://api.quantapus.com/roadmap-progress?userId=${window.currentUser.uid}`);
                 const progressData = await response.json();
-                
-                setNodes(prevNodes => prevNodes.map(node => ({
-                    ...node,
-                    data: {
-                        ...node.data,
-                        progress: progressData[node.data.label.toLowerCase()] || 0
-                    }
-                })))
+    
+                //Set progress to 0 first and wait for DOM render
+                setNodes(prevNodes =>
+                    prevNodes.map(node => ({
+                        ...node,
+                        data: {
+                            ...node.data,
+                            progress: 0
+                        }
+                    }))
+                );
+    
+                //Small delay to force re-render before applying progress
+                setTimeout(() => {
+                    setNodes(prevNodes =>
+                        prevNodes.map(node => ({
+                            ...node,
+                            data: {
+                                ...node.data,
+                                progress: progressData[node.data.label.toLowerCase()] || 0
+                            }
+                        }))
+                    );
+                }, 50); // 50ms delay
+    
             } catch (error) {
                 console.error('Progress fetch failed:', error);
             }
-        } else{
-            setNodes(prevNodes => prevNodes.map(node => ({
-                ...node,
-                data: {
-                    ...node.data,
-                    progress: 0
-                }
-            })));
+        } else {
+            // No user=
+            setNodes(prevNodes =>
+                prevNodes.map(node => ({
+                    ...node,
+                    data: {
+                        ...node.data,
+                        progress: 0
+                    }
+                }))
+            );
         }
     };
+    
 
     React.useEffect(() => {
         fetchProgress();
