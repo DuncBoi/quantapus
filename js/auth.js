@@ -32,11 +32,11 @@ auth.onAuthStateChanged(user => {
     if (user) {
         notyf.success("Signed In");
         updateToInitials(user);
-        console.log("this should work now");
         window.dispatchEvent(new Event("userSignedIn"));
     }
     else{
         googleLogin.textContent = "Sign In";
+        window.dispatchEvent(new Event("userSignedOut"));
     }
 });
 
@@ -70,8 +70,6 @@ googleLogin.addEventListener("click", async function(){
         if (!response.ok) throw new Error('Failed to log user');
         
         console.log('User UID logged in backend');
-
-        window.dispatchEvent(new Event("userSignedIn"));
     } catch (error) {
         console.error("Error during sign-in:", error);
     }
@@ -104,7 +102,6 @@ signOutLink.addEventListener("click", function(event) {
         dropdownMenu.style.display = "none";
         signInButton.textContent = "Sign In"; 
         notyf.success("Signed Out");
-        window.dispatchEvent(new Event("userSignedOut"));
     }).catch(error => {
         console.error("Error signing out:", error);
     });

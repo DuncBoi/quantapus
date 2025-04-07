@@ -106,20 +106,7 @@ function renderProblemDetails(problem) {
     const checkmark = problemDetailsContainer.querySelector('.checkmark');
     const checkmarkBox = problemDetailsContainer.querySelector('.checkmark-box');
 
-    function checkCompletionStatus(){
-        fetch(`https://api.quantapus.com/completed-problems/check?userId=${window.currentUser.uid}&problemId=${problem.id}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.completed) {
-                    checkmark.classList.add('completed');
-                }
-            })
-            .catch(error => console.error('Completion check failed:', error));
-    }
-
-    if (window.currentUser) {
-        checkCompletionStatus();
-    }
+    updateProblemCompletion(problem.id);
 
     // Add toggle functionality
     checkmarkBox.addEventListener('click', async (e) => {
@@ -145,6 +132,26 @@ function renderProblemDetails(problem) {
         window.history.back(); // Use browser history
     });
 }
+
+function updateProblemCompletion(problemId) {
+    const checkmark = document.querySelector('#problem-details .checkmark');
+    if (!window.currentUser) {
+        checkmark.classList.remove('completed');
+        return;
+    }
+
+    fetch(`https://api.quantapus.com/completed-problems/check?userId=${window.currentUser.uid}&problemId=${problemId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.completed) {
+                checkmark.classList.add('completed');
+            } else {
+                checkmark.classList.remove('completed');
+            }
+        })
+        .catch(error => console.error('Completion check failed:', error));
+}
+
 
 // Render an error message
 function renderError(message) {
@@ -180,8 +187,8 @@ window.initProblem = function(problemId) {
         renderError('No problem ID specified');
     }
 
-    const onSignedOut = () => fetchProblemDetails(problemId);
-    const onSignedIn = () => fetchProblemDetails(problemId);
+    const onSignedOut = () => updateProblemCompletion(problemId);
+    const onSignedIn = () => updateProblemCompletion(problemId);
 
     // Register listeners
     window.addEventListener("userSignedOut", onSignedOut);

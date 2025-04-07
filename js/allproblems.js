@@ -110,8 +110,8 @@ window.initProblems = function() {
   handleDropdowns();
   fetchProblems();
 
-  const onSignedOut = () => fetchProblems();
-  const onSignedIn = () => fetchProblems();
+  const onSignedOut = () => updateCompletedProblems('');
+  const onSignedIn = () => updateCompletedProblems(window.currentUser.uid);
 
   window.addEventListener("userSignedOut", onSignedOut);
   window.addEventListener("userSignedIn", onSignedIn);
@@ -152,6 +152,10 @@ async function fetchProblems() {
 
     generateCategoryDropdown(categories);
 
+    if (window.currentUser) {
+      updateCompletedProblems(window.currentUser.uid);
+    }
+
   } catch (error) {
     console.error('Error fetching problems:', error);
     renderError('Failed to load problems. Please try again later.');
@@ -169,8 +173,11 @@ async function fetchCompletedProblems(userId) {
 
 async function updateCompletedProblems(userId) {
   try {
-    const completedIds = await fetchCompletedProblems(userId);
-    const completedSet = new Set(completedIds);
+    let completedSet = new Set();
+    if (userId) {
+      const completedIds = await fetchCompletedProblems(userId);
+      completedSet = new Set(completedIds);
+    }
 
     // Update checkmarks without re-rendering
     document.querySelectorAll('.problem').forEach(problemDiv => {
@@ -187,6 +194,7 @@ async function updateCompletedProblems(userId) {
     console.error('Error updating completed problems:', error);
   }
 }
+
 
 
 function filterProblems() {
@@ -281,9 +289,6 @@ function renderProblems(problems) {
   // After rendering, apply the current filters
   filterProblems();
 
-  if (window.currentUser) {
-      updateCompletedProblems(window.currentUser.uid);
-  }
 }
 
 // Render an error message
