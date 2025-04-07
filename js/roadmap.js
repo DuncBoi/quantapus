@@ -26,50 +26,27 @@ function Flow() {
             try {
                 const response = await fetch(`https://api.quantapus.com/roadmap-progress?userId=${window.currentUser.uid}`);
                 const progressData = await response.json();
-    
-                //Set progress to 0 first and wait for DOM render
-                setNodes(prevNodes =>
-                    prevNodes.map(node => ({
-                        ...node,
-                        data: {
-                            ...node.data,
-                            progress: 0
-                        }
-                    }))
-                );
-    
-                //Small delay to force re-render before applying progress
-                setTimeout(() => {
-                    requestAnimationFrame(() => {
-                        setNodes(prevNodes =>
-                            prevNodes.map(node => ({
-                                ...node,
-                                data: {
-                                    ...node.data,
-                                    progress: progressData[node.data.label.toLowerCase()] || 0
-                                }
-                            }))
-                        );
-                    });
-                }, 50); // 50ms delay
-    
-            } catch (error) {
-                console.error('Progress fetch failed:', error);
-            }
-        } else {
-            // No user=
-            setNodes(prevNodes =>
-                prevNodes.map(node => ({
+                
+                setNodes(prevNodes => prevNodes.map(node => ({
                     ...node,
                     data: {
                         ...node.data,
-                        progress: 0
+                        progress: progressData[node.data.label.toLowerCase()] || 0
                     }
-                }))
-            );
+                })))
+            } catch (error) {
+                console.error('Progress fetch failed:', error);
+            }
+        } else{
+            setNodes(prevNodes => prevNodes.map(node => ({
+                ...node,
+                data: {
+                    ...node.data,
+                    progress: 0
+                }
+            })));
         }
     };
-    
 
     React.useEffect(() => {
         fetchProgress();
@@ -101,7 +78,7 @@ function Flow() {
                 const completedIds = await fetchCompletedProblems(window.currentUser.uid);
                 const completedSet = new Set(completedIds);
                 
-                waitForProblemsToRender(() => {
+                setTimeout(() => {
                     let count = 0;
                 
                     document.querySelectorAll('.problem').forEach(problemDiv => {
@@ -114,7 +91,7 @@ function Flow() {
                     });
                 
                     setCompletedCount(count);
-                });                
+                }, 50);
             }
         } catch (err) {
             setError(err.message);
@@ -326,16 +303,4 @@ async function fetchCompletedProblems(userId) {
         return [];
     }
 }
-
-//wait until dom is rendered
-function waitForProblemsToRender(callback) {
-    function check() {
-      if (document.querySelectorAll('.problem').length > 0) {
-        callback(); // finally safe to run checkmark logic
-      } else {
-        requestAnimationFrame(check); // try again on next render frame
-      }
-    }
-    requestAnimationFrame(check); // start the checking loop
-  }
 

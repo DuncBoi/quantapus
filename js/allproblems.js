@@ -282,9 +282,7 @@ function renderProblems(problems) {
   filterProblems();
 
   if (window.currentUser) {
-    waitForProblemsToRender(() => {
       updateCompletedProblems(window.currentUser.uid);
-    });
   }
 }
 
@@ -314,13 +312,3 @@ async function toggleCompletion(problemId) {
   }
 }
 
-function waitForProblemsToRender(callback) {
-  function check() {
-    if (document.querySelectorAll('.problem').length > 0) {
-      callback();
-    } else {
-      requestAnimationFrame(check);
-    }
-  }
-  requestAnimationFrame(check);
-}

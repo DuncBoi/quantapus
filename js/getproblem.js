@@ -118,9 +118,7 @@ function renderProblemDetails(problem) {
     }
 
     if (window.currentUser) {
-        waitForProblemsToRender(() => {
-            checkCompletionStatus();
-        });
+        checkCompletionStatus();
     }
 
     // Add toggle functionality
@@ -196,15 +194,4 @@ window.initProblem = function(problemId) {
     };
     
 };
-
-function waitForProblemsToRender(callback) {
-    function check() {
-      if (document.querySelectorAll('.checkmark')) {
-        callback();
-      } else {
-        requestAnimationFrame(check);
-      }
-    }
-    requestAnimationFrame(check);
-  }
 
