@@ -25,7 +25,7 @@ function renderProblemDetails(problem) {
                     <div class="title-container">
                     <h1 id="problem-title">
                             <span class="checkmark-box" style="margin-left: 5px; margin-right: 15px;">
-                            <span class="checkmark" style="width: 32px; height: 32px; border-width: 3px;"></span>
+                            <span class="checkmark large"></span>
                         </span>
                         <span class = "qp">QP</span>
                         <span class="problem-id" style="font-size: 3rem; "> #${problem.id}</span>
@@ -59,16 +59,18 @@ function renderProblemDetails(problem) {
                         <p id="explanation">${problem.explanation || 'No explanation available.'}</p>
 
                         <!-- YouTube Link (Embedded Video) -->
-                        <div id="youtube-link" class="youtube-container">
-                            <iframe
-                                width="560"
-                                height="315"
-                                src="${problem.yt_link}"
-                                frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowfullscreen>
-                            </iframe>
-                        </div>
+                        ${problem.yt_link ? `
+                            <div id="youtube-link" class="youtube-container">
+                                <iframe
+                                    width="560"
+                                    height="315"
+                                    src="${problem.yt_link}"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
             `;

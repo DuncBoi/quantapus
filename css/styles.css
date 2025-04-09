@@ -646,7 +646,7 @@
     height: 28px;
     border: 3px solid white;
     border-radius: 6px;
-    background-color: rgba(93, 211, 158, 0.1); /* light minty green tint */
+    background-color: rgba(93, 211, 158, 0.1);
     cursor: pointer;
     position: relative;
     transition: all 0.3s ease-in-out;
@@ -679,6 +679,15 @@
   .checkmark-box:hover .checkmark {
     transform: scale(1.1);
     box-shadow: 0 2px 12px rgba(93, 211, 158, 0.3);
+  }
+
+  .checkmark.large {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .checkmark.large::after {
+    font-size: 26px;
   }
 
   @keyframes pulse {
