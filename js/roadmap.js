@@ -1,4 +1,5 @@
 const { ReactFlow, ReactFlowProvider, useReactFlow, Handle } = window.ReactFlow;
+const notyf = new Notyf();
 
 // 1. Custom Node Component
 const CustomNode = ({ data }) => {
@@ -200,10 +201,6 @@ function Flow() {
                                     className: 'checkmark-box',
                                     onClick: async (e) => {
                                         e.stopPropagation();
-                                        if (!window.currentUser) {
-                                            notyf.error("Sign In to Track Progress");
-                                            return;
-                                        }
                                         const checkmark = e.currentTarget.querySelector('.checkmark');
 
                                         const result = await toggleCompletion(problem.id);

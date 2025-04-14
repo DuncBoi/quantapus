@@ -1,3 +1,4 @@
+const notyf = new Notyf();
 // Fetch the problem details from the backend
 async function fetchProblemDetails(id) {
     const container = document.getElementById('problem-details');
