@@ -33,17 +33,27 @@ function handleNavigation(path) {
             updateActiveNav(basePath);
             
             // Initialize based on route
+            let pageTitle = 'Quantapus';
             if (basePath === '/roadmap') {
+                pageTitle = 'Roadmap'
                 window.currentCleanup = initRoadmap();
             } else if (basePath === '/problem') {
-                // Get problem ID from URL
+                pageTitle = 'Problem'
                 const urlParams = new URLSearchParams(window.location.search);
                 const problemId = urlParams.get('id');
                 window.currentCleanup = initProblem(problemId); 
             } else if (basePath === '/problems'){
+                pageTitle = 'Problems'
                 window.currentCleanup = initProblems();
             } else{
                 window.currentCleanup = initBackground();
+            }
+
+            if (typeof gtag === 'function') {
+                gtag('event', 'page_view', {
+                    page_path: path,
+                    page_title: pageTitle
+                });
             }
         });
 }
