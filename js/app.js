@@ -55,6 +55,10 @@ function handleNavigation(path) {
                     page_title: pageTitle
                 });
             }
+
+            if (typeof clarity === 'function') {
+                clarity('set', 'page', path);
+            }
         });
 }
 
