@@ -106,7 +106,6 @@
    position: relative;
  }
  
- /* Icons/labels default for desktop */
  .nav-item .icon {
    display: none;
    pointer-events: none;
@@ -115,9 +114,8 @@
    display: inline;
    pointer-events: none;
  }
- 
- /* Active nav item underlined */
- .nav-item.active {
+
+  .nav-item.active {
    font-weight: bold;
    transition: all 0.3s ease-in-out;
  }
@@ -148,7 +146,6 @@
     min-width: 130px;
     text-align: center;
     transition: all 0.3s ease-in-out;
-    z-index: 9999;
   }
   
   .dropdown a {
@@ -173,10 +170,6 @@
    to   { width: 100%; }
  }
  
- /********************************************
-  * KEEP CTA / SIGN-IN BUTTON & DROPDOWNS UNCHANGED
-  ********************************************/
- /* EXACT COPY OF YOUR .cta + button HOVER */
  .cta {
    position: relative; 
    display: inline-block;
@@ -198,8 +191,23 @@
  .cta button:hover {
    opacity: 0.8;
  }
+
+ .top-filter-container {
+  background: rgba(40, 44, 52, 0.6);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  border-radius: 12px;                
+  padding: 24px 32px;                 
+  margin: 0 auto 32px;                
+  max-width: 95%;                   
+  display: flex;                      
+  flex-wrap: wrap;                   
+  gap: 16px;                          
+  align-items: center;               
+  justify-content: center;           
+  box-sizing: border-box;            
+}
+
  
- /* EXACT COPY OF YOUR DROPDOWN CONTAINERS & MENU */
  .dropdown-container {
    position: relative;
    text-align: center;
@@ -214,7 +222,7 @@
     padding: 4px 12px;
     transition: all 0.3s ease;
     border-radius: 6px;
-    z-index: 0;
+    z-index: 100;
   }
   
   .dropdown2::after {
@@ -270,7 +278,7 @@
    background: #3d3d3d;
  }
  
- /* Difficulty colors in dropdown items */
+ /* Difficulty colors */
  .dropdown-item[data-value="Easy"]   { color: #48B572; }
  .dropdown-item[data-value="Medium"] { color: #B5A848; }
  .dropdown-item[data-value="Hard"]   { color: #B54848; }
@@ -322,8 +330,10 @@
    transform: scale(1.1);
  }
  
- /* Animated heading (desktop) */
+ /* Animated heading */
  .animated-heading {
+  font-size: clamp(2rem, 8vw, 5rem);
+  font-weight: bold;
    text-align: left;
    letter-spacing: 2px;
    position: absolute;
@@ -335,9 +345,8 @@
  }
 
  .big-title {
-    font-weight: 800;
+    font-weight: 600;
     font-size: clamp(3rem, 9vw, 9rem);
-    line-height: 1.1;
     display: inline-block;
   }
 
@@ -614,6 +623,57 @@
    padding: 5px 10px;
    border-radius: 12px;
  }
+
+ .reset-button {
+  background: #487EB5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-weight: 600;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  font-size: 1rem;
+}
+
+.reset-button:hover {
+  background: #61a9f1;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.reset-button:active {
+  transform: scale(0.98);
+}
+
+.tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  width: max-content;
+  white-space: nowrap;
+  background-color: #222;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Show tooltip on hover after a short delay */
+.reset-button:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0.4s;
+}
  .easy   { background-color: #48B572; }
  .medium { background-color: #B5A848; }
  .hard   { background-color: #B54848; }
@@ -682,14 +742,14 @@
   }
 
   .checkmark.large {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
   }
   
   .checkmark.large::after {
     font-size: 26px;
   }
-
+  
   @keyframes pulse {
     0% {
       box-shadow: 0 0 0 0 rgba(56, 184, 143, 0.4);
@@ -883,6 +943,13 @@
    text-align: center;
    padding: 2rem;
  }
+
+ #no-problems-error {
+  color: white;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-top: 12px;
+}
  
  /********************************************
   * ANIMATIONS

@@ -22,31 +22,50 @@ function Flow() {
     const [completedCount, setCompletedCount] = React.useState(0);
 
     const fetchProgress = async () => {
-        if (window.currentUser?.uid) {
-            try {
-                const response = await fetch(`https://api.quantapus.com/roadmap-progress?userId=${window.currentUser.uid}`);
-                const progressData = await response.json();
-                
-                setNodes(prevNodes => prevNodes.map(node => ({
-                    ...node,
-                    data: {
-                        ...node.data,
-                        progress: progressData[node.data.label.toLowerCase()] || 0
-                    }
-                })))
-            } catch (error) {
-                console.error('Progress fetch failed:', error);
-            }
-        } else{
-            setNodes(prevNodes => prevNodes.map(node => ({
-                ...node,
-                data: {
-                    ...node.data,
-                    progress: 0
-                }
-            })));
+        const user = window.currentUser;
+      
+        if (!user) {
+          // If not logged in, clear all progress
+          setNodes(prevNodes =>
+            prevNodes.map(node => ({
+              ...node,
+              data: {
+                ...node.data,
+                progress: 0
+              }
+            }))
+          );
+          return;
         }
-    };
+      
+        try {
+          const idToken = await user.getIdToken();
+      
+          const response = await fetch('https://api.quantapus.com/roadmap-progress', {
+            headers: {
+              Authorization: `Bearer ${idToken}`
+            }
+          });
+      
+          if (!response.ok) {
+            throw new Error(`Status ${response.status}`);
+          }
+      
+          const progressData = await response.json();
+      
+          setNodes(prevNodes =>
+            prevNodes.map(node => ({
+              ...node,
+              data: {
+                ...node.data,
+                progress: progressData[node.data.label.toLowerCase()] || 0
+              }
+            }))
+          );
+        } catch (error) {
+          console.error('Progress fetch failed:', error);
+        }
+      };      
 
     React.useEffect(() => {
         fetchProgress();
@@ -105,24 +124,26 @@ function Flow() {
             notyf.error("Sign In to Track Progress");
             return false;
         }
-
+    
         try {
+            const idToken = await window.currentUser.getIdToken();
+    
             const response = await fetch('https://api.quantapus.com/toggle-complete', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    userId: window.currentUser.uid, 
-                    problemId 
-                })
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                },
+                body: JSON.stringify({ problemId })
             });
-            
+    
             if (!response.ok) throw new Error('Toggle failed');
             return await response.json();
         } catch (error) {
             console.error('Error:', error);
             return null;
         }
-    };
+    };    
 
     return React.createElement(React.Fragment, null,
         React.createElement(ReactFlow, {
@@ -295,12 +316,29 @@ window.initRoadmap = function() {
 };
 
 
-async function fetchCompletedProblems(userId) {
+async function fetchCompletedProblems() {
     try {
-        const response = await fetch(`https://api.quantapus.com/completed-problems?userId=${userId}`);
-        return await response.json();
-    } catch (error) {
+      const user = window.currentUser;
+      if (!user) { return []; }
+  
+      const idToken = await user.getIdToken();  
+      const response = await fetch('https://api.quantapus.com/completed-problems', {
+        headers: {
+          Authorization: `Bearer ${idToken}`
+        },
+      });
+  
+      if (!response.ok) {
+        console.warn('Non-200 response from backend:', response.status);
         return [];
+      }
+  
+      const json = await response.json();
+      return json;
+  
+    } catch (error) {
+      console.error('Error fetching completed problems:', error);
+      return [];
     }
-}
+  }
 

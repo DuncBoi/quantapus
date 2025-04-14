@@ -31,6 +31,12 @@ window.initProblems = function() {
   const difficultyDropdown = document.getElementById('difficulty-dropdown');
   const categoryDropdown = document.getElementById('type-dropdown');
 
+  const resetButton = document.querySelector('.reset-button');
+  const resetHandler = () => resetFilters();
+  if (resetButton) {
+    resetButton.addEventListener('click', resetHandler);
+  }
+
   // Difficulty dropdown text/color
   if (window.selectedDifficulty !== 'All') {
     difficultyDropdown.textContent = window.selectedDifficulty;
@@ -110,8 +116,8 @@ window.initProblems = function() {
   handleDropdowns();
   fetchProblems();
 
-  const onSignedOut = () => updateCompletedProblems('');
-  const onSignedIn = () => updateCompletedProblems(window.currentUser.uid);
+  const onSignedOut = () => updateCompletedProblems();
+  const onSignedIn = () => updateCompletedProblems();
 
   window.addEventListener("userSignedOut", onSignedOut);
   window.addEventListener("userSignedIn", onSignedIn);
@@ -122,6 +128,9 @@ window.initProblems = function() {
     document.removeEventListener('click', clickHandler);
     window.removeEventListener("userSignedOut", onSignedOut);
     window.removeEventListener("userSignedIn", onSignedIn);
+    if(resetButton){
+      resetButton.removeEventListener('click', resetHandler);
+    }
     delete window.selectedDifficulty;
     delete window.selectedCategory;
   };
@@ -152,9 +161,7 @@ async function fetchProblems() {
 
     generateCategoryDropdown(categories);
 
-    if (window.currentUser) {
-      updateCompletedProblems(window.currentUser.uid);
-    }
+    updateCompletedProblems();
 
   } catch (error) {
     console.error('Error fetching problems:', error);
@@ -162,24 +169,48 @@ async function fetchProblems() {
   }
 }
 
-async function fetchCompletedProblems(userId) {
+async function fetchCompletedProblems() {
   try {
-    const response = await fetch(`https://api.quantapus.com/completed-problems?userId=${userId}`);
-    return await response.json();
+    const user = window.currentUser;
+    if (!user) { return []; }
+
+    const idToken = await user.getIdToken();
+    const response = await fetch('https://api.quantapus.com/completed-problems', {
+      headers: {
+        Authorization: `Bearer ${idToken}`
+      },
+    });
+
+    if (!response.ok) {
+      console.warn('Non-200 response from backend:', response.status);
+      return [];
+    }
+
+    const json = await response.json();
+    return json;
+
   } catch (error) {
+    console.error('Error fetching completed problems:', error);
     return [];
   }
 }
 
-async function updateCompletedProblems(userId) {
+async function updateCompletedProblems() {
   try {
-    let completedSet = new Set();
-    if (userId) {
-      const completedIds = await fetchCompletedProblems(userId);
-      completedSet = new Set(completedIds);
+    const checkmarkSelector = '.problem .checkmark';
+
+    if (!window.currentUser) {
+      //Clear all checkmarks on sign out
+      document.querySelectorAll(checkmarkSelector).forEach(checkmark => {
+        checkmark.classList.remove('completed');
+      });
+      return;
     }
 
-    // Update checkmarks without re-rendering
+    const completedIds = await fetchCompletedProblems();
+
+    const completedSet = new Set(completedIds);
+
     document.querySelectorAll('.problem').forEach(problemDiv => {
       const problemId = Number(problemDiv.querySelector('.problem-id').textContent.replace("#", ""));
       const checkmark = problemDiv.querySelector('.checkmark');
@@ -194,7 +225,6 @@ async function updateCompletedProblems(userId) {
     console.error('Error updating completed problems:', error);
   }
 }
-
 
 
 function filterProblems() {
@@ -214,14 +244,16 @@ function filterProblems() {
     const categoryMatch = selectedCategory === 'Types Of' || categoryList.includes(normalizedSelectedCategory);
 
     const show = difficultyMatch && categoryMatch;
-    if (show) anyFound = true;
     problemDiv.style.display = show ? 'flex' : 'none';
+    if (show) anyFound = true;
   });
 
-  if (!anyFound) {
-    renderError("No Problems Found");
+  const errorElem = document.getElementById('no-problems-error');
+  if (errorElem) {
+    errorElem.style.display = anyFound ? 'none' : 'block';
   }
 }
+
 
 // Render problems in the DOM
 function renderProblems(problems) {
@@ -293,8 +325,11 @@ function renderProblems(problems) {
 
 // Render an error message
 function renderError(message) {
-  const problemsContainer = document.getElementById('problems-container');
-  problemsContainer.innerHTML = `<p style="color: red;">${message}</p>`;
+  const errorElem = document.getElementById('no-problems-error');
+  if (errorElem) {
+    errorElem.textContent = message;
+    errorElem.style.display = 'block';
+  }
 }
 
 async function toggleCompletion(problemId) {
@@ -302,18 +337,44 @@ async function toggleCompletion(problemId) {
     notyf.error("Sign In to Track Progress");
     return;
   }
-  const userId = window.currentUser.uid;
+
   try {
-    const response = await fetch('https://api.quantapus.com/api/toggle-complete', {
+    const idToken = await window.currentUser.getIdToken();
+
+    const response = await fetch('https://api.quantapus.com/toggle-complete', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, problemId })
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`
+      },
+      body: JSON.stringify({ problemId })
     });
+
     if (!response.ok) throw new Error('Toggle failed');
     return await response.json();
   } catch (error) {
     console.error('Error:', error);
     return null;
   }
+}
+
+
+function resetFilters() {
+  window.selectedDifficulty = 'All';
+  window.selectedCategory = 'Types Of';
+
+  const difficultyDropdown = document.getElementById('difficulty-dropdown');
+  const categoryDropdown = document.getElementById('type-dropdown');
+
+  difficultyDropdown.textContent = 'All';
+  difficultyDropdown.style.color = '';
+
+  categoryDropdown.textContent = 'Types Of';
+  categoryDropdown.style.color = '';
+
+  localStorage.removeItem('selectedDifficulty');
+  localStorage.removeItem('selectedCategory');
+
+  filterProblems();
 }
 

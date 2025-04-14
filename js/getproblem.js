@@ -135,24 +135,35 @@ function renderProblemDetails(problem) {
     });
 }
 
-function updateProblemCompletion(problemId) {
+async function updateProblemCompletion(problemId) {
     const checkmark = document.querySelector('#problem-details .checkmark');
+  
     if (!window.currentUser) {
-        checkmark.classList.remove('completed');
-        return;
+      checkmark.classList.remove('completed');
+      return;
     }
-
-    fetch(`https://api.quantapus.com/completed-problems/check?userId=${window.currentUser.uid}&problemId=${problemId}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.completed) {
-                checkmark.classList.add('completed');
-            } else {
-                checkmark.classList.remove('completed');
-            }
-        })
-        .catch(error => console.error('Completion check failed:', error));
-}
+  
+    try {
+      const idToken = await window.currentUser.getIdToken();
+  
+      const response = await fetch(`https://api.quantapus.com/completed-problems/check?problemId=${problemId}`, {
+        headers: {
+          Authorization: `Bearer ${idToken}`
+        }
+      });
+  
+      const data = await response.json();
+  
+      if (data.completed) {
+        checkmark.classList.add('completed');
+      } else {
+        checkmark.classList.remove('completed');
+      }
+    } catch (error) {
+      console.error('Completion check failed:', error);
+    }
+  }
+  
 
 
 // Render an error message
@@ -162,18 +173,23 @@ function renderError(message) {
 }
 
 async function toggleCompletion(problemId) {
-    if (!window.currentUser){
-        notyf.error("Sign In to Track Progress");
-        return false;
+    if (!window.currentUser) {
+      notyf.error("Sign In to Track Progress");
+      return false;
     }
-    userId = window.currentUser.uid;
+  
     try {
+      const idToken = await window.currentUser.getIdToken();
+  
       const response = await fetch('https://api.quantapus.com/toggle-complete', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, problemId })
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`
+        },
+        body: JSON.stringify({ problemId })  // no userId sent!
       });
-      
+  
       if (!response.ok) throw new Error('Toggle failed');
       return await response.json();
     } catch (error) {
@@ -181,6 +197,7 @@ async function toggleCompletion(problemId) {
       return null;
     }
   }
+  
 
 window.initProblem = function(problemId) {
     if (problemId) {

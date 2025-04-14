@@ -1,5 +1,6 @@
 <section class="page-content">
     <div class="selector">
+        <div class="top-filter-container">
         <!-- Difficulty Dropdown -->
         <div class="dropdown-container">
             <span class="dropdown2" id="difficulty-dropdown">All</span>
@@ -17,12 +18,20 @@
             <div class="dropdown-menu" id="type-menu">
                 <div class="dropdown-item" data-value="Types Of">Types Of</div>
             </div>
-        </div>
-        
+        </div>        
         <span>Problems</span>
 
-        <div class="problems-container" id="problems-container">
-            <!-- Problems will be dynamically inserted here -->
+        <!-- Reset Filters Button -->
+        <button class="reset-button">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span class="tooltip-text">Reset Filters</span>
+        </button>
+
+        </div>
+
+        <div id="problems-container-wrapper">
+            <div id="problems-container"></div>
+            <p id="no-problems-error" style="display: none;">No Problems Found</p>
         </div>
     </div>
 </section>
