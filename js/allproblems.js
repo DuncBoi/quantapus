@@ -101,14 +101,16 @@ window.initProblems = function() {
           window.selectedCategory = value;
           localStorage.setItem('selectedCategory', value);   // SAVE TO LOCALSTORAGE
         }
+
+        filterProblems();
       }
     };
 
     document.addEventListener('click', clickHandler);
   };
 
-  handleDropdowns();
   fetchProblems();
+  handleDropdowns();
 
   const onSignedIn = () => fetchProblems();
 

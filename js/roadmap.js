@@ -173,25 +173,27 @@ function Flow() {
                                         const checkmark = e.currentTarget.querySelector('.checkmark');
                                     
                                         const nowCompleted = window.toggleCompletion(problem.id);
-                                        checkmark.classList.toggle('completed', nowCompleted);
-                                        setCompletedCount(prev => prev + (nowCompleted ? 1 : -1));
+                                        if (window.currentUser){
+                                            checkmark.classList.toggle('completed', nowCompleted);
+                                            setCompletedCount(prev => prev + (nowCompleted ? 1 : -1));
                                     
-                                        // Immediately update node progress visually
-                                        setNodes(prevNodes =>
-                                            prevNodes.map(n => {
-                                                if (n.data.label.toLowerCase() === selectedNode.data.label.toLowerCase()) {
-                                                    const total = problems.length;
-                                                    const newCompleted = completedCount + (nowCompleted ? 1 : -1);
-                                                    const progress = total > 0 ? Math.round((newCompleted / total) * 100) : 0;
+                                            // Immediately update node progress visually
+                                            setNodes(prevNodes =>
+                                                prevNodes.map(n => {
+                                                    if (n.data.label.toLowerCase() === selectedNode.data.label.toLowerCase()) {
+                                                        const total = problems.length;
+                                                        const newCompleted = completedCount + (nowCompleted ? 1 : -1);
+                                                        const progress = total > 0 ? Math.round((newCompleted / total) * 100) : 0;
                                     
-                                                    return {
-                                                        ...n,
-                                                        data: { ...n.data, progress }
-                                                    };
-                                                }
-                                                return n;
-                                            })
-                                        );
+                                                        return {
+                                                            ...n,
+                                                            data: { ...n.data, progress }
+                                                        };
+                                                    }
+                                                    return n;
+                                                })
+                                            );
+                                        }
                                     }                                                                       
                                 },
                                     React.createElement('span', { 
