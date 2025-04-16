@@ -1,6 +1,3 @@
-const BACKEND_URL = 'https://api.quantapus.com/problems';
-const notyf = new Notyf();
-
 function generateCategoryDropdown(categories) {
   const categoryMenu = document.getElementById('type-menu');
   categoryMenu.innerHTML = ''; // Clear static/default items
@@ -104,9 +101,6 @@ window.initProblems = function() {
           window.selectedCategory = value;
           localStorage.setItem('selectedCategory', value);   // SAVE TO LOCALSTORAGE
         }
-
-        // Apply filters immediately
-        filterProblems();
       }
     };
 
@@ -116,8 +110,7 @@ window.initProblems = function() {
   handleDropdowns();
   fetchProblems();
 
-  const onSignedOut = () => updateCompletedProblems();
-  const onSignedIn = () => updateCompletedProblems();
+  const onSignedIn = () => fetchProblems();
 
   window.addEventListener("userSignedIn", onSignedIn);
 

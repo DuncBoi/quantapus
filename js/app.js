@@ -76,13 +76,14 @@ async function apiCalls() {
             data.forEach(p => window.problemMap[p.id] = p);
         }
 
-        if (window.currentUser && !window.completedSet) {
+        if (window.currentUser && !window.completedSetPopulated) {
             const token = await window.currentUser.getIdToken();
             const res = await fetch('https://api.quantapus.com/completed-problems', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const completedIds = await res.json();
             window.completedSet = new Set(completedIds);
+            window.completedSetPopulated = true;
         }
     } catch (e) {
         console.error('apiCalls error:', e);
@@ -181,6 +182,7 @@ window.pendingToggles = {};
 window.toggleDebounceTimer = null;
 window.handleNavigation = handleNavigation;
 window.toggleCompletion = toggleCompletion;
-window.pendingCompletions = new Set();
+window.completedSet = new Set();
+window.completedSetPopulated = false;
 window.apiCalls = apiCalls;  
   

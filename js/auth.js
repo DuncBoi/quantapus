@@ -33,12 +33,12 @@ auth.onAuthStateChanged(async user => {
         notyf.success("Signed In");
         updateToInitials(user);
         await window.apiCalls();
-        console.log("cows", window.completedSet);
         
         window.dispatchEvent(new Event("userSignedIn"));
     } else {
         googleLogin.textContent = "Sign In";
-        window.completedSet = null;
+        window.completedSet = new Set();
+        window.completedSetPopulated = false;
 
         document.querySelectorAll('.checkmark').forEach(checkmark => {
             checkmark.classList.remove('completed');
