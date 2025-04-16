@@ -110,6 +110,7 @@ window.initProblems = async function() {
   };
 
   await fetchProblems();
+
   handleDropdowns();
 
   const onSignedIn = () => fetchProblems();

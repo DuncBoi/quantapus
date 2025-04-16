@@ -79,6 +79,10 @@ googleLogin.addEventListener("click", async function(){
             Authorization: `Bearer ${token}`},
             body: JSON.stringify({ uid }),
         });
+        if (response.status === 429){
+            notyf.error('API Rate Limit Hit.');
+            return;
+        }
         if (response.ok) console.log('User UID logged in backend');
 
     } catch (error) {

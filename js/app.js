@@ -70,6 +70,10 @@ async function loadProblems() {
     try {
         const res = await fetch('https://api.quantapus.com/problems');
         const data = await res.json();
+        if (res.status === 429){
+            notyf.error('API Rate Limit Hit.');
+            return;
+        }
         window.cachedProblems = data;
 
         window.problemMap = {};
@@ -92,6 +96,10 @@ async function loadCompletion() {
             headers: { Authorization: `Bearer ${token}` }
         });
         const completedIds = await res.json();
+        if (res.status === 429){
+            notyf.error('API Rate Limit Hit.');
+            return;
+        }
         window.completedSet = new Set(completedIds);
         window.completedSetPopulated = true;
     } catch (e) {
@@ -139,17 +147,27 @@ window.toggleCompletion = function(problemId) {
     const token = await window.currentUser.getIdToken();
     console.log('[Toggle API] Flushing batch:', changes);
   
-    fetch('https://api.quantapus.com/batch-toggle-complete', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ changes })
-    }).catch(err => {
+    try {
+      const res = await fetch('https://api.quantapus.com/batch-toggle-complete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ changes })
+      });
+  
+      if (res.status === 429) {
+        notyf.error('API Rate Limit Hit.');
+    } else if (!res.ok) {
+        throw new Error('Network error');
+      }
+    } catch (err) {
       console.warn('[Toggle API] Batch request failed', err);
-    });
+      notyf.error('Something went wrong.');
+    }
   }
+  
 
 // Event listener for All Problems & Roadmap
 document.querySelectorAll('.nav-item').forEach(link => {

@@ -23,6 +23,7 @@ function Flow() {
     const [completedCount, setCompletedCount] = React.useState(0);
 
     async function fetchProgress() {
+        await window.loadProblems(); 
         if (!window.currentUser || !window.completedSet || !window.cachedProblems) {
             setNodes(prev =>
                 prev.map(n => ({
@@ -75,9 +76,7 @@ function Flow() {
         setLoading(true);
         setError(null);
     
-        try {
-            await window.loadProblems(); 
-    
+        try {    
             const topic = node.data.label.toLowerCase();
     
             // Use cached problems from window.cachedProblems directly
