@@ -22,127 +22,96 @@ function Flow() {
     const [nodes, setNodes] = React.useState(initialNodes); 
     const [completedCount, setCompletedCount] = React.useState(0);
 
-    const fetchProgress = async () => {
-        const user = window.currentUser;
-      
-        if (!user) {
-          // If not logged in, clear all progress
-          setNodes(prevNodes =>
-            prevNodes.map(node => ({
-              ...node,
-              data: {
-                ...node.data,
-                progress: 0
-              }
-            }))
-          );
-          return;
+    async function fetchProgress() {
+        await window.apiCalls();
+        if (!window.currentUser || !window.completedSet || !window.cachedProblems) {
+            setNodes(prev =>
+                prev.map(n => ({
+                    ...n,
+                    data: { ...n.data, progress: 0 }
+                }))
+            );
+            return;
         }
-      
-        try {
-          const idToken = await user.getIdToken();
-      
-          const response = await fetch('https://api.quantapus.com/roadmap-progress', {
-            headers: {
-              Authorization: `Bearer ${idToken}`
+    
+        const updated = initialNodes.map(node => {
+            const topic = node.data.label.toLowerCase();
+    
+            const problemsForNode = window.cachedProblems.filter(p => {
+                return (p.roadmap || '').toLowerCase() === topic;
+            });
+
+            const total = problemsForNode.length;
+            let completed = 0;
+    
+            for (const problem of problemsForNode) {
+                if (window.completedSet.has(problem.id)) {
+                    completed++;
+                }
             }
-          });
-      
-          if (!response.ok) {
-            throw new Error(`Status ${response.status}`);
-          }
-      
-          const progressData = await response.json();
-      
-          setNodes(prevNodes =>
-            prevNodes.map(node => ({
-              ...node,
-              data: {
-                ...node.data,
-                progress: progressData[node.data.label.toLowerCase()] || 0
-              }
-            }))
-          );
-        } catch (error) {
-          console.error('Progress fetch failed:', error);
-        }
-      };      
+    
+            const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+    
+            return {
+                ...node,
+                data: {
+                    ...node.data,
+                    progress
+                }
+            };
+        });
+    
+        setNodes(updated);
+    }    
 
     React.useEffect(() => {
-        fetchProgress();
-    }, [window.currentUser]);
-
-    React.useEffect(() => {
+        fetchProgress(); // runs once on load
         const refresh = () => fetchProgress();
         window.addEventListener("refreshProgressInReactFlow", refresh);
-    
-        return () => {
-            window.removeEventListener("refreshProgressInReactFlow", refresh);
-        };
+        return () => window.removeEventListener("refreshProgressInReactFlow", refresh);
     }, []);
-    
 
     const handleNodeClick = async (node) => {
         setSelectedNode(node);
         setLoading(true);
         setError(null);
-        
+    
         try {
-            const roadmapName = encodeURIComponent(node.data.label.toLowerCase());
-            const response = await fetch(`https://api.quantapus.com/problems/roadmap/${roadmapName}`);
-            if (!response.ok) throw new Error('Failed to fetch problems');
-            const data = await response.json();
-            setProblems(data);
-            // 2. Immediately update checkmarks
-            if (window.currentUser) {
-                const completedIds = await fetchCompletedProblems(window.currentUser.uid);
-                const completedSet = new Set(completedIds);
-                
-                setTimeout(() => {
-                    let count = 0;
-                
-                    document.querySelectorAll('.problem').forEach(problemDiv => {
-                        const problemId = Number(problemDiv.querySelector('.problem-id').textContent.replace("#", ""));
-                        const checkmark = problemDiv.querySelector('.checkmark');
-                
-                        const isCompleted = completedSet.has(problemId);
-                        checkmark?.classList.toggle('completed', isCompleted);
-                        if (isCompleted) count++;
-                    });
-                
-                    setCompletedCount(count);
-                }, 50);
-            }
+            await window.apiCalls(); 
+    
+            const topic = node.data.label.toLowerCase();
+    
+            // Use cached problems from window.cachedProblems directly
+            const problems = window.cachedProblems.filter(
+                p => (p.roadmap || '').toLowerCase() === topic
+            );
+    
+            setProblems(problems);
+    
+            // Calculate completed count directly from cached data
+            const count = problems.reduce((acc, p) => (
+                acc + (window.completedSet.has(p.id) ? 1 : 0)
+            ), 0);
+    
+            setCompletedCount(count);
+
+            setTimeout(() => {
+                document.querySelectorAll('.problems-list .problem').forEach(problemDiv => {
+                    const idSpan = problemDiv.querySelector('.problem-id');
+                    if (!idSpan) return;
+    
+                    const problemId = Number(idSpan.textContent.replace("#", ""));
+                    const checkmark = problemDiv.querySelector('.checkmark');
+    
+                    const isCompleted = window.completedSet.has(problemId);
+                    checkmark.classList.toggle('completed', isCompleted);
+                });
+            }, 0);
+    
         } catch (err) {
             setError(err.message);
         } finally {
             setLoading(false);
-        }
-    };
-
-    const toggleCompletion = async (problemId) => {
-        if (!window.currentUser) {
-            notyf.error("Sign In to Track Progress");
-            return false;
-        }
-    
-        try {
-            const idToken = await window.currentUser.getIdToken();
-    
-            const response = await fetch('https://api.quantapus.com/toggle-complete', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${idToken}`
-                },
-                body: JSON.stringify({ problemId })
-            });
-    
-            if (!response.ok) throw new Error('Toggle failed');
-            return await response.json();
-        } catch (error) {
-            console.error('Error:', error);
-            return null;
         }
     };    
 
@@ -199,18 +168,31 @@ function Flow() {
                             React.createElement('div', { className: 'problem-left' },
                                 React.createElement('div', { 
                                     className: 'checkmark-box',
-                                    onClick: async (e) => {
+                                    onClick: (e) => {
                                         e.stopPropagation();
                                         const checkmark = e.currentTarget.querySelector('.checkmark');
-
-                                        const result = await toggleCompletion(problem.id);
-                                        if (result) {
-                                            const isNowCompleted = !checkmark.classList.contains('completed');
-                                            checkmark.classList.toggle('completed');
-                                            setCompletedCount(prev => prev + (isNowCompleted ? 1 : -1));
-                                        }
-                                        await fetchProgress();
-                                    }
+                                    
+                                        const nowCompleted = window.toggleCompletion(problem.id);
+                                        checkmark.classList.toggle('completed', nowCompleted);
+                                        setCompletedCount(prev => prev + (nowCompleted ? 1 : -1));
+                                    
+                                        // Immediately update node progress visually
+                                        setNodes(prevNodes =>
+                                            prevNodes.map(n => {
+                                                if (n.data.label.toLowerCase() === selectedNode.data.label.toLowerCase()) {
+                                                    const total = problems.length;
+                                                    const newCompleted = completedCount + (nowCompleted ? 1 : -1);
+                                                    const progress = total > 0 ? Math.round((newCompleted / total) * 100) : 0;
+                                    
+                                                    return {
+                                                        ...n,
+                                                        data: { ...n.data, progress }
+                                                    };
+                                                }
+                                                return n;
+                                            })
+                                        );
+                                    }                                                                       
                                 },
                                     React.createElement('span', { 
                                         className: 'checkmark' + 
@@ -231,7 +213,7 @@ function Flow() {
     );
 }
 
-// 3. App Setup (remainder unchanged)
+// 3. Nodes Setup
 const initialNodes = [
     { 
         id: '1', 
@@ -295,7 +277,6 @@ window.initRoadmap = function() {
     };
 
     window.addEventListener("userSignedIn", handleAuthChange);
-    window.addEventListener("userSignedOut", handleAuthChange);
 
     return function cleanupRoadmap() {
         console.log('Cleaning up React Flow resources');
@@ -303,7 +284,6 @@ window.initRoadmap = function() {
         reactRoot.unmount();
 
         window.removeEventListener("userSignedIn", handleAuthChange);
-        window.removeEventListener("userSignedOut", handleAuthChange);
 
         if (window.reactFlowInstance) {
             window.reactFlowInstance.destroy();
@@ -311,31 +291,4 @@ window.initRoadmap = function() {
         }
     };
 };
-
-
-async function fetchCompletedProblems() {
-    try {
-      const user = window.currentUser;
-      if (!user) { return []; }
-  
-      const idToken = await user.getIdToken();  
-      const response = await fetch('https://api.quantapus.com/completed-problems', {
-        headers: {
-          Authorization: `Bearer ${idToken}`
-        },
-      });
-  
-      if (!response.ok) {
-        console.warn('Non-200 response from backend:', response.status);
-        return [];
-      }
-  
-      const json = await response.json();
-      return json;
-  
-    } catch (error) {
-      console.error('Error fetching completed problems:', error);
-      return [];
-    }
-  }
 

@@ -1,20 +1,20 @@
 const notyf = new Notyf();
+
 // Fetch the problem details from the backend
 async function fetchProblemDetails(id) {
-    const container = document.getElementById('problem-details');
-    // loading spinner
-    container.innerHTML = `<div class="loading-container"><div class="loading-spinner"></div></div>`;
-    try {
-        const response = await fetch(`https://api.quantapus.com/problems/${id}`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const problem = await response.json();
-        renderProblemDetails(problem);
-    } catch (error) {
-        console.error('Error fetching problem details:', error);
-        renderError('Failed to load problem details. Please try again later.');
-    }
+  const container = document.getElementById('problem-details');
+
+  // Show loading spinner
+  container.innerHTML = `<div class="loading-container"><div class="loading-spinner"></div></div>`;
+
+  try {
+      await window.apiCalls();
+      console.log(`Using problem #${id} from global cache`);
+      renderProblemDetails(window.problemMap[id]);
+  } catch (error) {
+      console.error('Error fetching problem details:', error);
+      renderError('Failed to load problem details.');
+  }
 }
 
 // Render the problem details
@@ -100,7 +100,6 @@ function renderProblemDetails(problem) {
       
         categoryContainer.appendChild(span);
       
-        // Add a space *after* the span (not before the comma)
         if (index !== categories.length - 1) {
           categoryContainer.appendChild(document.createTextNode(' '));
         }
@@ -111,16 +110,14 @@ function renderProblemDetails(problem) {
 
     updateProblemCompletion(problem.id);
 
-    // Add toggle functionality
-    checkmarkBox.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        const result = await toggleCompletion(problem.id);
-        if (result) {
-            checkmark.classList.toggle('completed');
-        }
+    //toggle checkmark functionality
+    checkmarkBox.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const nowCompleted = window.toggleCompletion(problem.id);
+      checkmark.classList.toggle('completed', nowCompleted);
     });
 
-    // Add event listener to the solution button
+    //event listener on solution button
     const solutionButton = document.getElementById('solution-button');
     const solutionSection = document.getElementById('solution');
     solutionButton.addEventListener('click', () => {
@@ -136,69 +133,20 @@ function renderProblemDetails(problem) {
     });
 }
 
-async function updateProblemCompletion(problemId) {
-    const checkmark = document.querySelector('#problem-details .checkmark');
-  
-    if (!window.currentUser) {
-      checkmark.classList.remove('completed');
-      return;
-    }
-  
-    try {
-      const idToken = await window.currentUser.getIdToken();
-  
-      const response = await fetch(`https://api.quantapus.com/completed-problems/check?problemId=${problemId}`, {
-        headers: {
-          Authorization: `Bearer ${idToken}`
-        }
-      });
-  
-      const data = await response.json();
-  
-      if (data.completed) {
-        checkmark.classList.add('completed');
-      } else {
-        checkmark.classList.remove('completed');
-      }
-    } catch (error) {
-      console.error('Completion check failed:', error);
-    }
+function updateProblemCompletion(problemId) {
+  const checkmark = document.querySelector('#problem-details .checkmark');
+  if (!window.currentUser || !window.completedSet) {
+    checkmark.classList.remove('completed');
+    return;
   }
-  
-
+  checkmark.classList.toggle('completed', window.completedSet.has(Number(problemId)));
+}
 
 // Render an error message
 function renderError(message) {
     const problemDetailsContainer = document.getElementById('problem-details');
     problemDetailsContainer.innerHTML = `<p style="color: red;">${message}</p>`;
 }
-
-async function toggleCompletion(problemId) {
-    if (!window.currentUser) {
-      notyf.error("Sign In to Track Progress");
-      return false;
-    }
-  
-    try {
-      const idToken = await window.currentUser.getIdToken();
-  
-      const response = await fetch('https://api.quantapus.com/toggle-complete', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${idToken}`
-        },
-        body: JSON.stringify({ problemId })  // no userId sent!
-      });
-  
-      if (!response.ok) throw new Error('Toggle failed');
-      return await response.json();
-    } catch (error) {
-      console.error('Error:', error);
-      return null;
-    }
-  }
-  
 
 window.initProblem = function(problemId) {
     if (problemId) {
@@ -207,16 +155,9 @@ window.initProblem = function(problemId) {
         renderError('No problem ID specified');
     }
 
-    const onSignedOut = () => updateProblemCompletion(problemId);
     const onSignedIn = () => updateProblemCompletion(problemId);
-
-    // Register listeners
-    window.addEventListener("userSignedOut", onSignedOut);
     window.addEventListener("userSignedIn", onSignedIn);
-
-    // Return proper cleanup function
     return () => {
-        window.removeEventListener("userSignedOut", onSignedOut);
         window.removeEventListener("userSignedIn", onSignedIn);
     };
     

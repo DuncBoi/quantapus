@@ -27,18 +27,28 @@ const dropdownMenu = document.getElementById("dropdownMenu");
 const signOutLink = document.getElementById("signOutLink");
 
 // Persist Sign-In State on Page Refresh
-auth.onAuthStateChanged(user => {
+auth.onAuthStateChanged(async user => {
     window.currentUser = user;
     if (user) {
         notyf.success("Signed In");
         updateToInitials(user);
+        await window.apiCalls();
+        console.log("cows", window.completedSet);
+        
         window.dispatchEvent(new Event("userSignedIn"));
-    }
-    else{
+    } else {
         googleLogin.textContent = "Sign In";
-        window.dispatchEvent(new Event("userSignedOut"));
+        window.completedSet = null;
+
+        document.querySelectorAll('.checkmark').forEach(checkmark => {
+            checkmark.classList.remove('completed');
+        });
+
+        const refreshEvent = new CustomEvent("refreshProgressInReactFlow");
+        window.dispatchEvent(refreshEvent);
     }
 });
+
 
 //update button to user's initials
 const updateToInitials = (user) => {
@@ -60,16 +70,17 @@ googleLogin.addEventListener("click", async function(){
         updateToInitials(result.user);
 
         const uid = result.user.uid;
+        const token = await result.user.getIdToken();
         
         const response = await fetch('https://api.quantapus.com/log-user', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ uid }),
+          headers: { 
+            'Content-Type': 'application/json', 
+            Authorization: `Bearer ${token}`},
+            body: JSON.stringify({ uid }),
         });
+        if (response.ok) console.log('User UID logged in backend');
 
-        if (!response.ok) throw new Error('Failed to log user');
-        
-        console.log('User UID logged in backend');
     } catch (error) {
         console.error("Error during sign-in:", error);
     }

@@ -119,14 +119,12 @@ window.initProblems = function() {
   const onSignedOut = () => updateCompletedProblems();
   const onSignedIn = () => updateCompletedProblems();
 
-  window.addEventListener("userSignedOut", onSignedOut);
   window.addEventListener("userSignedIn", onSignedIn);
 
   // Cleanup function
   return () => {
     console.log('Cleaning up Dropdowns and Events');
     document.removeEventListener('click', clickHandler);
-    window.removeEventListener("userSignedOut", onSignedOut);
     window.removeEventListener("userSignedIn", onSignedIn);
     if(resetButton){
       resetButton.removeEventListener('click', resetHandler);
@@ -138,20 +136,21 @@ window.initProblems = function() {
 
 // Fetch problems from the backend
 async function fetchProblems() {
-  // loading spinner
   const problemsContainer = document.getElementById('problems-container');
   problemsContainer.innerHTML = '<div class="loading-container"><div class="loading-spinner"></div></div>';
+
   try {
-    console.log('Fetching problems from:', BACKEND_URL);
-    const response = await fetch(BACKEND_URL);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const problems = await response.json();
-    console.log('Problems received:', problems);
+    await window.apiCalls();
+
+    const problems = window.cachedProblems;
 
     renderProblems(problems);
 
+    if (window.currentUser) {
+      updateCompletedProblems();  
+    }
+
+    // Extract categories
     const categories = new Set();
     problems.forEach(problem => {
       if (problem.category) {
@@ -161,70 +160,31 @@ async function fetchProblems() {
 
     generateCategoryDropdown(categories);
 
-    updateCompletedProblems();
-
   } catch (error) {
     console.error('Error fetching problems:', error);
     renderError('Failed to load problems. Please try again later.');
   }
 }
 
-async function fetchCompletedProblems() {
-  try {
-    const user = window.currentUser;
-    if (!user) { return []; }
+function updateCompletedProblems() {
+  const checkmarkSelector = '.problem .checkmark';
 
-    const idToken = await user.getIdToken();
-    const response = await fetch('https://api.quantapus.com/completed-problems', {
-      headers: {
-        Authorization: `Bearer ${idToken}`
-      },
+  if (!window.currentUser || !window.completedSet) {
+    // Clear checkmarks if not signed in or no cache
+    document.querySelectorAll(checkmarkSelector).forEach(checkmark => {
+      checkmark.classList.remove('completed');
     });
-
-    if (!response.ok) {
-      console.warn('Non-200 response from backend:', response.status);
-      return [];
-    }
-
-    const json = await response.json();
-    return json;
-
-  } catch (error) {
-    console.error('Error fetching completed problems:', error);
-    return [];
+    return;
   }
+
+  document.querySelectorAll('.problem').forEach(problemDiv => {
+    const problemId = Number(problemDiv.querySelector('.problem-id').textContent.replace("#", ""));
+    const checkmark = problemDiv.querySelector('.checkmark');
+
+    checkmark.classList.toggle('completed', window.completedSet.has(problemId));
+  });
 }
 
-async function updateCompletedProblems() {
-  try {
-    const checkmarkSelector = '.problem .checkmark';
-
-    if (!window.currentUser) {
-      //Clear all checkmarks on sign out
-      document.querySelectorAll(checkmarkSelector).forEach(checkmark => {
-        checkmark.classList.remove('completed');
-      });
-      return;
-    }
-
-    const completedIds = await fetchCompletedProblems();
-
-    const completedSet = new Set(completedIds);
-
-    document.querySelectorAll('.problem').forEach(problemDiv => {
-      const problemId = Number(problemDiv.querySelector('.problem-id').textContent.replace("#", ""));
-      const checkmark = problemDiv.querySelector('.checkmark');
-
-      if (completedSet.has(problemId)) {
-        checkmark.classList.add('completed');
-      } else {
-        checkmark.classList.remove('completed');
-      }
-    });
-  } catch (error) {
-    console.error('Error updating completed problems:', error);
-  }
-}
 
 
 function filterProblems() {
@@ -302,13 +262,13 @@ function renderProblems(problems) {
     }
 
     // Add interactions
-    checkmarkBox.addEventListener('click', async (e) => {
+    checkmarkBox.addEventListener('click', (e) => {
       e.stopPropagation();
-      const result = await toggleCompletion(problem.id);
-      if (result) {
-        checkmark.classList.toggle('completed');
-      }
+      const nowCompleted = window.toggleCompletion(problem.id);
+      checkmark.classList.toggle('completed', nowCompleted);
     });
+    
+    
 
     problemDiv.addEventListener('click', (e) => {
       e.preventDefault();
@@ -331,33 +291,6 @@ function renderError(message) {
     errorElem.style.display = 'block';
   }
 }
-
-async function toggleCompletion(problemId) {
-  if (!window.currentUser) {
-    notyf.error("Sign In to Track Progress");
-    return;
-  }
-
-  try {
-    const idToken = await window.currentUser.getIdToken();
-
-    const response = await fetch('https://api.quantapus.com/toggle-complete', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${idToken}`
-      },
-      body: JSON.stringify({ problemId })
-    });
-
-    if (!response.ok) throw new Error('Toggle failed');
-    return await response.json();
-  } catch (error) {
-    console.error('Error:', error);
-    return null;
-  }
-}
-
 
 function resetFilters() {
   window.selectedDifficulty = 'All';
