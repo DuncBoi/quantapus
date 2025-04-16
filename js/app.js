@@ -61,34 +61,41 @@ function handleNavigation(path) {
 }
 
 //preload global data once
-async function apiCalls() {
-    if (window.apiCallsLock) return;
-    window.apiCallsLock = true;      
+// 1. Loads immediately on page load
+async function loadProblems() {
+    if (window.cachedProblems || window.loadProblemsLock) return;
+
+    window.loadProblemsLock = true;
 
     try {
-        if (!window.cachedProblems) {
-            const res = await fetch('https://api.quantapus.com/problems');
-            const data = await res.json();
-            window.cachedProblems = data;
+        const res = await fetch('https://api.quantapus.com/problems');
+        const data = await res.json();
+        window.cachedProblems = data;
 
-            // Map for quick access
-            window.problemMap = {};
-            data.forEach(p => window.problemMap[p.id] = p);
-        }
-
-        if (window.currentUser && !window.completedSetPopulated) {
-            const token = await window.currentUser.getIdToken();
-            const res = await fetch('https://api.quantapus.com/completed-problems', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const completedIds = await res.json();
-            window.completedSet = new Set(completedIds);
-            window.completedSetPopulated = true;
-        }
+        window.problemMap = {};
+        data.forEach(p => window.problemMap[p.id] = p);
     } catch (e) {
-        console.error('apiCalls error:', e);
+        console.error('Failed to load public problem data:', e);
     } finally {
-        window.apiCallsLock = false;
+        window.loadProblemsLock = false;
+    }
+}
+
+
+// 2. Loads after sign-in
+async function loadCompletion() {
+    if (!window.currentUser || window.completedSetPopulated) return;
+
+    try {
+        const token = await window.currentUser.getIdToken();
+        const res = await fetch('https://api.quantapus.com/completed-problems', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const completedIds = await res.json();
+        window.completedSet = new Set(completedIds);
+        window.completedSetPopulated = true;
+    } catch (e) {
+        console.error('Failed to load user completion data:', e);
     }
 }
 
@@ -175,14 +182,15 @@ function updateActiveNav(currentPath) {
 }
 
 // Initial load
-window.apiCallsLock = false;
-apiCalls();
 handleNavigation(window.location.pathname);
+window.loadProblemsLock = false;
 window.pendingToggles = {};
 window.toggleDebounceTimer = null;
 window.handleNavigation = handleNavigation;
 window.toggleCompletion = toggleCompletion;
 window.completedSet = new Set();
 window.completedSetPopulated = false;
-window.apiCalls = apiCalls;  
+window.loadProblems = loadProblems;  
+window.loadCompletion= loadCompletion;  
+
   

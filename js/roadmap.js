@@ -23,7 +23,6 @@ function Flow() {
     const [completedCount, setCompletedCount] = React.useState(0);
 
     async function fetchProgress() {
-        await window.apiCalls();
         if (!window.currentUser || !window.completedSet || !window.cachedProblems) {
             setNodes(prev =>
                 prev.map(n => ({
@@ -77,7 +76,7 @@ function Flow() {
         setError(null);
     
         try {
-            await window.apiCalls(); 
+            await window.loadProblems(); 
     
             const topic = node.data.label.toLowerCase();
     

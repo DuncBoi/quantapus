@@ -32,7 +32,7 @@ auth.onAuthStateChanged(async user => {
     if (user) {
         notyf.success("Signed In");
         updateToInitials(user);
-        await window.apiCalls();
+        await window.loadCompletion();
         
         window.dispatchEvent(new Event("userSignedIn"));
     } else {

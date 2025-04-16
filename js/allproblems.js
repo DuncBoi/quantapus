@@ -18,7 +18,7 @@ function generateCategoryDropdown(categories) {
   });
 }
 
-window.initProblems = function() {
+window.initProblems = async function() {
   let clickHandler = null;
 
   // --- RESTORE FILTERS FROM LOCAL STORAGE OR USE DEFAULTS ---
@@ -109,7 +109,7 @@ window.initProblems = function() {
     document.addEventListener('click', clickHandler);
   };
 
-  fetchProblems();
+  await fetchProblems();
   handleDropdowns();
 
   const onSignedIn = () => fetchProblems();
@@ -135,8 +135,7 @@ async function fetchProblems() {
   problemsContainer.innerHTML = '<div class="loading-container"><div class="loading-spinner"></div></div>';
 
   try {
-    await window.apiCalls();
-
+    await window.loadProblems();
     const problems = window.cachedProblems;
 
     renderProblems(problems);
