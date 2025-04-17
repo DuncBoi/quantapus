@@ -300,59 +300,51 @@
  /********************************************
   * HEADING: PAGE-CONTENT2
   ********************************************/
- .page-content2 {
-   position: relative;
-   height: 100vh;
-   overflow: hidden;
-   display: flex;
-   flex-direction: column;
-   margin-top: -70px;
- }
+  .page-content2 {
+    position: relative;
+    height: 100vh;         
+    margin-top: -70px;
+  }
  
- .content {
-   flex: 1;
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
- }
- 
- /* Floating logo (desktop) */
- .intro-logo-container {
-   position: absolute;
-   right: 5%;
-   top: 50%;
-   transform: translateY(-50%);
-   z-index: 2;
-   animation: float 4s ease-in-out infinite;
- }
- .right-logo {
-   width: 200px;
-   height: 200px;
-   transition: transform 0.3s ease;
- }
- .right-logo:hover {
-   transform: scale(1.1);
- }
- 
- /* Animated heading */
- .animated-heading {
-  font-size: clamp(2rem, 8vw, 5rem);
-  font-weight: bold;
-   text-align: left;
-   letter-spacing: 2px;
-   position: absolute;
-   left: 5%;
-   top: 50%;
-   transform: translateY(-50%);
-   max-width: 75%;
-   animation: fadeInSlide 1.2s cubic-bezier(0.33, 1, 0.68, 1) forwards;
- }
+  .content {
+    position: fixed;
+    top: 50%;
+    left: 5%;           /* hug it to the left edge */
+    right: 5%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;  /* left‑align the heading */
+    z-index: 2;         /* above the logo */
+  }
+
+  .right-logo {
+    width: 200px;       /* or whatever smaller size you like */
+    height: auto;
+  }
+  
+
+/* keep logo fixed at right-center */
+.intro-logo-container {
+  position: fixed;
+  top: 50%;
+  right: 5%;
+  z-index: 2;
+  animation: float 4s ease-in-out infinite;
+}
+
+/* bring h1 into normal flow of .content */
+.animated-heading {
+  position: static;
+  transform: none;
+  text-align: left;
+  max-width: 90%;
+  animation: fadeInSlide 1.2s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
 
  .big-title {
     font-weight: 600;
     font-size: clamp(3rem, 9vw, 9rem);
-    display: inline-block;
+    display: block;
   }
 
  .small-subtitle {
@@ -371,6 +363,28 @@
    animation: gradientMove 5s ease-in-out infinite alternate;
    display: inline-block;
  }
+
+ .site-footer {
+  background: #24252A;
+  color: #fff;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.site-footer .footer-links {
+  margin-bottom: 1rem;
+}
+
+.site-footer .footer-links a {
+  color: #fff;
+  margin: 0 0.75rem;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.site-footer .footer-links a:hover {
+  text-decoration: underline;
+}
  
  /********************************************
   * KEYFRAMES

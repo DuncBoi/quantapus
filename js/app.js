@@ -4,7 +4,8 @@ const routes = {
     '/': '/content/intro.html',
     '/roadmap': '/content/roadmap.html',
     '/problem': '/content/problem.html',
-    '/problems': '/content/allproblems.html'
+    '/problems': '/content/allproblems.html',
+    '/privacy': '/content/privacy.html'
 };
 
 function handleNavigation(path) {
@@ -47,7 +48,9 @@ function handleNavigation(path) {
             } else if (basePath === '/problems'){
                 pageTitle = 'Problems'
                 window.currentCleanup = await initProblems();
-            } else{
+            } else if (basePath === '/privacy'){
+                pageTitle = 'Privacy Policy'
+            }else{
                 window.currentCleanup = initBackground();
             }
 
@@ -169,9 +172,10 @@ window.toggleCompletion = function(problemId) {
   }
   
 
-// Event listener for All Problems & Roadmap
+// Event listener for Headers + Footers
 document.querySelectorAll('.nav-item').forEach(link => {
     link.addEventListener('click', (e) => {
+        console.log("nav item da bess");
         e.preventDefault();
         const path = new URL(e.target.href).pathname;
         handleNavigation(path);

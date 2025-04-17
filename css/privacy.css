@@ -1,0 +1,73 @@
+.policy-container {
+  max-width: 95%;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #24252A;            /* Dark background */
+  color: #e0e0e0;                       /* Light text */
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+  line-height: 1.75;
+}
+
+/* Headings */
+.policy-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  border-bottom: 2px solid #333;
+  padding-bottom: 0.5rem;
+}
+
+.policy-container h2 {
+  font-size: 1.75rem;
+  margin: 2rem 0 1rem;
+  color: #ffffff;
+}
+
+.policy-container h3 {
+  font-size: 1.25rem;
+  margin: 1.5rem 0 0.75rem;
+  color: #cccccc;
+}
+
+/* Paragraphs & Lists */
+.policy-container p {
+  margin-bottom: 1.25rem;
+}
+
+.policy-container ul {
+  list-style: square inside;
+  margin: 0 0 1.5rem 1.5rem;
+}
+
+.policy-container li {
+  margin-bottom: 0.75rem;
+}
+
+/* Links */
+.policy-container a {
+  color: #61a9f1;
+  text-decoration: none;
+  border-bottom: 1px dashed #61a9f1;
+  transition: all 0.2s ease;
+}
+
+.policy-container a:hover {
+  color: #90c7ff;
+  border-bottom-style: solid;
+}
+
+/* Code snippets (if any) */
+.policy-container code {
+  background-color: #1e1e1e;
+  color: #ffb86c;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+}
+
+/* Optional accent: a left border for each section */
+.policy-container h2,
+.policy-container h3 {
+  border-left: 4px solid #61a9f1;
+  padding-left: 0.75rem;
+}
