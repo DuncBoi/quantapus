@@ -13,7 +13,7 @@ function handleNavigation(path) {
     try {
         window.currentCleanup();
     } catch (e) {
-        console.error('Nothing to cleanup', e);
+        console.log('Nothing to cleanup', e);
     }
 
     // Extract base path without query params
@@ -30,7 +30,7 @@ function handleNavigation(path) {
     // Load new content
     fetch(routes[basePath] || routes['/'])
         .then(r => r.text())
-        .then(html => {
+        .then(async html => {
             container.innerHTML = html;
             updateActiveNav(basePath);
             
@@ -46,7 +46,7 @@ function handleNavigation(path) {
                 window.currentCleanup = initProblem(problemId); 
             } else if (basePath === '/problems'){
                 pageTitle = 'Problems'
-                window.currentCleanup = initProblems();
+                window.currentCleanup = await initProblems();
             } else{
                 window.currentCleanup = initBackground();
             }
@@ -210,5 +210,51 @@ window.completedSet = new Set();
 window.completedSetPopulated = false;
 window.loadProblems = loadProblems;  
 window.loadCompletion= loadCompletion;  
+
+//handle dropdowns - globally initialized to reduce cleanup costs
+document.addEventListener('click', e => {
+    const btn = e.target.closest('.dropdown2');
+    if (btn) {
+        const menu = btn.nextElementSibling;
+
+        if (btn.id === 'type-dropdown' && window.categoriesLoading) {
+          menu.innerHTML = '<div class="loading-spinner"></div>';
+        }
+    
+        menu.classList.toggle('show');
+        return;
+    }
+  
+    const item = e.target.closest('.dropdown-item');
+    if (item) {
+      const container = item.closest('.dropdown-container');
+      const dropdown  = container.querySelector('.dropdown2');
+      const value     = item.dataset.value;
+  
+      dropdown.textContent = value;
+      dropdown.style.color = '';  
+      if (dropdown.id === 'difficulty-dropdown') {
+        if (value === 'Easy')   dropdown.style.color = '#48B572';
+        if (value === 'Medium') dropdown.style.color = '#B5A848';
+        if (value === 'Hard')   dropdown.style.color = '#B54848';
+        window.selectedDifficulty = value;
+        localStorage.setItem('selectedDifficulty', value);
+      } else {
+        if (value !== 'Types Of') dropdown.style.color = '#61a9f1';
+        window.selectedCategory = value;
+        localStorage.setItem('selectedCategory', value);
+      }
+  
+      item.parentElement.classList.remove('show');
+      window.dispatchEvent(new Event('filterChanged'));
+      return;
+    }
+  
+    if (!e.target.closest('.dropdown-container')) {
+      document.querySelectorAll('.dropdown-menu.show')
+              .forEach(m => m.classList.remove('show'));
+    }
+  });
+  
 
   

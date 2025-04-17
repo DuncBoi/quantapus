@@ -80,10 +80,10 @@ function Flow() {
             const topic = node.data.label.toLowerCase();
     
             // Use cached problems from window.cachedProblems directly
-            const problems = window.cachedProblems.filter(
-                p => (p.roadmap || '').toLowerCase() === topic
-            );
-    
+            const problems = window.cachedProblems
+                .filter(p => (p.roadmap || '').toLowerCase() === topic)
+                .sort((a, b) => a.roadmap_num - b.roadmap_num);
+
             setProblems(problems);
     
             // Calculate completed count directly from cached data

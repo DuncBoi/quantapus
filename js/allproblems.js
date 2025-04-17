@@ -1,3 +1,5 @@
+window.categoriesLoading = false;
+
 function generateCategoryDropdown(categories) {
   const categoryMenu = document.getElementById('type-menu');
   categoryMenu.innerHTML = ''; // Clear static/default items
@@ -19,112 +21,44 @@ function generateCategoryDropdown(categories) {
 }
 
 window.initProblems = async function() {
-  let clickHandler = null;
-
-  // --- RESTORE FILTERS FROM LOCAL STORAGE OR USE DEFAULTS ---
   window.selectedDifficulty = localStorage.getItem('selectedDifficulty') || 'All';
-  window.selectedCategory = localStorage.getItem('selectedCategory') || 'Types Of';
+  window.selectedCategory   = localStorage.getItem('selectedCategory')   || 'Types Of';
 
-  const difficultyDropdown = document.getElementById('difficulty-dropdown');
-  const categoryDropdown = document.getElementById('type-dropdown');
+  // 2) Update the two dropdown buttons to match:
+  const diffBtn = document.getElementById('difficulty-dropdown');
+  diffBtn.textContent = window.selectedDifficulty;
+  diffBtn.style.color  = ({
+    Easy:   '#48B572',
+    Medium: '#B5A848',
+    Hard:   '#B54848',
+  })[window.selectedDifficulty] || '';
 
-  const resetButton = document.querySelector('.reset-button');
-  const resetHandler = () => resetFilters();
-  if (resetButton) {
-    resetButton.addEventListener('click', resetHandler);
-  }
-
-  // Difficulty dropdown text/color
-  if (window.selectedDifficulty !== 'All') {
-    difficultyDropdown.textContent = window.selectedDifficulty;
-    if (window.selectedDifficulty === 'Easy') difficultyDropdown.style.color = '#48B572';
-    if (window.selectedDifficulty === 'Medium') difficultyDropdown.style.color = '#B5A848';
-    if (window.selectedDifficulty === 'Hard') difficultyDropdown.style.color = '#B54848';
-  } else {
-    difficultyDropdown.textContent = 'All';
-    difficultyDropdown.style.color = '';
-  }
-  
-  if (window.selectedCategory !== 'Types Of') {
-    categoryDropdown.textContent = window.selectedCategory;
-    categoryDropdown.style.color = '#61a9f1';
-  } else {
-    categoryDropdown.textContent = 'Types Of';
-  }
-
-  const handleDropdowns = () => {
-    if (clickHandler) {
-      document.removeEventListener('click', clickHandler);
-    }
-
-    clickHandler = function(e) {
-      if (e.target.classList.contains('dropdown2')) {
-        e.preventDefault();
-        const menu = e.target.nextElementSibling;
-        menu.classList.toggle('show');
-      }
-
-      // Close dropdowns when clicking outside
-      if (!e.target.closest('.dropdown-container')) {
-        document.querySelectorAll('.dropdown-menu').forEach(menu => {
-          menu.classList.remove('show');
-        });
-      }
-
-      // Handle filter selection
-      if (e.target.classList.contains('dropdown-item')) {
-        const dropdown = e.target.closest('.dropdown-container').querySelector('.dropdown2');
-
-        const value = e.target.dataset.value;
-
-        // Reset to default text color
-        dropdown.style.color = '';
-
-        // Set new text color (if difficulty)
-        if (value === 'Easy') dropdown.style.color = '#48B572';
-        if (value === 'Medium') dropdown.style.color = '#B5A848';
-        if (value === 'Hard') dropdown.style.color = '#B54848';
-
-        if (dropdown.id === 'type-dropdown' && value != 'Types Of') {
-          dropdown.style.color = '#61a9f1'
-        }
-
-        // Update the button text
-        dropdown.textContent = value;
-        dropdown.nextElementSibling.classList.remove('show');
-
-        // Update global filter state & persist to localStorage
-        if (dropdown.id === "difficulty-dropdown") {
-          window.selectedDifficulty = value;
-          localStorage.setItem('selectedDifficulty', value); // SAVE TO LOCALSTORAGE
-        } else if (dropdown.id === "type-dropdown") {
-          window.selectedCategory = value;
-          localStorage.setItem('selectedCategory', value);   // SAVE TO LOCALSTORAGE
-        }
-
-        filterProblems();
-      }
-    };
-
-    document.addEventListener('click', clickHandler);
-  };
+  const typeBtn = document.getElementById('type-dropdown');
+  typeBtn.textContent = window.selectedCategory;
+  typeBtn.style.color = window.selectedCategory !== 'Types Of'
+    ? '#61a9f1'
+    : '';
 
   await fetchProblems();
 
-  handleDropdowns();
+  const resetBtn = document.querySelector('.reset-button');
+  const resetHandler = (e) => {
+    e.stopPropagation(); 
+    resetFilters();
+  };
+  if (resetBtn) resetBtn.addEventListener('click', resetHandler);
 
   const onSignedIn = () => fetchProblems();
-
   window.addEventListener("userSignedIn", onSignedIn);
+
+  const onFilter = () => filterProblems();
+  window.addEventListener('filterChanged', onFilter);
 
   // Cleanup function
   return () => {
-    console.log('Cleaning up Dropdowns and Events');
-    document.removeEventListener('click', clickHandler);
+    resetBtn.removeEventListener('click', resetHandler);
     window.removeEventListener("userSignedIn", onSignedIn);
-    if(resetButton){
-      resetButton.removeEventListener('click', resetHandler);
-    }
+    window.removeEventListener("filterChanged", onFilter);
     delete window.selectedDifficulty;
     delete window.selectedCategory;
   };
@@ -132,6 +66,7 @@ window.initProblems = async function() {
 
 // Fetch problems from the backend
 async function fetchProblems() {
+  window.categoriesLoading = true;           
   const problemsContainer = document.getElementById('problems-container');
   problemsContainer.innerHTML = '<div class="loading-container"><div class="loading-spinner"></div></div>';
 
@@ -139,13 +74,6 @@ async function fetchProblems() {
     await window.loadProblems();
     const problems = window.cachedProblems;
 
-    renderProblems(problems);
-
-    if (window.currentUser) {
-      updateCompletedProblems();  
-    }
-
-    // Extract categories
     const categories = new Set();
     problems.forEach(problem => {
       if (problem.category) {
@@ -154,6 +82,13 @@ async function fetchProblems() {
     });
 
     generateCategoryDropdown(categories);
+    window.categoriesLoading = false;
+
+    renderProblems(problems);
+
+    if (window.currentUser) {
+      updateCompletedProblems();  
+    }
 
   } catch (error) {
     console.error('Error fetching problems:', error);
