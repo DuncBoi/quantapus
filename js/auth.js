@@ -76,10 +76,17 @@ googleLogin.addEventListener("click", async () => {
       html: `
         <div class="tos-content">
           <p>Please read and agree to our
-            <a href="#" style="color:#61a9f1; onclick="window.open('/?redirect=/terms','_blank');return false;">Terms of Service</a>
-            &amp;
-            <a href="#" style="color:#61a9f1; onclick="window.open('/?redirect=/privacy','_blank');return false;">Privacy Policy</a>.
-          </p>
+      <a
+        href="#"
+        onclick="window.open(window.location.origin + '/terms', '_blank'); return false;"
+        style="color:#61a9f1; text-decoration:underline;"
+      >Terms of Service</a>
+      &amp
+      <a href="#"
+            onclick="window.open(window.location.origin + '/privacy', '_blank'); return false;"
+            style="color:#61a9f1; text-decoration:underline;"
+            >Privacy Policy</a>.
+        </p>
           <div class="tos-checkbox">
             <input type="checkbox" id="tos-checkbox"/>
             <label for="tos-checkbox">I agree to the Terms of Service &amp; Privacy Policy</label>

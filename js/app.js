@@ -211,7 +211,7 @@ function updateActiveNav(currentPath) {
 }
 
 // Initial load
-handleNavigation(window.location.pathname);
+handleNavigation(window.location.pathname + window.location.search);
 window.loadProblemsLock = false;
 window.pendingToggles = {};
 window.toggleDebounceTimer = null;
