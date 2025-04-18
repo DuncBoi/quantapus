@@ -317,21 +317,6 @@
     z-index: 2;         /* above the logo */
   }
 
-  .right-logo {
-    width: 200px;       /* or whatever smaller size you like */
-    height: auto;
-  }
-  
-
-/* keep logo fixed at right-center */
-.intro-logo-container {
-  position: fixed;
-  top: 50%;
-  right: 5%;
-  z-index: 2;
-  animation: float 4s ease-in-out infinite;
-}
-
 /* bring h1 into normal flow of .content */
 .animated-heading {
   position: static;
@@ -1023,24 +1008,13 @@
     font-size: 40px;
 }
  
-   /* Animated heading + logo on mobile */
+   /* Animated heading on mobile */
    .animated-heading {
      position: static;
      transform: none;
      text-align: center;
      max-width: 90%;
      margin-bottom: 1rem;
-   }
-   .intro-logo-container {
-     position: static;
-     transform: none;
-     margin-top: 5rem;
-     display: flex;
-     justify-content: center;
-   }
-   .right-logo {
-     width: 150px;
-     height: 150px;
    }
  
    /* Modal on mobile */
