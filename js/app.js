@@ -5,7 +5,9 @@ const routes = {
     '/roadmap': '/content/roadmap.html',
     '/problem': '/content/problem.html',
     '/problems': '/content/allproblems.html',
-    '/privacy': '/content/privacy.html'
+    '/account': '/content/account.html',
+    '/privacy': '/content/privacy.html',
+    '/terms': '/content/terms.html'
 };
 
 function handleNavigation(path) {
@@ -50,7 +52,12 @@ function handleNavigation(path) {
                 window.currentCleanup = await initProblems();
             } else if (basePath === '/privacy'){
                 pageTitle = 'Privacy Policy'
-            }else{
+            } else if (basePath === '/terms'){
+                pageTitle = 'Terms Of Service'
+            } else if (basePath === '/account'){
+                pageTitle = 'Account'
+                window.currentCleanup = initAccount();
+            } else{
                 window.currentCleanup = initBackground();
             }
 
