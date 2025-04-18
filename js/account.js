@@ -5,9 +5,15 @@ window.initAccount = async function() {
 
   // if not signed in, send back to login
   if (!user) {
-    window.handleNavigation("/");
-    return;
-  }
+    const container = document.querySelector('.account-inner');
+       container.innerHTML = `
+          <h1>My Account</h1>
+          <p style="margin-top:2rem; font-size:1.125rem; color:#e0e0e0;">
+            You are not signed in.
+          </p>
+        `;
+        return;
+      }
 
   // DOM refs
   const avatarEl    = document.getElementById("userAvatar");

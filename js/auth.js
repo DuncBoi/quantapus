@@ -53,6 +53,9 @@ auth.onAuthStateChanged(async user => {
         const refreshEvent = new CustomEvent("refreshProgressInReactFlow");
         window.dispatchEvent(refreshEvent);
     }
+    if (window.location.pathname === '/account') {
+        window.handleNavigation('/account');
+    }
 });
 
 
