@@ -65,51 +65,47 @@ const updateToInitials = (user) => {
 };
 
 // Handle Sign-In
-googleLogin.addEventListener("click", async function() {
+googleLogin.addEventListener("click", async () => {
     if (auth.currentUser) {
       dropdownMenu.style.display = "block";
       return;
     }
   
-    const { value: agreed } = await Swal.fire({
+    await Swal.fire({
       title: 'Before you sign in…',
-      html:
-        'Please read and agree to our ' +
-        '<a href="#" onclick="handleNavigation(\'/terms\'); return false;">Terms of Service</a> and ' +
-        '<a href="#" onclick="handleNavigation(\'/privacy\'); return false;">Privacy Policy</a>.',
-      icon: 'info',
-  
-      input: 'checkbox',
-      inputPlaceholder: 'I agree to Terms of Service & Privacy Policy',
-      inputValidator: v => !v && 'You must agree before continuing',
-  
+      html: `
+        <div class="tos-content">
+          <p>Please read and agree to our
+            <a href="#" style="color:#61a9f1; onclick="window.open('/?redirect=/terms','_blank');return false;">Terms of Service</a>
+            &amp;
+            <a href="#" style="color:#61a9f1; onclick="window.open('/?redirect=/privacy','_blank');return false;">Privacy Policy</a>.
+          </p>
+          <div class="tos-checkbox">
+            <input type="checkbox" id="tos-checkbox"/>
+            <label for="tos-checkbox">I agree to the Terms of Service &amp; Privacy Policy</label>
+          </div>
+          <button id="swal-google-signin" class="swal2-styled" disabled>
+            <i class="fab fa-google" style="font-size:18px; margin-right:8px;"></i>
+            Sign in with Google
+        </button>
+        </div>
+      `,
       showConfirmButton: false,
       showCancelButton: false,
-  
-      footer:
-        '<button id="swal-google-signin" class="swal2-styled" ' +
-        'style="background:#fff;color:#444;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;">' +
-        '<img src="https://developers.google.com/identity/images/g-logo.png" ' +
-             'alt="Google logo" ' +
-             'style="width:18px;height:18px;margin-right:8px;"/>' +
-        'Sign in with Google' +
-      '</button>',
-  
       background: '#24252A',
       color:      '#e0e0e0',
       backdrop:   'rgba(0,0,0,0.8)',
+      icon: 'info',
   
       didOpen: () => {
-        const checkbox = Swal.getPopup().querySelector('input[type="checkbox"]');
-        const btn      = Swal.getPopup().querySelector('#swal-google-signin');
+        const popup    = Swal.getPopup();
+        const checkbox = popup.querySelector('#tos-checkbox');
+        const btn      = popup.querySelector('#swal-google-signin');
   
-        // disable until they check
-        btn.disabled = true;
-        btn.style.opacity = '0.5';
-  
+        // wire up enable/disable
         checkbox.addEventListener('change', () => {
-          btn.disabled = !checkbox.checked;
-          btn.style.opacity = checkbox.checked ? '1' : '0.5';
+          btn.disabled      = !checkbox.checked;
+          btn.style.opacity = checkbox.checked ? '1' : '0.4';
         });
   
         btn.addEventListener('click', async () => {
