@@ -2,6 +2,7 @@ const notyf = new Notyf();
 
 const routes = {
     '/': '/content/intro.html',
+    '/index.html': '/content/intro.html',
     '/roadmap': '/content/roadmap.html',
     '/problem': '/content/problem.html',
     '/problems': '/content/allproblems.html',
@@ -30,36 +31,47 @@ function handleNavigation(path) {
         history.pushState({}, '', path);
     }
 
+    const isKnown = basePath in routes;
+    const fragment = isKnown
+      ? routes[basePath]
+      : '/content/404.html';
+
     // Load new content
-    fetch(routes[basePath] || routes['/'])
-        .then(r => r.text())
-        .then(async html => {
-            container.innerHTML = html;
-            updateActiveNav(basePath);
+    fetch(fragment)
+      .then(r => r.text())
+      .then(async html => {
+        container.innerHTML = html;
+        ;updateActiveNav(isKnown ? basePath : null);
             
             // Initialize based on route
-            let pageTitle = 'Quantapus';
-            if (basePath === '/roadmap') {
-                pageTitle = 'Roadmap'
-                window.currentCleanup = initRoadmap();
-            } else if (basePath === '/problem') {
-                pageTitle = 'Problem'
-                const urlParams = new URLSearchParams(window.location.search);
-                const problemId = urlParams.get('id');
-                window.currentCleanup = initProblem(problemId); 
-            } else if (basePath === '/problems'){
-                pageTitle = 'Problems'
-                window.currentCleanup = await initProblems();
-            } else if (basePath === '/privacy'){
-                pageTitle = 'Privacy Policy'
-            } else if (basePath === '/terms'){
-                pageTitle = 'Terms Of Service'
-            } else if (basePath === '/account'){
-                pageTitle = 'Account'
-                window.currentCleanup = initAccount();
-            } else{
-                window.currentCleanup = initBackground();
-            }
+            let pageTitle = isKnown
+              ? 'Quantapus'
+              : 'Page Not Found';
+              if (isKnown) {
+                // your existing inits
+                if (basePath === '/roadmap') {
+                  pageTitle = 'Roadmap';
+                  window.currentCleanup = initRoadmap();
+                } else if (basePath === '/problem') {
+                  pageTitle = 'Problem';
+                  const id = new URLSearchParams(window.location.search).get('id');
+                  window.currentCleanup = initProblem(id);
+                } else if (basePath === '/problems') {
+                  pageTitle = 'Problems';
+                  window.currentCleanup = await initProblems();
+                } else if (basePath === '/account') {
+                  pageTitle = 'Account';
+                  window.currentCleanup = initAccount();
+                } else if (basePath === '/privacy') {
+                  pageTitle = 'Privacy Policy';
+                } else if (basePath === '/terms') {
+                  pageTitle = 'Terms Of Service';
+                } else {
+                  window.currentCleanup = initBackground();
+                }
+              } else {
+                window.currentCleanup = () => {};
+              }
 
             if (typeof gtag === 'function') {
                 gtag('event', 'page_view', {
