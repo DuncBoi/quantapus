@@ -69,88 +69,73 @@ const updateToInitials = (user) => {
 
 // Handle Sign-In
 googleLogin.addEventListener("click", async () => {
-    if (auth.currentUser) {
-      dropdownMenu.style.display = "block";
-      return;
-    }
-  
-    await Swal.fire({
-      title: 'Before you sign in…',
-      html: `
-        <div class="tos-content">
-          <p>Please read and agree to our
-      <a
-        href="#"
-        onclick="window.open(window.location.origin + '/terms', '_blank'); return false;"
-        style="color:#61a9f1; text-decoration:underline;"
-      >Terms of Service</a>
-      &amp
-      <a href="#"
-            onclick="window.open(window.location.origin + '/privacy', '_blank'); return false;"
-            style="color:#61a9f1; text-decoration:underline;"
-            >Privacy Policy</a>.
+  if (auth.currentUser) {
+    dropdownMenu.style.display = "block";
+    return;
+  }
+
+  await Swal.fire({
+    title: 'Before you sign in…',
+    html: `
+      <div class="tos-content">
+        <p>Please review our 
+          <a href="#"
+             onclick="window.open(window.location.origin + '/terms','_blank');return false;"
+             style="color:#61a9f1;text-decoration:underline;"
+          >Terms of Service</a>
+          &amp;
+          <a href="#"
+             onclick="window.open(window.location.origin + '/privacy','_blank');return false;"
+             style="color:#61a9f1;text-decoration:underline;"
+          >Privacy Policy</a>.
         </p>
-          <div class="tos-checkbox">
-            <input type="checkbox" id="tos-checkbox"/>
-            <label for="tos-checkbox">I agree to the Terms of Service &amp; Privacy Policy</label>
-          </div>
-          <button id="swal-google-signin" class="swal2-styled" disabled>
-            <i class="fab fa-google" style="font-size:18px; margin-right:8px;"></i>
-            Sign in with Google
+        <button id="swal-google-signin" class="swal2-styled">
+          <i class="fab fa-google" style="font-size:18px;margin-right:8px;"></i>
+          Sign in with Google
         </button>
-        </div>
-      `,
-      showConfirmButton: false,
-      showCancelButton: false,
-      background: '#24252A',
-      color:      '#e0e0e0',
-      backdrop:   'rgba(0,0,0,0.8)',
-      icon: 'info',
-  
-      didOpen: () => {
-        const popup    = Swal.getPopup();
-        const checkbox = popup.querySelector('#tos-checkbox');
-        const btn      = popup.querySelector('#swal-google-signin');
-  
-        // wire up enable/disable
-        checkbox.addEventListener('change', () => {
-          btn.disabled      = !checkbox.checked;
-          btn.style.opacity = checkbox.checked ? '1' : '0.4';
-        });
-  
-        btn.addEventListener('click', async () => {
-          Swal.close();
-  
-          try {
-            const result = await signInWithPopup(auth, provider);
-            console.log("User signed in:", result.user);
-            updateToInitials(result.user);
-  
-            const uid = result.user.uid;
-            const token = await result.user.getIdToken();
-  
-            const response = await fetch('https://api.quantapus.com/log-user', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-              },
-              body: JSON.stringify({ uid }),
-            });
-  
-            if (response.status === 429) {
-              notyf.error('API Rate Limit Hit.');
-              return;
-            }
-            if (response.ok) console.log('User UID logged in backend');
-  
-          } catch (error) {
-            console.error("Error during sign-in:", error);
+      </div>
+    `,
+    showConfirmButton: false,
+    showCancelButton: false,
+    background: '#24252A',
+    color:      '#e0e0e0',
+    backdrop:   'rgba(0,0,0,0.8)',
+    icon: 'info',
+
+    didOpen: () => {
+      const popup = Swal.getPopup();
+      const btn   = popup.querySelector('#swal-google-signin');
+
+      btn.addEventListener('click', async () => {
+        Swal.close();
+        try {
+          const result = await signInWithPopup(auth, provider);
+          updateToInitials(result.user);
+
+          const uid   = result.user.uid;
+          const token = await result.user.getIdToken();
+          const response = await fetch('https://api.quantapus.com/log-user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ uid }),
+          });
+
+          if (response.status === 429) {
+            notyf.error('API Rate Limit Hit.');
+            return;
           }
-        });
-      }
-    });
-});  
+          if (response.ok) console.log('User UID logged in backend');
+        } catch (error) {
+          console.error("Error during sign-in:", error);
+        }
+      });
+    }
+  });
+});
+
 
 googleLogin.addEventListener("mouseenter", function () {
     if (auth.currentUser) {

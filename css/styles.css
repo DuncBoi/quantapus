@@ -1069,34 +1069,6 @@
   line-height: 1.5;
 }
 
-/* horizontal row for the two links */
-.tos-links {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;            /* space between links */
-  margin: 1rem 0 0.5rem;
-}
-
-.tos-links a {
-  color: #61a9f1;       /* your brand blue */
-  text-decoration: none;
-  font-weight: 500;
-}
-
-/* rest of your existing styles… */
-.tos-checkbox {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 1rem;
-}
-.tos-checkbox input {
-  width: 1.25em;
-  height: 1.25em;
-  accent-color: #61a9f1;
-  margin-right: 0.5rem;
-}
-
 #swal-google-signin {
   display: flex;
   align-items: center;
@@ -1112,13 +1084,11 @@
   transition: opacity 0.2s ease;
 }
 
-/* Disabled state */
 #swal-google-signin:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-/* Icon size override (optional) */
 #swal-google-signin .fa-google {
   font-size: 1.25rem;
 }
