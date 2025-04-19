@@ -30,6 +30,7 @@ const signOutLink = document.getElementById("signOutLink");
 accountLink.addEventListener("click", function(e) {
     e.preventDefault();
     window.handleNavigation('/account');
+    hideDropdown();
   });
 
 // Persist Sign-In State on Page Refresh
@@ -167,6 +168,7 @@ signOutLink.addEventListener("click", function(event) {
     }).catch(error => {
         console.error("Error signing out:", error);
     });
+    hideDropdown();
 });
 
 window.triggerSignOut = () => {

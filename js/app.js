@@ -53,8 +53,8 @@ function handleNavigation(path) {
                   pageTitle = 'Roadmap';
                   window.currentCleanup = initRoadmap();
                 } else if (basePath === '/problem') {
-                  pageTitle = 'Problem';
                   const id = new URLSearchParams(window.location.search).get('id');
+                  pageTitle = `Problem #${id}`;
                   window.currentCleanup = initProblem(id);
                 } else if (basePath === '/problems') {
                   pageTitle = 'Problems';
@@ -71,6 +71,10 @@ function handleNavigation(path) {
                 }
               } else {
                 window.currentCleanup = () => {};
+              }
+              
+              if (basePath !== '/problem'){
+                document.title = `${pageTitle}`;
               }
 
             if (typeof gtag === 'function') {

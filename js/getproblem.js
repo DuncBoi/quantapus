@@ -8,7 +8,8 @@ async function fetchProblemDetails(id) {
   container.innerHTML = `<div class="loading-container"><div class="loading-spinner"></div></div>`;
 
   try {
-      await window.loadProblems()
+      await window.loadProblems();
+      document.title = window.problemMap?.[id].title;
       console.log(`Using problem #${id} from global cache`);
       renderProblemDetails(window.problemMap[id]);
   } catch (error) {
