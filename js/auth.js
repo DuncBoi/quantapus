@@ -5,7 +5,7 @@ const notyf = new Notyf();
 
 const firebaseConfig = {
     apiKey: "AIzaSyAOSxXEAlWwuvWqWbNCVDBSjvFepVgn8jc",
-    authDomain: "qp-auth-d9e52.firebaseapp.com",
+    authDomain: "auth.quantapus.com",
     projectId: "qp-auth-d9e52",
     storageBucket: "qp-auth-d9e52.firebasestorage.app",
     messagingSenderId: "119036334637",
