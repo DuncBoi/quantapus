@@ -1,3 +1,6 @@
+import renderMathInElement from 'https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.mjs';
+import 'https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/copy-tex.mjs';
+
 const notyf = new Notyf();
 
   const delimiters = [
@@ -94,8 +97,8 @@ function renderProblemDetails(problem) {
                 </div>
             `;
 
-    window.katexRender(problemDetailsContainer, { delimiters });
-    
+    renderMathInElement(problemDetailsContainer, { delimiters });
+
     // Render comma-separated, clickable category tags
     const categoryContainer = document.getElementById('category-container');
     const rawCategory = problem.category || 'Uncategorized';
