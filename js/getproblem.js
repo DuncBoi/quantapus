@@ -1,5 +1,12 @@
 const notyf = new Notyf();
 
+  const delimiters = [
+    { left: '$$', right: '$$', display: true },
+    { left: '$',  right: '$',  display: false },
+    { left: '\\[', right: '\\]', display: true },
+    { left: '\\(', right: '\\)', display: false }
+  ];
+
 // Fetch the problem details from the backend
 async function fetchProblemDetails(id) {
   const container = document.getElementById('problem-details');
@@ -9,13 +16,23 @@ async function fetchProblemDetails(id) {
 
   try {
       await window.loadProblems();
-      document.title = window.problemMap?.[id].title;
-      console.log(`Using problem #${id} from global cache`);
-      renderProblemDetails(window.problemMap[id]);
   } catch (error) {
       console.error('Error fetching problem details:', error);
       renderError('Failed to load problem details.');
   }
+  const problem = window.problemMap?.[id];
+    if (!problem) {
+        console.error(`No problem found with id=${id}`);
+        return renderError('Problem not found.');
+    }
+
+    document.title = problem.title || 'Quantapus';
+    try {
+        renderProblemDetails(problem);
+    } catch (err) {
+        console.error('Error rendering problem details:', err);
+        return renderError('Failed to render problem details.');
+    }
 }
 
 // Render the problem details
@@ -77,8 +94,8 @@ function renderProblemDetails(problem) {
                 </div>
             `;
 
-    MathJax.typeset();
-
+    window.katexRender(problemDetailsContainer, { delimiters });
+    
     // Render comma-separated, clickable category tags
     const categoryContainer = document.getElementById('category-container');
     const rawCategory = problem.category || 'Uncategorized';
@@ -124,7 +141,6 @@ function renderProblemDetails(problem) {
     solutionButton.addEventListener('click', () => {
         solutionSection.classList.toggle('hidden');
         solutionButton.textContent = solutionSection.classList.contains('hidden') ? 'Show Solution' : 'Hide Solution';
-        MathJax.typeset();
     });
 
     const backButton = document.querySelector('.back-button-inline');

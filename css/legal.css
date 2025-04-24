@@ -122,7 +122,7 @@
   margin-top: 2rem;
 }
 
-button {
+accButton {
   flex: 1;
   padding: 0.75rem 1.25rem;
   font-size: 1rem;
@@ -133,31 +133,31 @@ button {
   box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
-button:hover {
+accButton:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.6);
 }
 
-button:active {
+accButton:active {
   transform: translateY(0);
   box-shadow: 0 3px 8px rgba(0,0,0,0.4);
 }
 
-button.reset {
+accButton.reset {
   background: #61a9f1;
   color: #24252A;
 }
 
-button.reset:hover {
+accButton.reset:hover {
   background: #79baf5;
 }
 
-button.delete {
+accButton.delete {
   background: #e55353;
   color: #fff;
 }
 
-button.delete:hover {
+accButton.delete:hover {
   background: #ee6e6e;
 }
 
@@ -166,7 +166,7 @@ button.delete:hover {
   .account-inner {
     padding: 1.5rem 1rem;
   }
-  button {
+  legal_button {
     font-size: 0.9rem;
     padding: 0.6rem 0.8rem;
   }

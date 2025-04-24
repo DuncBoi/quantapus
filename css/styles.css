@@ -475,11 +475,13 @@
  
  #explanation {
    background-color: rgba(0, 0, 0, 0.2);
-   padding: 10px;
+   font-family: "Roboto Flex";
+   padding: 15px;
+   font-weight: 400;
    border-radius: 5px;
    box-shadow: 0 4px 8px rgba(0, 0, 0, .8);
    width: 100%;
-   font-size: 1.5rem;
+   font-size: 1.75rem;
    overflow-x: auto;
    overflow-y: hidden;
  }
@@ -528,6 +530,7 @@
  #solution-code {
    font-family: 'Roboto Flex', sans-serif;
    font-size: 2rem;
+   font-weight: 600;
    color: #edf0f1;
    white-space: normal;
    text-align: left;
@@ -1086,6 +1089,15 @@
 
 #swal-google-signin .fa-google {
   font-size: 1.25rem;
+}
+
+.katex,
+.katex-display {
+  font: inherit !important;
+}
+
+.katex-display .mfrac .frac-line {
+  transform: translateY(-0.1em) !important;
 }
 
 
