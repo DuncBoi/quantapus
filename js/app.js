@@ -130,6 +130,7 @@ async function loadCompletion() {
         window.completedSetPopulated = true;
     } catch (e) {
         console.error('Failed to load user completion data:', e);
+        notyf.error('Something went wrong.');
     }
 }
 

@@ -73,7 +73,7 @@
   justify-content: center;
   min-height: 100vh;
   padding: 2rem;
-  background: #1f1f24; /* a shade darker behind the card */
+  background: #1f1f24; 
 }
 
 .account-inner {
@@ -122,10 +122,11 @@
   margin-top: 2rem;
 }
 
-accButton {
+.accButton {
   flex: 1;
   padding: 0.75rem 1.25rem;
   font-size: 1rem;
+  font-weight: 500;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -133,32 +134,24 @@ accButton {
   box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
-accButton:hover {
+.accButton:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.6);
 }
 
-accButton:active {
+.accButton:active {
   transform: translateY(0);
   box-shadow: 0 3px 8px rgba(0,0,0,0.4);
 }
 
-accButton.reset {
+.accButton.reset {
   background: #61a9f1;
   color: #24252A;
 }
 
-accButton.reset:hover {
-  background: #79baf5;
-}
-
-accButton.delete {
+.accButton.delete {
   background: #e55353;
   color: #fff;
-}
-
-accButton.delete:hover {
-  background: #ee6e6e;
 }
 
 /* small responsive tweak */

@@ -91,7 +91,7 @@ googleLogin.addEventListener("click", async () => {
           >Privacy Policy</a>.
         </p>
         <button id="swal-google-signin" class="swal2-styled">
-          <i class="fab fa-google" style="font-size:18px;margin-right:8px;"></i>
+          <i class="fab fa-google" style="font-size:30px;margin-right:8px;"></i>
           Sign in with Google
         </button>
       </div>

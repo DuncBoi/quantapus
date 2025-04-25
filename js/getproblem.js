@@ -1,5 +1,4 @@
 import renderMathInElement from 'https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.mjs';
-import 'https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/copy-tex.mjs';
 
 const notyf = new Notyf();
 
@@ -53,7 +52,6 @@ function renderProblemDetails(problem) {
                         <span class="problem-id" style="font-size: 3rem; "> #${problem.id}</span>
                         <span class="title-colon">:</span> ${problem.title || 'Untitled'}
                     </h1>
-                        <button class="back-button-inline">← Back</button>
                     </div>
 
                     <!-- Difficulty and Category -->
@@ -144,12 +142,6 @@ function renderProblemDetails(problem) {
     solutionButton.addEventListener('click', () => {
         solutionSection.classList.toggle('hidden');
         solutionButton.textContent = solutionSection.classList.contains('hidden') ? 'Show Solution' : 'Hide Solution';
-    });
-
-    const backButton = document.querySelector('.back-button-inline');
-    backButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        window.history.back(); // Use browser history
     });
 }
 

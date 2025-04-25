@@ -13,6 +13,27 @@ const CustomNode = ({ data }) => {
     );
 };
 
+function updateSubcategoryBorders() {
+    document.querySelectorAll('.subcategory-group').forEach(groupEl => {
+      const subcat = groupEl
+        .querySelector('.subcategory-header')
+        .textContent.trim();
+  
+      // find all the problem‐divs underneath this group
+      const problems = Array.from(
+        groupEl.querySelectorAll('.problem')
+      ).map(div => {
+        return Number(div.querySelector('.problem-id').textContent.replace('#',''));
+      });
+      console.log("problems to update", problems);
+        const allDone = problems.every(id => window.completedSet.has(id));
+        console.log("alldone: ", allDone);
+  
+      groupEl.classList.toggle('completed', allDone);
+    });
+  }
+  
+
 // 2. Flow Component with Modal
 function Flow() {
     const [selectedNode, setSelectedNode] = React.useState(null);
@@ -21,6 +42,7 @@ function Flow() {
     const [error, setError] = React.useState(null);
     const [nodes, setNodes] = React.useState(initialNodes); 
     const [completedCount, setCompletedCount] = React.useState(0);
+    const [animate, setAnimate] = React.useState(false);
 
     async function fetchProgress() {
         await window.loadProblems(); 
@@ -71,6 +93,26 @@ function Flow() {
         return () => window.removeEventListener("refreshProgressInReactFlow", refresh);
     }, []);
 
+    React.useEffect(() => {
+        if (!selectedNode) return;
+        setAnimate(false);                        
+        requestAnimationFrame(() => setAnimate(true));
+      
+        // 1. initialize all the checkmarks
+        document.querySelectorAll('.problems-list .problem').forEach(problemDiv => {
+          const id = Number(
+            problemDiv
+              .querySelector('.problem-id')
+              .textContent.replace('#','')
+          );
+          const checkmark = problemDiv.querySelector('.checkmark');
+          checkmark.classList.toggle('completed', window.completedSet.has(id));
+        });
+      
+        // 2. update the subcategory borders
+        updateSubcategoryBorders();
+      }, [selectedNode, problems]);
+
     const handleNodeClick = async (node) => {
         setSelectedNode(node);
         setLoading(true);
@@ -92,26 +134,22 @@ function Flow() {
             ), 0);
     
             setCompletedCount(count);
-
-            setTimeout(() => {
-                document.querySelectorAll('.problems-list .problem').forEach(problemDiv => {
-                    const idSpan = problemDiv.querySelector('.problem-id');
-                    if (!idSpan) return;
-    
-                    const problemId = Number(idSpan.textContent.replace("#", ""));
-                    const checkmark = problemDiv.querySelector('.checkmark');
-    
-                    const isCompleted = window.completedSet.has(problemId);
-                    checkmark.classList.toggle('completed', isCompleted);
-                });
-            }, 0);
     
         } catch (err) {
-            setError(err.message);
+            setError("Failed to Load Problems");
         } finally {
             setLoading(false);
         }
     };    
+
+    const groupedProblems = React.useMemo(() => {
+        return problems.reduce((acc, p) => {
+        const sub = p.subcategory || 'Uncategorized';
+        if (!acc[sub]) acc[sub] = [];
+        acc[sub].push(p);
+        return acc;
+        }, {});
+    }, [problems]);
 
     return React.createElement(React.Fragment, null,
         React.createElement(ReactFlow, {
@@ -127,7 +165,7 @@ function Flow() {
             onClick: () => setSelectedNode(null)
         },
             React.createElement('div', { 
-                className: 'modal-content',
+                className: `modal-content ${animate ? "animate-in" : ""}`,
                 onClick: (e) => e.stopPropagation()
             },
                 React.createElement('button', {
@@ -150,19 +188,23 @@ function Flow() {
                 ),                
                                 
                 React.createElement('div', { className: 'problems-list' },
-                    loading && React.createElement('div', { className: 'loading-container' },
+                    (loading || problems === null) && React.createElement('div', { className: 'loading-container' },
                         React.createElement('div', { className: 'loading-spinner' })
                     ),
                     error && React.createElement('div', { className: 'error-message' }, error),
                     !loading && !error && problems.length === 0 && 
                         React.createElement('p', { className: 'empty-state' }, 'No problems found'),
                     
-                    !loading && !error && problems.map(problem => 
-                        React.createElement('div', {
-                            key: problem.id,
-                            className: 'problem',
-                            onClick: () => window.handleNavigation(`/problem?id=${problem.id}`)
-                        },
+                    !loading && !error && Object.entries(groupedProblems).map(([subcat, group]) =>
+                        React.createElement('div', { key: subcat, className: 'subcategory-group' },
+                        React.createElement('h3', { className: 'subcategory-header' }, subcat),
+
+                        group.map(problem =>
+                            React.createElement('div', {
+                                key: problem.id,
+                                className: 'problem',
+                                onClick: () => window.handleNavigation(`/problem?id=${problem.id}`)
+                            },
                             React.createElement('div', { className: 'problem-left' },
                                 React.createElement('div', { 
                                     className: 'checkmark-box',
@@ -174,6 +216,8 @@ function Flow() {
                                         if (window.currentUser){
                                             checkmark.classList.toggle('completed', nowCompleted);
                                             setCompletedCount(prev => prev + (nowCompleted ? 1 : -1));
+
+                                            updateSubcategoryBorders();
                                     
                                             // Immediately update node progress visually
                                             setNodes(prevNodes =>
@@ -208,9 +252,10 @@ function Flow() {
                         )
                     )
                 )
+            ))
             )
         )
-    );
+    )
 }
 
 // 3. Nodes Setup
