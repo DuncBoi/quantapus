@@ -8,7 +8,8 @@ const routes = {
     '/problems': '/content/allproblems.html',
     '/account': '/content/account.html',
     '/privacy': '/content/privacy.html',
-    '/terms': '/content/terms.html'
+    '/terms': '/content/terms.html',
+    '/contact': '/content/contact.html'
 };
 
 function handleNavigation(path) {
@@ -46,7 +47,7 @@ function handleNavigation(path) {
             // Initialize based on route
             let pageTitle = isKnown
               ? 'Quantapus'
-              : 'Page Not Found';
+              : '404';
               if (isKnown) {
                 // your existing inits
                 if (basePath === '/roadmap') {
@@ -66,7 +67,10 @@ function handleNavigation(path) {
                   pageTitle = 'Privacy Policy';
                 } else if (basePath === '/terms') {
                   pageTitle = 'Terms Of Service';
-                } else {
+                } else if (basePath === '/contact') {
+                  pageTitle = 'Contact';
+                }
+                else {
                   window.currentCleanup = initBackground();
                 }
               } else {
@@ -283,6 +287,15 @@ document.addEventListener('click', e => {
               .forEach(m => m.classList.remove('show'));
     }
   });
+
+  async function flushNow() {
+    if (!window.currentUser || !Object.keys(window.pendingToggles).length) return;
+    clearTimeout(window.toggleDebounceTimer);
+    await flushToggleBatch();
+  }
+  
+  window.addEventListener('beforeunload', flushNow);
+  
   
 
   

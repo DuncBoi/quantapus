@@ -70,12 +70,10 @@ function renderProblemDetails(problem) {
 
                     <!-- Solution and Explanation (Hidden by Default) -->
                     <div id="solution" class="solution hidden">
-                        <h2>Solution</h2>
                         <p id="solution-code">
                              ${problem.solution} 
                         </p>
 
-                        <h2>Explanation</h2>
                         <p id="explanation">${problem.explanation || 'No explanation available.'}</p>
 
                         <!-- YouTube Link (Embedded Video) -->

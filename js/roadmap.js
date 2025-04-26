@@ -287,7 +287,7 @@ const initialEdges = [
         target: '2',
         animated: true,
         style: { stroke: 'white', strokeWidth: 2 },
-        markerEnd: { type: 'arrowclosed', color: 'white' }
+        markerEnd: { type: 'arrowclosed', color: 'white'}
     },
     {
         id: 'e1-3',
