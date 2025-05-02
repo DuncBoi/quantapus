@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<div class="management-section">
+    <h2>Manage Existing Problems</h2>
+    
+    <div class="form-group">
+        <label>Problem ID:</label>
+        <input type="number" id="manage-id" min="1">
+        <button id="manage-load-btn" type="button">Load</button>
+        <button id="manage-delete-btn" type="button" class="delete-btn">Delete</button>
+    </div>
+</div>
+
+<style>
+    body {
+      margin-top: 70px;     
+      margin-left: 30px;
+      margin-right: 30px;
+      margin-bottom: 70px;     
+      background: #f4f5f7;      
+      color: #333;             
+    }
+
+    h1, h2 {
+      color: #2c3e50;
+      margin-bottom: 0.5em;
+    }
+
+    .management-section,
+    #problem-form {
+      background: #ffffff;
+      border: 1px solid #dde1e4;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .management-section h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #34495e;
+    }
+    .form-group input[type="text"],
+    .form-group input[type="number"],
+    .form-group input[type="password"],
+    .form-group input[type="url"],
+    .form-group select,
+    .form-group textarea {
+      padding: 10px 12px;
+      border: 1px solid #ccd1d9;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #61a9f1;
+      outline: none;
+    }
+
+    button {
+      background: #61a9f1;
+      color: #fff;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: background 0.2s, transform 0.1s;
+    }
+    button:hover {
+      background: #4a8fd6;
+      transform: translateY(-1px);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+
+    .delete-btn {
+      background: #e74c3c !important;
+      margin-left: 8px;
+    }
+    .delete-btn:hover {
+      background: #c0392b !important;
+    }
+
+  </style>
+</head>
+<body>
+    <h1>Problem Submission Form</h1>
+    
+    <form id="problem-form">
+        <!-- Authentication -->
+        <div class="form-group">
+            <label for="secretKey">Secret Key:</label>
+            <input type="password" id="secretKey" name="secretKey" required>
+        </div>
+
+        <!-- Problem Metadata -->
+        <div class="form-group">
+            <label for="id">Problem ID:</label>
+            <input type="number" id="id" name="id" required min="1">
+        </div>
+
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+
+        <div class="form-group">
+            <label for="difficulty">Difficulty:</label>
+            <select id="difficulty" name="difficulty" required>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <input type="text" id="category" name="category" required>
+        </div>
+
+        <!-- Problem Content -->
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="5" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="solution">Solution:</label>
+            <input type="text" id="solution" name="solution" required>
+        </div>
+
+        <div class="form-group">
+            <label for="explanation">Explanation:</label>
+            <textarea id="explanation" name="explanation" rows="20" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="yt_link">YouTube Link (optional):</label>
+            <input type="url" id="yt_link" name="yt_link">
+        </div>
+
+        <div class="form-group">
+            <label for="roadmap">Roadmap Category:</label>
+            <input type="text" id="roadmap" name="roadmap" maxlength="50">
+        </div>
+
+        <div class="form-group">
+            <label for="subcategory">Subcategory</label>
+            <input type="text" id="subcategory" name="subcategory" maxlength="100">
+        </div>
+
+        <div class="form-group">
+            <label for="subcategory_order">Subcategory Order:</label>
+            <input type="number" id="subcategory_order" name="subcategory_order" min="0">
+        </div>
+
+        <div class="form-group">
+            <label for="subcategory_rank">Subcategory Rank (order of problem within subcat):</label>
+            <input type="number" id="subcategory_rank" name="subcategory_rank" min="0">
+        </div>
+
+        <div class="form-group">
+            <label for="update-mode">
+                <input type="checkbox" id="updateMode" name="updateMode"> Update Existing Problem
+            </label>
+        </div>
+
+        <button type="submit">Submit Problem</button>
+        
+    </form>
+
+    <section id="ordering-panel"></section>
+
+</body>
+</html>

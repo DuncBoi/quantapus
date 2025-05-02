@@ -1,13 +1,60 @@
 import renderMathInElement from 'https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.mjs';
 
-const notyf = new Notyf();
-
   const delimiters = [
     { left: '$$', right: '$$', display: true },
     { left: '$',  right: '$',  display: false },
     { left: '\\[', right: '\\]', display: true },
     { left: '\\(', right: '\\)', display: false }
   ];
+
+  function goTo(offset) {
+    const rd = window.__rd;
+    rd.idx = Math.max(0, Math.min(rd.ids.length-1, rd.idx + offset));
+    rd.currentId = rd.ids[rd.idx];
+    sessionStorage.setItem('roadmapCtx', JSON.stringify(rd));
+  
+    history.pushState(null, '', `/problem?id=${rd.currentId}`);
+  
+    fetchProblemDetails(rd.currentId)
+      .then(() => {
+        wireHeaderButtons();
+      });
+  }
+
+  function wireHeaderButtons() {
+    const rd = window.__rd;
+    if (rd.ids.length === 0) return;
+    const total   = rd.ids.length;
+    const current = rd.idx;
+  
+    const back  = document.getElementById('back-btn');
+    const next  = document.getElementById('next-btn');
+    const title = document.querySelector('.topic-name');
+    const header = document.querySelector('.header-title')
+    const prog  = document.querySelector('.progress-counter');
+  
+    // Show header now that we have context
+    document.getElementById('problem-header-container').style.display = '';
+    document.body.classList.add('with-header');
+  
+    // inject topic & (current/total)
+    title.textContent = rd.topic;
+    prog.textContent  = `(${current+1}/${total})`;
+  
+    // enable/disable
+    back.disabled = current <= 0;
+    next.disabled = current >= total - 1;
+  
+    // re-bind
+    back.onclick  = () => goTo(-1);
+    next.onclick  = () => goTo(+1);
+    header.onclick = () => {
+        const key = encodeURIComponent(window.__rd.topic);
+        history.pushState(null, '', `/roadmap?open=${key}`);
+        window.handleNavigation(`/roadmap?open=${key}`);
+    }
+  }
+  
 
 // Fetch the problem details from the backend
 async function fetchProblemDetails(id) {
@@ -40,8 +87,9 @@ async function fetchProblemDetails(id) {
 // Render the problem details
 function renderProblemDetails(problem) {
     const problemDetailsContainer = document.getElementById('problem-details');
+
     problemDetailsContainer.innerHTML = `
-                <div class="problem-container">
+            <div class="problem-container">
                     <!-- Problem Title -->
                     <div class="title-container">
                     <h1 id="problem-title">
@@ -94,6 +142,8 @@ function renderProblemDetails(problem) {
             `;
 
     renderMathInElement(problemDetailsContainer, { delimiters });
+
+    wireHeaderButtons();
 
     // Render comma-separated, clickable category tags
     const categoryContainer = document.getElementById('category-container');
@@ -159,6 +209,11 @@ function renderError(message) {
 }
 
 window.initProblem = function(problemId) {
+    const raw = sessionStorage.getItem('roadmapCtx');
+    window.__rd = raw
+        ? JSON.parse(raw)
+        : { ids: [], idx: -1, topic: '' };
+
     if (problemId) {
         fetchProblemDetails(problemId);
     } else {
@@ -168,8 +223,10 @@ window.initProblem = function(problemId) {
     const onSignedIn = () => updateProblemCompletion(problemId);
     window.addEventListener("userSignedIn", onSignedIn);
     return () => {
+        document.getElementById('problem-header-container').style.display = 'none';
+        document.body.classList.remove('with-header');
         window.removeEventListener("userSignedIn", onSignedIn);
     };
-    
 };
+
 

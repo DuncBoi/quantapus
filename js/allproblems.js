@@ -202,6 +202,7 @@ function renderProblems(problems) {
 
     problemDiv.addEventListener('click', (e) => {
       e.preventDefault();
+      sessionStorage.removeItem('roadmapCtx');
       window.handleNavigation(`/problem?id=${problem.id}`);
     });
 

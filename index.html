@@ -32,6 +32,7 @@
     <script type="module" src="js/roadmap.js"></script>
     <script type="module" src="js/getproblem.js"></script>
     <script type="module" src="js/account.js"></script>
+    <script type="module" src="js/admin.js"></script>
 
 </head>
 <body>
@@ -60,6 +61,18 @@
             </div>
         </div>
     </nav>
+
+    <section id="problem-header-container" style="display:none">
+        <div class="problem-header">
+          <button id="back-btn" class="nav-arrow" aria-label="Back">‹</button>
+          <div class="header-title">
+            <span class="topic-name"></span>
+            <span class="progress-counter"></span>
+          </div>
+          <button id="next-btn" class="nav-arrow" aria-label="Next">›</button>
+        </div>
+      </section>
+      
 
     <!-- Dynamic Content Container -->
     <div id="content-container"></div>

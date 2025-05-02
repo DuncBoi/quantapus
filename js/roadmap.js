@@ -15,19 +15,13 @@ const CustomNode = ({ data }) => {
 
 function updateSubcategoryBorders() {
     document.querySelectorAll('.subcategory-group').forEach(groupEl => {
-      const subcat = groupEl
-        .querySelector('.subcategory-header')
-        .textContent.trim();
-  
       // find all the problem‐divs underneath this group
       const problems = Array.from(
         groupEl.querySelectorAll('.problem')
       ).map(div => {
         return Number(div.querySelector('.problem-id').textContent.replace('#',''));
       });
-      console.log("problems to update", problems);
         const allDone = problems.every(id => window.completedSet.has(id));
-        console.log("alldone: ", allDone);
   
       groupEl.classList.toggle('completed', allDone);
     });
@@ -43,6 +37,17 @@ function Flow() {
     const [nodes, setNodes] = React.useState(initialNodes); 
     const [completedCount, setCompletedCount] = React.useState(0);
     const [animate, setAnimate] = React.useState(false);
+    
+    React.useEffect(() => {
+        if (window.__initialOpenTopic) {
+          const topic = window.__initialOpenTopic.toLowerCase();
+          const match = nodes.find(n => n.data.label.toLowerCase() === topic);
+          if (match) {
+            handleNodeClick(match);
+          }
+          delete window.__initialOpenTopic;
+        }
+      }, []);
 
     async function fetchProgress() {
         await window.loadProblems(); 
@@ -121,10 +126,16 @@ function Flow() {
         try {    
             const topic = node.data.label.toLowerCase();
     
-            // Use cached problems from window.cachedProblems directly
             const problems = window.cachedProblems
                 .filter(p => (p.roadmap || '').toLowerCase() === topic)
-                .sort((a, b) => a.roadmap_num - b.roadmap_num);
+                .sort((a, b) => {
+                // 1) sort by subcategory_order
+                if (a.subcategory_order !== b.subcategory_order) {
+                    return a.subcategory_order - b.subcategory_order;
+                }
+                // 2) if same subcategory, sort by your subcategory_rank
+                return a.subcategory_rank - b.subcategory_rank;
+            });
 
             setProblems(problems);
     
@@ -203,7 +214,15 @@ function Flow() {
                             React.createElement('div', {
                                 key: problem.id,
                                 className: 'problem',
-                                onClick: () => window.handleNavigation(`/problem?id=${problem.id}`)
+                                onClick: () => {
+                                    const ctx = {
+                                        ids:    problems.map(p => p.id),
+                                        idx:    problems.findIndex(p => p.id === problem.id),
+                                        topic:  selectedNode.data.label
+                                    };
+                                    sessionStorage.setItem('roadmapCtx', JSON.stringify(ctx));
+                                    window.handleNavigation(`/problem?id=${problem.id}`)
+                                }
                             },
                             React.createElement('div', { className: 'problem-left' },
                                 React.createElement('div', { 
@@ -270,14 +289,20 @@ const initialNodes = [
         id: '2', 
         type: 'customNode', 
         position: { x: 0, y: 300 }, 
-        data: { label: 'Sets' } 
+        data: { label: 'Discrete Math' } 
     },
     { 
         id: '3', 
         type: 'customNode', 
         position: { x: 200, y: 300 }, 
-        data: { label: 'Conditional' } 
-    }
+        data: { label: 'Sets' } 
+    },
+    { 
+        id: '4', 
+        type: 'customNode', 
+        position: { x: 300, y: 500 }, 
+        data: { label: 'Combinatorics' } 
+    }, 
 ];
 
 const initialEdges = [
@@ -287,12 +312,20 @@ const initialEdges = [
         target: '2',
         animated: true,
         style: { stroke: 'white', strokeWidth: 2 },
-        markerEnd: { type: 'arrowclosed', color: 'white'}
+        markerEnd: { type: 'arrowclosed', color: 'white' }
     },
     {
         id: 'e1-3',
         source: '1',
         target: '3',
+        animated: true,
+        style: { stroke: 'white', strokeWidth: 2 },
+        markerEnd: { type: 'arrowclosed', color: 'white' }
+    },
+    {
+        id: 'e3-4',
+        source: '3',
+        target: '4',
         animated: true,
         style: { stroke: 'white', strokeWidth: 2 },
         markerEnd: { type: 'arrowclosed', color: 'white' }
@@ -320,6 +353,14 @@ window.initRoadmap = function() {
         const refreshEvent = new CustomEvent("refreshProgressInReactFlow");
         window.dispatchEvent(refreshEvent);
     };
+
+    const params = new URLSearchParams(window.location.search);
+    const toOpen = params.get('open');
+    if (toOpen) {
+        window.__initialOpenTopic = toOpen;
+        params.delete('open');
+        history.replaceState(null, '', window.location.pathname);
+    }
 
     window.addEventListener("userSignedIn", handleAuthChange);
 

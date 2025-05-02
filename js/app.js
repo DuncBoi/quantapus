@@ -9,7 +9,8 @@ const routes = {
     '/account': '/content/account.html',
     '/privacy': '/content/privacy.html',
     '/terms': '/content/terms.html',
-    '/contact': '/content/contact.html'
+    '/contact': '/content/contact.html',
+    '/admin': '/content/admin.html'
 };
 
 function handleNavigation(path) {
@@ -69,6 +70,9 @@ function handleNavigation(path) {
                   pageTitle = 'Terms Of Service';
                 } else if (basePath === '/contact') {
                   pageTitle = 'Contact';
+                } else if (basePath === '/admin') {
+                  pageTitle = 'Admin';
+                  window.currentCleanup = await initAdmin();
                 }
                 else {
                   window.currentCleanup = initBackground();
@@ -203,7 +207,6 @@ window.toggleCompletion = function(problemId) {
 // Event listener for Headers + Footers
 document.querySelectorAll('.nav-item').forEach(link => {
     link.addEventListener('click', (e) => {
-        console.log("nav item da bess");
         e.preventDefault();
         const path = new URL(e.target.href).pathname;
         handleNavigation(path);

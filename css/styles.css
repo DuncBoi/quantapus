@@ -268,8 +268,8 @@
    position: absolute;
    top: 100%;
    font-size: 2rem;
-   background-color: #2c2d33;     
-   border: 1px solid #394149;                                    
+   background-color: #1e1f26;     
+   border: 1px solid #1e1f26;                                    
    box-shadow: 0 4px 16px rgba(0, 0, 0, 1);
    border-radius: 8px;
    min-width: none;
@@ -381,6 +381,7 @@
   color: #fff;
   margin: 0 0.75rem;
   text-decoration: none;
+  font-weight: 600;
   font-size: 0.9rem;
 }
 
@@ -431,22 +432,82 @@
  /********************************************
   * PROBLEM DETAILS
   ********************************************/
+
+  #problem-header-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; 
+    margin-bottom: 20px;
+  }
+  
+  .problem-header {
+    display: inline-flex;       
+    align-items: center;
+    gap: 0.5rem;   
+    font-weight: 700;            
+    padding: 0.5rem 1rem;      
+    background: #24252A;
+    border: 2px solid #000;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+  }
+  
+  .nav-arrow {
+    background: transparent;
+    border: none;
+    color: #f0f2f5;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin: 0 0.75rem;
+    padding: 0.25rem;
+    transition: color 0.2s;
+  }
+  .nav-arrow:hover {
+    color: #61a9f1;
+  }
+  
+  .header-title {
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 1.35rem;
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+    background: #1e3353;
+    border: 2px solid #61a9f1;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+    color: #fff;
+  }
+
+  .header-title:hover {
+    transform: scale(1.05);    
+  }
+  
   .title-container h1 {
     display: flex;
     align-items: center;
+    font-weight: 800;
     gap: 10px;
     flex-wrap: wrap;
   }
   
  #problem-details {
    max-width: 95%;
-   margin: 40px auto;
+   margin: 30px auto;
+   border: 2px solid #000;
    padding: 30px;
    background-color: #2c2d33;
    border-radius: 12px;
    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
  }
- 
+
+ .with-header #content-container #problem-details {
+  margin-top: 0;
+}
+
  #problem-title {
    font-size: 3rem;
    margin-bottom: 15px;
@@ -475,7 +536,6 @@
   }
   
   .clickable-tag:hover {
-    color: #61a9f1;
     text-decoration: underline;
     transform: scale(1.05);
   }
@@ -564,10 +624,9 @@
    padding: 20px;
    overflow-y: hidden;
    overflow-x: auto;
-   border: 2px solid rgba(72, 126, 181, 0.8);
+   border: 1px solid rgba(72, 126, 181, 0.8);
    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
    position: relative;
-   animation: pulse-border 10s infinite;
  }
  
  /********************************************
@@ -579,6 +638,7 @@
    align-items: center;
    padding: 15px;
    margin: 10px auto;
+   border: 2px solid #000;
    width: 100%;
    background-color: #2c2d33;
    border-radius: 8px;
@@ -802,7 +862,7 @@
 
  .subcategory-group {
   background: rgba(0,0,0,0.3);
-  padding: 1.5rem 1.2rem 1.2rem 2rem;
+  padding: 1.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   border-radius: 8px;
   margin-bottom: 1.5rem;
@@ -810,30 +870,33 @@
   overflow: hidden; 
 }
 
-.subcategory-group::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 10px;   
-  height: 100%;
-  background: #5dd39e;
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 0.5s ease;
-}
-
-.subcategory-group.completed::before {
-  transform: scaleY(1);
-}
-
 .subcategory-header {
+  position: relative;
   font-size: 2rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
   color: #edf0f1;
   border-left: 4px solid #61a9f1;
   padding-left: 0.75rem;
+}
+
+.subcategory-header::after {
+  content: "";
+  position: absolute;
+  top:    0;
+  left:   -4px;     /* right on top of the 4px blue border */
+  width:  4px;      /* same thickness */
+  height: 100%;
+  background: #5dd39e;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.5s ease;
+  z-index: 1;       /* above the blue border */
+}
+
+/* 3) Only “grow” it when the group is marked completed */
+.subcategory-group.completed .subcategory-header::after {
+  transform: scaleY(1);
 }
 
 @keyframes zoomIn {
@@ -960,6 +1023,7 @@
    height: 6px;
    background: linear-gradient(90deg, #5dd39e 0%, #38b88f 100%);
    border-radius: 4px;
+   transition: width 0.5s ease-in-out;
    z-index: 2;
  }
  
@@ -1183,9 +1247,17 @@
   font: inherit !important;
 }
 
+/* inline mode */
+.katex .mfrac .frac-line {
+  transform: translateY(0em) !important;
+}
+
+/* display mode */
 .katex-display .mfrac .frac-line {
   transform: translateY(-0.1em) !important;
 }
+
+
 
 
  
