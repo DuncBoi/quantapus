@@ -8,14 +8,13 @@ const CustomNode = ({ data }) => {
         style: { '--progress': `${data.progress || 0}%` }
     },
         React.createElement(Handle, { type: "target", position: "top", className: "react-flow__handle-top" }),
-        React.createElement('div', { className: 'node-content' }, data.label),
+        React.createElement('div', { className: 'node-content' }, data.displayLabel ? data.displayLabel : data.label),
         React.createElement(Handle, { type: "source", position: "bottom", className: "react-flow__handle-bottom" })
     );
 };
 
 function updateSubcategoryBorders() {
     document.querySelectorAll('.subcategory-group').forEach(groupEl => {
-      // find all the problem‐divs underneath this group
       const problems = Array.from(
         groupEl.querySelectorAll('.problem')
       ).map(div => {
@@ -37,6 +36,19 @@ function Flow() {
     const [nodes, setNodes] = React.useState(initialNodes); 
     const [completedCount, setCompletedCount] = React.useState(0);
     const [animate, setAnimate] = React.useState(false);
+
+    const STORAGE_KEY = 'roadmapSubcatOpen';
+    const initialOpen = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    const [openMap, setOpenMap] = React.useState(initialOpen);
+
+    React.useEffect(() => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(openMap));
+      }, [openMap]);
+
+      const handleToggle = subcat => event => {
+        // event.target.open is the new boolean state
+        setOpenMap(m => ({ ...m, [subcat]: event.target.open }));
+      };
     
     React.useEffect(() => {
         if (window.__initialOpenTopic) {
@@ -163,13 +175,26 @@ function Flow() {
     }, [problems]);
 
     return React.createElement(React.Fragment, null,
+        React.createElement(
+            'div',
+            {
+              style: {
+                position: 'absolute',
+                top:    '75px',
+                bottom: '0px',      
+                left:   0,
+                right:  0
+              }
+            },
         React.createElement(ReactFlow, {
             nodes: nodes,
             edges: initialEdges,
             nodeTypes: { customNode: CustomNode },
             fitView: true,
+            minZoom: 0.4,
+            maxZoom: 5, 
             onNodeClick: (e, node) => handleNodeClick(node)
-        }),
+        })),
         
         selectedNode && React.createElement('div', { 
             className: 'modal-overlay',
@@ -207,9 +232,15 @@ function Flow() {
                         React.createElement('p', { className: 'empty-state' }, 'No problems found'),
                     
                     !loading && !error && Object.entries(groupedProblems).map(([subcat, group]) =>
-                        React.createElement('div', { key: subcat, className: 'subcategory-group' },
-                        React.createElement('h3', { className: 'subcategory-header' }, subcat),
-
+                      React.createElement(
+                        'details',
+                        { key: subcat, className: 'subcategory-group', open: openMap[subcat] ?? true, onToggle: handleToggle(subcat)  },
+                        React.createElement(
+                          'summary',
+                          { className: 'subcategory-header' },
+                          subcat, 
+                          React.createElement('span', { className: 'subcategory-check' }),
+                        ),
                         group.map(problem =>
                             React.createElement('div', {
                                 key: problem.id,
@@ -282,36 +313,66 @@ const initialNodes = [
     { 
         id: '1', 
         type: 'customNode', 
-        position: { x: 100, y: 100 }, 
+        position: { x: 0, y: 100 }, 
         data: { label: 'Brainteasers' } 
     },
     { 
         id: '2', 
         type: 'customNode', 
-        position: { x: 0, y: 300 }, 
-        data: { label: 'Discrete Math' } 
+        position: { x: -25, y: 400 }, 
+        data: { label: 'Proofs' } 
     },
     { 
         id: '3', 
         type: 'customNode', 
-        position: { x: 200, y: 300 }, 
+        position: { x: 137.5, y: 250}, 
         data: { label: 'Sets' } 
     },
     { 
         id: '4', 
         type: 'customNode', 
-        position: { x: 300, y: 500 }, 
+        position: { x: 300, y: 400 }, 
         data: { label: 'Combinatorics' } 
     }, 
+    { 
+        id: '5', 
+        type: 'customNode', 
+        position: { x: -200, y: 550 }, 
+        data: { label: 'Number Theory' } 
+    },
+    { 
+        id: '6', 
+        type: 'customNode', 
+        position: { x: 50, y: 700 }, 
+        data: { label: 'Discrete Distributions', displayLabel: 'Discrete Dists' } 
+    },
+    { 
+        id: '7', 
+        type: 'customNode', 
+        position: { x: 400, y: 550 }, 
+        data: { label: 'Advanced Combinatorics', displayLabel: 'Combinatorics 2' } 
+    },
+    { 
+        id: '8', 
+        type: 'customNode', 
+        position: { x: 200, y: 550 }, 
+        data: { label: 'Conditional Probability', displayLabel: 'Conditional' } 
+    },
+    { 
+        id: '9', 
+        type: 'customNode', 
+        position: { x: 350, y: 700 }, 
+        data: { label: 'Moments' } 
+    },
 ];
 
 const initialEdges = [
     {
-        id: 'e1-2',
-        source: '1',
+        id: 'e3-2',
+        source: '3',
         target: '2',
         animated: true,
-        style: { stroke: 'white', strokeWidth: 2 },
+        style: { stroke: 'white', strokeWidth: 2.5 },
         markerEnd: { type: 'arrowclosed', color: 'white' }
     },
     {
@@ -319,7 +380,7 @@ const initialEdges = [
         source: '1',
         target: '3',
         animated: true,
-        style: { stroke: 'white', strokeWidth: 2 },
+        style: { stroke: 'white', strokeWidth: 2.5 },
         markerEnd: { type: 'arrowclosed', color: 'white' }
     },
     {
@@ -327,7 +388,55 @@ const initialEdges = [
         source: '3',
         target: '4',
         animated: true,
-        style: { stroke: 'white', strokeWidth: 2 },
+        style: { stroke: 'white', strokeWidth: 2.5 },
+        markerEnd: { type: 'arrowclosed', color: 'white' }
+    },
+    {
+        id: 'e2-5',
+        source: '2',
+        target: '5',
+        animated: true,
+        style: { stroke: 'white', strokeWidth: 2.5 },
+        markerEnd: { type: 'arrowclosed', color: 'white' }
+    },
+    {
+        id: 'e8-6',
+        source: '8',
+        target: '6',
+        animated: true,
+        style: { stroke: 'white', strokeWidth: 2.5 },
+        markerEnd: { type: 'arrowclosed', color: 'white' }
+    },
+    {
+        id: 'e4-8',
+        source: '4',
+        target: '8',
+        animated: true,
+        style: { stroke: 'white', strokeWidth: 2.5 },
+        markerEnd: { type: 'arrowclosed', color: 'white' }
+    },
+    {
+        id: 'e4-7',
+        source: '4',
+        target: '7',
+        animated: true,
+        style: { stroke: 'white', strokeWidth: 2.5 },
+        markerEnd: { type: 'arrowclosed', color: 'white' }
+    },
+    {
+        id: 'e2-8',
+        source: '2',
+        target: '8',
+        animated: true,
+        style: { stroke: 'white', strokeWidth: 2.5 },
+        markerEnd: { type: 'arrowclosed', color: 'white' }
+    },
+    {
+        id: 'e8-9',
+        source: '8',
+        target: '9',
+        animated: true,
+        style: { stroke: 'white', strokeWidth: 2.5 },
         markerEnd: { type: 'arrowclosed', color: 'white' }
     }
 ];

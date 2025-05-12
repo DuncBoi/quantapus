@@ -220,6 +220,16 @@ window.initProblem = function(problemId) {
         renderError('No problem ID specified');
     }
 
+    window.addEventListener('popstate', (event) => {
+        if (!event.state) return;  
+        rd.idx = event.state.idx;
+        rd.currentId = rd.ids[rd.idx];
+        sessionStorage.setItem('roadmapCtx', JSON.stringify(rd));
+      
+        fetchProblemDetails(rd.currentId)
+          .then(wireHeaderButtons);
+      });
+
     const onSignedIn = () => updateProblemCompletion(problemId);
     window.addEventListener("userSignedIn", onSignedIn);
     return () => {
