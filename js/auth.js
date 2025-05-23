@@ -101,7 +101,9 @@ googleLogin.addEventListener("click", async () => {
     background: '#24252A',
     color:      '#e0e0e0',
     backdrop:   'rgba(0,0,0,0.8)',
-    icon: 'info',
+    imageUrl: '/images/logo.svg',
+    imageWidth: 115,
+    imageHeight: 115,
 
     didOpen: () => {
       const popup = Swal.getPopup();

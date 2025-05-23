@@ -24,6 +24,10 @@
   font-weight: 600 !important;
 }
 
+.swal2-popup .swal2-image {
+  margin-bottom: 0px !important;
+}
+
 .notyf, 
 .notyf__toast {
   font-family: inherit !important;
@@ -193,6 +197,7 @@
  
  .cta button {
    background: linear-gradient(90deg, #4848b5, #48b5b5);
+   background-size: 130% auto;
    border: none;
    padding: 12px;
    min-width: 45px;
@@ -1244,6 +1249,8 @@
   max-width: 260px;
   margin: 1.5rem auto 0;
   border-radius: 6px;
+  background: linear-gradient(145deg, #4848b5, #48b5b5);
+  background-size: 130% auto;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 

@@ -10,7 +10,6 @@ window.initBackground = function() {
     vantaInstance = VANTA.WAVES({
         el: "#vanta-bg",
         mouseControls: false,
-        touchControls: false,
         gyroControls: true,
         minHeight: 200.00,
         minWidth: 200.00,
@@ -18,8 +17,8 @@ window.initBackground = function() {
         scaleMobile: 1.00,
         shininess: 10.00,
         waveSpeed: 0.5,
-        waveHeight: 20,
-        zoom: 0.65,
+        waveHeight: 25,
+        zoom: 0.5,
         color: 0x24252A,
       })
 

@@ -100,6 +100,7 @@
   height: 96px;
   border-radius: 50%;
   background: linear-gradient(90deg, #4848b5, #48b5b5);
+  background-size: 130% auto;
   display: flex;
   align-items: center;
   justify-content: center;
