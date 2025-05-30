@@ -23,6 +23,10 @@ import renderMathInElement from 'https://cdn.jsdelivr.net/npm/katex@0.16.22/dist
 
   function wireHeaderButtons() {
     const rd = window.__rd;
+    if (rd.currentId === undefined) {
+      rd.currentId = rd.ids[rd.idx];
+    }
+    rd.idx = rd.ids.findIndex(id => id === rd.currentId);
     if (rd.ids.length === 0) return;
     const total   = rd.ids.length;
     const current = rd.idx;
@@ -220,15 +224,20 @@ window.initProblem = function(problemId) {
         renderError('No problem ID specified');
     }
 
-    window.addEventListener('popstate', (event) => {
-        if (!event.state) return;  
-        rd.idx = event.state.idx;
-        rd.currentId = rd.ids[rd.idx];
-        sessionStorage.setItem('roadmapCtx', JSON.stringify(rd));
-      
-        fetchProblemDetails(rd.currentId)
-          .then(wireHeaderButtons);
-      });
+    window.addEventListener('popstate', () => {
+      const rd = window.__rd;
+      const params = new URLSearchParams(window.location.search);
+      const id     = parseInt(params.get('id'), 10);
+      if (isNaN(id)) return;
+    
+      rd.currentId = id;
+      rd.idx       = rd.ids.findIndex(x => x === id);
+      sessionStorage.setItem('roadmapCtx', JSON.stringify(rd));
+    
+      fetchProblemDetails(rd.currentId)
+        .then(wireHeaderButtons);
+  });
+  
 
     const onSignedIn = () => updateProblemCompletion(problemId);
     window.addEventListener("userSignedIn", onSignedIn);

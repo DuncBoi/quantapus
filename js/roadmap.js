@@ -41,6 +41,15 @@ function Flow() {
     const initialOpen = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
     const [openMap, setOpenMap] = React.useState(initialOpen);
 
+    const hasPushed = React.useRef(false);
+
+    const closeModal = (justClose) => {
+        setSelectedNode(null);
+        const url = new URL(window.location);
+        url.searchParams.delete('open');
+        window.history.replaceState(null, '', url);        
+      };
+
     React.useEffect(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(openMap));
       }, [openMap]);
@@ -49,17 +58,32 @@ function Flow() {
         // event.target.open is the new boolean state
         setOpenMap(m => ({ ...m, [subcat]: event.target.open }));
       };
-    
-    React.useEffect(() => {
-        if (window.__initialOpenTopic) {
-          const topic = window.__initialOpenTopic.toLowerCase();
-          const match = nodes.find(n => n.data.label.toLowerCase() === topic);
-          if (match) {
-            handleNodeClick(match);
-          }
-          delete window.__initialOpenTopic;
+
+      React.useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const openName = params.get('open');
+        if (openName) {
+            const node = initialNodes.find(n => n.data.label === openName);
+            if (node) loadNode(node);
+            hasPushed.current = true;
         }
+      
+        // listen for back/forward navigation
+        const onPopState = () => {
+          const name = new URLSearchParams(window.location.search).get('open');
+          if (name) {
+            const node = initialNodes.find(n => n.data.label === name);
+            if (node) loadNode(node);
+          } else {
+            closeModal();
+          }
+        };
+      
+        window.addEventListener('popstate', onPopState);
+        return () => window.removeEventListener('popstate', onPopState);
       }, []);
+      
+
 
     async function fetchProgress() {
         await window.loadProblems(); 
@@ -104,7 +128,7 @@ function Flow() {
     }    
 
     React.useEffect(() => {
-        fetchProgress(); // runs once on load
+        fetchProgress();
         const refresh = () => fetchProgress();
         window.addEventListener("refreshProgressInReactFlow", refresh);
         return () => window.removeEventListener("refreshProgressInReactFlow", refresh);
@@ -112,30 +136,33 @@ function Flow() {
 
     React.useEffect(() => {
         if (!selectedNode) return;
-        setAnimate(false);                        
+        setAnimate(false);
         requestAnimationFrame(() => setAnimate(true));
+      }, [selectedNode]);
       
-        // 1. initialize all the checkmarks
+      // B) initialize checkmarks & borders whenever the problem list changes
+      React.useEffect(() => {
+        if (!selectedNode) return;
+      
         document.querySelectorAll('.problems-list .problem').forEach(problemDiv => {
           const id = Number(
-            problemDiv
-              .querySelector('.problem-id')
-              .textContent.replace('#','')
+            problemDiv.querySelector('.problem-id').textContent.replace('#','')
           );
           const checkmark = problemDiv.querySelector('.checkmark');
           checkmark.classList.toggle('completed', window.completedSet.has(id));
         });
       
-        // 2. update the subcategory borders
         updateSubcategoryBorders();
       }, [selectedNode, problems]);
 
-    const handleNodeClick = async (node) => {
+      async function loadNode(node) {
         setSelectedNode(node);
         setLoading(true);
         setError(null);
     
         try {    
+            await window.loadProblems();
+
             const topic = node.data.label.toLowerCase();
     
             const problems = window.cachedProblems
@@ -163,7 +190,18 @@ function Flow() {
         } finally {
             setLoading(false);
         }
-    };    
+    }
+
+    function openModal(node) {
+        loadNode(node);
+
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('open', node.data.label);
+        window.history.replaceState({ modalOpen: true }, '', newUrl);
+      }
+      
+      
+      
 
     const groupedProblems = React.useMemo(() => {
         return problems.reduce((acc, p) => {
@@ -193,12 +231,12 @@ function Flow() {
             fitView: true,
             minZoom: 0.4,
             maxZoom: 5, 
-            onNodeClick: (e, node) => handleNodeClick(node)
+            onNodeClick: (e, node) => openModal(node)
         })),
         
         selectedNode && React.createElement('div', { 
             className: 'modal-overlay',
-            onClick: () => setSelectedNode(null)
+            onClick: () => closeModal(true)
         },
             React.createElement('div', { 
                 className: `modal-content ${animate ? "animate-in" : ""}`,
@@ -206,7 +244,7 @@ function Flow() {
             },
                 React.createElement('button', {
                     className: 'modal-close',
-                    onClick: () => setSelectedNode(null)
+                    onClick: () => closeModal(true)
                 }, 'X'),
                 
                 React.createElement(React.Fragment, null,
@@ -251,6 +289,7 @@ function Flow() {
                                         idx:    problems.findIndex(p => p.id === problem.id),
                                         topic:  selectedNode.data.label
                                     };
+
                                     sessionStorage.setItem('roadmapCtx', JSON.stringify(ctx));
                                     window.handleNavigation(`/problem?id=${problem.id}`)
                                 }
@@ -462,14 +501,6 @@ window.initRoadmap = function() {
         const refreshEvent = new CustomEvent("refreshProgressInReactFlow");
         window.dispatchEvent(refreshEvent);
     };
-
-    const params = new URLSearchParams(window.location.search);
-    const toOpen = params.get('open');
-    if (toOpen) {
-        window.__initialOpenTopic = toOpen;
-        params.delete('open');
-        history.replaceState(null, '', window.location.pathname);
-    }
 
     window.addEventListener("userSignedIn", handleAuthChange);
 
