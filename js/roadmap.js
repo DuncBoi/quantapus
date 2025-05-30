@@ -194,15 +194,11 @@ function Flow() {
 
     function openModal(node) {
         loadNode(node);
-
         const newUrl = new URL(window.location);
         newUrl.searchParams.set('open', node.data.label);
         window.history.replaceState({ modalOpen: true }, '', newUrl);
       }
       
-      
-      
-
     const groupedProblems = React.useMemo(() => {
         return problems.reduce((acc, p) => {
         const sub = p.subcategory || 'Uncategorized';
@@ -221,7 +217,8 @@ function Flow() {
                 top:    '75px',
                 bottom: '0px',      
                 left:   0,
-                right:  0
+                right:  0,
+                overflow: 'hidden'
               }
             },
         React.createElement(ReactFlow, {
