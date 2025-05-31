@@ -1079,6 +1079,7 @@
  #root {
    width: 100vw;
    height: 100vh;
+   overflow: hidden;
  }
  .react-flow__attribution {
    display: none !important;
@@ -1216,6 +1217,10 @@
    .checkmark,
    .checkmark-box {
      font-size: 1rem;
+   }
+
+   .subcategory-header {
+      font-size: 1.5rem;
    }
 
    .problem-difficulty {

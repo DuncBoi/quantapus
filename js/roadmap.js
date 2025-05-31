@@ -215,11 +215,10 @@ function Flow() {
               style: {
                 position: 'absolute',
                 top:    '75px',
-                bottom: '0px',      
+                bottom: '-10px',      
                 left:   0,
-                right:  0,
-                overflow: 'hidden'
-              }
+                right:  0              
+            }
             },
         React.createElement(ReactFlow, {
             nodes: nodes,
