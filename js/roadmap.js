@@ -385,7 +385,7 @@ const initialNodes = [
         id: '7', 
         type: 'customNode', 
         position: { x: 400, y: 550 }, 
-        data: { label: 'Advanced Combinatorics', displayLabel: 'Combinatorics 2' } 
+        data: { label: 'Combinatorics 2' } 
     },
     { 
         id: '8', 
