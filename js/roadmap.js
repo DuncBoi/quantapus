@@ -213,9 +213,9 @@ function Flow() {
             'div',
             {
               style: {
-                position: 'absolute',
-                top:    '75px',
-                bottom: '-10px',      
+                position: 'fixed',
+                top:    '85px',
+                bottom: '0px',
                 left:   0,
                 right:  0              
             }

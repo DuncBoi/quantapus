@@ -126,8 +126,6 @@ function renderProblemDetails(problem) {
                              ${problem.solution} 
                         </p>
 
-                        <p id="explanation">${problem.explanation || 'No explanation available.'}</p>
-
                         <!-- YouTube Link (Embedded Video) -->
                         ${problem.yt_link ? `
                             <div id="youtube-link" class="youtube-container">
@@ -141,6 +139,7 @@ function renderProblemDetails(problem) {
                                 </iframe>
                             </div>
                         ` : ''}
+                        <p id="explanation">${problem.explanation || 'No explanation available.'}</p>
                     </div>
                 </div>
             `;

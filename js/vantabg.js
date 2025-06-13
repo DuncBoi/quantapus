@@ -18,7 +18,7 @@ window.initBackground = function() {
         shininess: 10.00,
         waveSpeed: 0.5,
         waveHeight: 25,
-        zoom: 0.5,
+        zoom: 0.55,
         color: 0x24252A,
       })
 
