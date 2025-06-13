@@ -129,10 +129,12 @@ function renderProblemDetails(problem) {
                         <!-- YouTube Link (Embedded Video) -->
                         ${problem.yt_link ? `
                             <div id="youtube-link" class="youtube-container">
+                              <div id="yt-spinner"><div class="loading-spinner"></div> </div>
                                 <iframe
+                                    id="youtube-iframe"
                                     width="560"
                                     height="315"
-                                    src="${problem.yt_link}"
+                                    src="${problem.yt_link}?enablejsapi=1&origin=${location.origin}"
                                     frameborder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowfullscreen>
@@ -147,6 +149,15 @@ function renderProblemDetails(problem) {
     renderMathInElement(problemDetailsContainer, { delimiters });
 
     wireHeaderButtons();
+
+    const iframe  = document.getElementById('youtube-iframe');
+    const spinner = document.getElementById('yt-spinner');
+
+  if (iframe && spinner) {  
+    iframe.addEventListener('load', () => {
+      spinner.style.display = 'none';
+    });
+  }
 
     // Render comma-separated, clickable category tags
     const categoryContainer = document.getElementById('category-container');
@@ -191,8 +202,18 @@ function renderProblemDetails(problem) {
     const solutionButton = document.getElementById('solution-button');
     const solutionSection = document.getElementById('solution');
     solutionButton.addEventListener('click', () => {
-        solutionSection.classList.toggle('hidden');
-        solutionButton.textContent = solutionSection.classList.contains('hidden') ? 'Show Solution' : 'Hide Solution';
+        const hiding = solutionSection.classList.toggle('hidden');
+        solutionButton.textContent = hiding ? 'Show Solution' : 'Hide Solution';
+
+        if (hiding) {
+          const player = document.getElementById('youtube-iframe');
+          if (player) {
+            player.contentWindow.postMessage(
+              JSON.stringify({ event: 'command', func: 'stopVideo', args: [] }),
+              '*'
+            );
+          }
+        }
     });
 }
 

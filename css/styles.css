@@ -843,6 +843,7 @@
   ********************************************/
  .youtube-container {
    margin-top: 30px;
+   position: relative;
  }
  .youtube-container iframe {
    width: 100%;
@@ -850,6 +851,16 @@
    border: none;
    border-radius: 12px;
  }
+ 
+ #yt-spinner {
+  position: absolute;
+  inset: 0;                  
+  display: flex;
+  align-items: center;
+  justify-content: center;     
+  background: rgba(0,0,0,.4);  
+  z-index: 1;
+}
  
  /********************************************
   * MODAL (ROADMAP PROBLEMS)
