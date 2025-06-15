@@ -551,10 +551,56 @@
  .description {
    margin-bottom: 30px;
    font-size: 1.5rem;
-   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-
+   overflow: visible;
  }
+
+ .info-term .tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  width: max-content;
+  background-color: #222;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 1.2rem;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+  max-width: clamp(150px, 80vw, 500px);
+  white-space: normal;     
+  word-wrap: break-word;    
+  height: auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.info-term:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0.2s;
+}
+
+/* arrow below the tooltip text */
+.info-term .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%; 
+  left: 50%;                 
+  transform: translateX(-50%);
+  border-width: 10px; 
+  border-style: solid;
+  border-color: #222 transparent transparent transparent;
+}
+
+.info-term {
+  position: relative;
+  cursor: help;
+  border-bottom: 1px dotted #888;
+}
  
  #explanation {
    background-color: rgba(0, 0, 0, 0.2);
@@ -861,7 +907,7 @@
   background: rgba(0,0,0,.4);  
   z-index: 1;
 }
- 
+
  /********************************************
   * MODAL (ROADMAP PROBLEMS)
   ********************************************/
@@ -1301,6 +1347,7 @@
 .katex,
 .katex-display {
   font: inherit !important;
+  overflow-x: auto;
 }
 
 /* inline mode */

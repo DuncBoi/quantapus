@@ -7,6 +7,18 @@ import renderMathInElement from 'https://cdn.jsdelivr.net/npm/katex@0.16.22/dist
     { left: '\\(', right: '\\)', display: false }
   ];
 
+  function addInfoTooltips(container) {
+    container.innerHTML = container.innerHTML.replace(
+      /\[!info:([^\]]+)\]\(([^)]+)\)/g,
+      (_, key, tip) => `
+        <span class="info-term">
+          ${key}
+          <span class="tooltip-text">${tip}</span>
+        </span>
+      `
+    );
+  }
+
   function goTo(offset) {
     const rd = window.__rd;
     rd.idx = Math.max(0, Math.min(rd.ids.length-1, rd.idx + offset));
@@ -145,6 +157,8 @@ function renderProblemDetails(problem) {
                     </div>
                 </div>
             `;
+
+    addInfoTooltips(problemDetailsContainer);
 
     renderMathInElement(problemDetailsContainer, { delimiters });
 
