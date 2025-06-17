@@ -217,7 +217,7 @@ function Flow() {
                 top:    '85px',
                 bottom: '0px',
                 left:   0,
-                right:  0              
+                right:  0,
             }
             },
         React.createElement(ReactFlow, {
@@ -280,14 +280,7 @@ function Flow() {
                                 key: problem.id,
                                 className: 'problem',
                                 onClick: () => {
-                                    const ctx = {
-                                        ids:    problems.map(p => p.id),
-                                        idx:    problems.findIndex(p => p.id === problem.id),
-                                        topic:  selectedNode.data.label
-                                    };
-
-                                    sessionStorage.setItem('roadmapCtx', JSON.stringify(ctx));
-                                    window.handleNavigation(`/problem?id=${problem.id}`)
+                                    window.handleNavigation(`/problem?id=${problem.id}&list=roadmap`);
                                 }
                             },
                             React.createElement('div', { className: 'problem-left' },
@@ -486,6 +479,7 @@ let reactRoot = null;
 
 // Initialize function
 window.initRoadmap = function() {
+    document.body.classList.add('roadmap-open');
     const container = document.getElementById('root');
     if (!container) return () => {};
 
@@ -501,6 +495,7 @@ window.initRoadmap = function() {
     window.addEventListener("userSignedIn", handleAuthChange);
 
     return function cleanupRoadmap() {
+        document.body.classList.remove('roadmap-open');
         console.log('Cleaning up React Flow resources');
 
         reactRoot.unmount();

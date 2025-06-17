@@ -2,65 +2,84 @@ window.categoriesLoading = false;
 
 function generateCategoryDropdown(categories) {
   const categoryMenu = document.getElementById('type-menu');
-  categoryMenu.innerHTML = ''; // Clear static/default items
+  categoryMenu.innerHTML = '';
 
+  // “Types Of” default
   const defaultItem = document.createElement('div');
   defaultItem.className = 'dropdown-item';
   defaultItem.dataset.value = 'Types Of';
   defaultItem.textContent = 'Types Of';
+  defaultItem.addEventListener('click', () => {
+    window.selectedCategory = 'Types Of';
+    const btn = document.getElementById('type-dropdown');
+    btn.textContent = 'Types Of';
+    btn.style.color = '';
+    window.dispatchEvent(new Event('filterChanged'));
+  });
   categoryMenu.appendChild(defaultItem);
 
-  //sorted list of unique categories
-  Array.from(categories).sort().forEach(category => {
+  // real categories
+  Array.from(categories).sort().forEach(cat => {
     const item = document.createElement('div');
     item.className = 'dropdown-item';
-    item.dataset.value = category;
-    item.textContent = category;
+    item.dataset.value = cat;
+    item.textContent = cat;
+    item.addEventListener('click', () => {
+      window.selectedCategory = cat;
+      const btn = document.getElementById('type-dropdown');
+      btn.textContent = cat;
+      btn.style.color = '#61a9f1';
+      window.dispatchEvent(new Event('filterChanged'));
+    });
     categoryMenu.appendChild(item);
   });
 }
 
-window.initProblems = async function() {
-  window.selectedDifficulty = localStorage.getItem('selectedDifficulty') || 'All';
-  window.selectedCategory   = localStorage.getItem('selectedCategory')   || 'Types Of';
+function generateDifficultyDropdown() {
+  const diffMenu = document.getElementById('difficulty-menu');
+  diffMenu.innerHTML = '';
+  ['All','Easy','Medium','Hard'].forEach(level => {
+    const item = document.createElement('div');
+    item.className = 'dropdown-item';
+    item.dataset.value = level;
+    item.textContent = level;
+    item.addEventListener('click', () => {
+      window.selectedDifficulty = level;
+      const btn = document.getElementById('difficulty-dropdown');
+      btn.textContent = level;
+      btn.style.color = ({Easy:'#48B572',Medium:'#B5A848',Hard:'#B54848'})[level]||'';
+      window.dispatchEvent(new Event('filterChanged'));
+    });
+    diffMenu.appendChild(item);
+  });
+}
 
-  // 2) Update the two dropdown buttons to match:
+
+window.initProblems = async function() {
+  const params = new URLSearchParams(location.search);
+  window.selectedDifficulty = params.get('difficulty') || 'All';
+  window.selectedCategory   = params.get('category')   || 'Types Of';
+
+  // sync dropdown buttons
   const diffBtn = document.getElementById('difficulty-dropdown');
   diffBtn.textContent = window.selectedDifficulty;
-  diffBtn.style.color  = ({
-    Easy:   '#48B572',
-    Medium: '#B5A848',
-    Hard:   '#B54848',
-  })[window.selectedDifficulty] || '';
+  diffBtn.style.color  = ({Easy:'#48B572',Medium:'#B5A848',Hard:'#B54848'})[window.selectedDifficulty]||'';
 
   const typeBtn = document.getElementById('type-dropdown');
   typeBtn.textContent = window.selectedCategory;
-  typeBtn.style.color = window.selectedCategory !== 'Types Of'
-    ? '#61a9f1'
-    : '';
+  typeBtn.style.color = window.selectedCategory !== 'Types Of' ? '#61a9f1' : '';
 
   await fetchProblems();
 
-  const resetBtn = document.querySelector('.reset-button');
-  const resetHandler = (e) => {
-    e.stopPropagation(); 
-    resetFilters();
-  };
-  if (resetBtn) resetBtn.addEventListener('click', resetHandler);
+  document.querySelector('.reset-button')
+    .addEventListener('click', resetFilters);
 
-  const onSignedIn = () => fetchProblems();
-  window.addEventListener("userSignedIn", onSignedIn);
+  window.addEventListener("userSignedIn", () => fetchProblems());
+  window.addEventListener('filterChanged', () => filterProblems());
 
-  const onFilter = () => filterProblems();
-  window.addEventListener('filterChanged', onFilter);
-
-  // Cleanup function
   return () => {
-    resetBtn.removeEventListener('click', resetHandler);
-    window.removeEventListener("userSignedIn", onSignedIn);
-    window.removeEventListener("filterChanged", onFilter);
-    delete window.selectedDifficulty;
-    delete window.selectedCategory;
+    window.removeEventListener("userSignedIn", fetchProblems);
+    window.removeEventListener("filterChanged", filterProblems);
   };
 };
 
@@ -82,6 +101,7 @@ async function fetchProblems() {
     });
 
     generateCategoryDropdown(categories);
+    generateDifficultyDropdown()
     window.categoriesLoading = false;
 
     renderProblems(problems);
@@ -115,32 +135,35 @@ function updateCompletedProblems() {
   });
 }
 
-
-
 function filterProblems() {
-  const selectedDifficulty = window.selectedDifficulty;
-  const selectedCategory = window.selectedCategory;
-  let anyFound = false;
+  const sd = window.selectedDifficulty;
+  const sc = window.selectedCategory;
+  let any = false;
 
-  document.querySelectorAll('.problem').forEach(problemDiv => {
-    const difficulty = problemDiv.querySelector('.problem-difficulty').textContent;
-    const category = problemDiv.getAttribute('data-category') || 'Unknown';
+  document.querySelectorAll('.problem').forEach(div => {
+    const diff = div.querySelector('.problem-difficulty').textContent;
+    const cats = (div.dataset.category || '')
+      .split(',')
+      .map(c => c.trim());
 
-    const difficultyMatch = selectedDifficulty === 'All' || difficulty === selectedDifficulty;
+    const okDiff = sd === 'All' || diff === sd;
+    const okCat  = sc === 'Types Of' || cats.includes(sc);
+    const show   = okDiff && okCat;
 
-    const categoryList = category.split(',').map(cat => cat.trim().toLowerCase());
-    const normalizedSelectedCategory = selectedCategory.toLowerCase().trim();
-
-    const categoryMatch = selectedCategory === 'Types Of' || categoryList.includes(normalizedSelectedCategory);
-
-    const show = difficultyMatch && categoryMatch;
-    problemDiv.style.display = show ? 'flex' : 'none';
-    if (show) anyFound = true;
+    div.style.display = show ? 'flex' : 'none';
+    if (show) any = true;
   });
 
-  const errorElem = document.getElementById('no-problems-error');
-  if (errorElem) {
-    errorElem.style.display = anyFound ? 'none' : 'block';
+  const err = document.getElementById('no-problems-error');
+  if (err) err.style.display = any ? 'none' : 'block';
+
+  if (sd === 'All' && sc === 'Types Of') {
+    history.replaceState(null, '', location.pathname);
+  } else {
+    const params = new URLSearchParams();
+    if (sc !== 'Types Of')   params.set('category',   sc);
+    if (sd !== 'All')         params.set('difficulty', sd);
+    history.replaceState(null, '', `${location.pathname}?${params.toString()}`);
   }
 }
 
@@ -203,8 +226,21 @@ function renderProblems(problems) {
     problemDiv.addEventListener('click', (e) => {
       e.preventDefault();
       sessionStorage.removeItem('roadmapCtx');
-      window.handleNavigation(`/problem?id=${problem.id}`);
-    });
+    
+      // grab any existing filters
+      const orig = new URLSearchParams(location.search);
+      const difficulty = orig.get('difficulty');
+      const category   = orig.get('category');
+    
+      // build a new params object in the exact order you want
+      const params = new URLSearchParams();
+      params.set('id',   problem.id);
+      params.set('list', 'all');
+      if (difficulty) params.set('difficulty', difficulty);
+      if (category)   params.set('category',   category);
+    
+      window.handleNavigation(`/problem?${params.toString()}`);
+  });
 
     problemsContainer.appendChild(problemDiv);
   });
@@ -225,20 +261,20 @@ function renderError(message) {
 
 function resetFilters() {
   window.selectedDifficulty = 'All';
-  window.selectedCategory = 'Types Of';
+  window.selectedCategory   = 'Types Of';
 
-  const difficultyDropdown = document.getElementById('difficulty-dropdown');
-  const categoryDropdown = document.getElementById('type-dropdown');
+  const diffBtn = document.getElementById('difficulty-dropdown');
+  diffBtn.textContent = 'All';
+  diffBtn.style.color = '';
 
-  difficultyDropdown.textContent = 'All';
-  difficultyDropdown.style.color = '';
+  const typeBtn = document.getElementById('type-dropdown');
+  typeBtn.textContent = 'Types Of';
+  typeBtn.style.color = '';
 
-  categoryDropdown.textContent = 'Types Of';
-  categoryDropdown.style.color = '';
-
-  localStorage.removeItem('selectedDifficulty');
-  localStorage.removeItem('selectedCategory');
+  history.replaceState(null, '', location.pathname);
 
   filterProblems();
 }
+
+
 

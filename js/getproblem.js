@@ -21,17 +21,16 @@ import renderMathInElement from 'https://cdn.jsdelivr.net/npm/katex@0.16.22/dist
 
   function goTo(offset) {
     const rd = window.__rd;
-    rd.idx = Math.max(0, Math.min(rd.ids.length-1, rd.idx + offset));
+    rd.idx = Math.max(0, Math.min(rd.ids.length - 1, rd.idx + offset));
     rd.currentId = rd.ids[rd.idx];
-    sessionStorage.setItem('roadmapCtx', JSON.stringify(rd));
-  
-    history.pushState(null, '', `/problem?id=${rd.currentId}`);
-  
-    fetchProblemDetails(rd.currentId)
-      .then(() => {
-        wireHeaderButtons();
-      });
-  }
+
+    const params = new URLSearchParams(location.search);
+    params.set('id', rd.currentId);
+    params.set('list', rd.listName);
+
+    history.pushState(null, '', `/problem?${params.toString()}`);
+    fetchProblemDetails(rd.currentId).then(() => wireHeaderButtons());
+}
 
   function wireHeaderButtons() {
     const rd = window.__rd;
@@ -73,31 +72,82 @@ import renderMathInElement from 'https://cdn.jsdelivr.net/npm/katex@0.16.22/dist
   
 
 // Fetch the problem details from the backend
-async function fetchProblemDetails(id) {
-  const container = document.getElementById('problem-details');
+async function fetchProblemDetails(rawId) {
+  const id = Number(rawId);
 
-  // Show loading spinner
+  const container = document.getElementById('problem-details');
+  if (!container) return;
   container.innerHTML = `<div class="loading-container"><div class="loading-spinner"></div></div>`;
 
   try {
-      await window.loadProblems();
+    await window.loadProblems();
   } catch (error) {
-      console.error('Error fetching problem details:', error);
-      renderError('Failed to load problem details.');
+    console.error('Error fetching problem details:', error);
+    return renderError('Failed to load problem details.');
   }
-  const problem = window.problemMap?.[id];
-    if (!problem) {
-        console.error(`No problem found with id=${id}`);
-        return renderError('Problem not found.');
-    }
 
-    document.title = problem.title || 'Quantapus';
-    try {
-        renderProblemDetails(problem);
-    } catch (err) {
-        console.error('Error rendering problem details:', err);
-        return renderError('Failed to render problem details.');
-    }
+  const problem = window.problemMap?.[id];
+  if (!problem) {
+    console.error(`No problem found with id=${id}`);
+    return renderError('Problem not found.');
+  }
+
+  const params = new URLSearchParams(location.search);
+  let rawList = params.get('list');
+  let listName = (rawList === 'roadmap' || rawList === 'all') ? rawList : 'roadmap';
+  const selectedDifficulty   = params.get('difficulty') || 'All';
+  const selectedCategory     = params.get('category')   || 'Types Of';
+  const all                  = window.cachedProblems || [];
+
+  if (
+    listName === 'roadmap' &&
+    (
+      !problem.roadmap ||
+      !all.some(p => p.roadmap === problem.roadmap)
+    )
+  ) {
+    listName = 'all';
+    params.set('list', 'all');
+    history.replaceState(
+      null,
+      '',
+      `${location.pathname}?${params.toString()}`
+    );
+  }
+
+  let listProblems, topic;
+  if (listName === 'roadmap') {
+    listProblems = all.filter(p => p.roadmap === problem.roadmap);
+    listProblems.sort((a, b) => {
+      if (a.subcategory_order !== b.subcategory_order) {
+        return a.subcategory_order - b.subcategory_order;
+      }
+      return a.subcategory_rank - b.subcategory_rank;
+    });
+    const raw = problem.roadmap || '';
+    topic = raw.charAt(0).toUpperCase() + raw.slice(1);
+  } else {
+    listProblems = all.filter(p => {
+      const diffMatch = selectedDifficulty === 'All' || p.difficulty === selectedDifficulty;
+      const cats = (p.category || '').split(',').map(c => c.trim());
+      const catMatch = selectedCategory === 'Types Of' || cats.includes(selectedCategory);
+      return diffMatch && catMatch;
+    });
+    listProblems.sort((a, b) => a.id - b.id);
+    topic = `${selectedDifficulty} ${selectedCategory} Problems `;
+  }
+
+  const ids = listProblems.map(p => p.id);
+  const idx = ids.indexOf(id);
+  window.__rd = { ids, idx, topic, listName };
+
+  document.title = problem.title || 'Quantapus';
+  try {
+    renderProblemDetails(problem);
+  } catch (err) {
+    console.error('Error rendering problem details:', err);
+    return renderError('Failed to render problem details.');
+  }
 }
 
 // Render the problem details
@@ -188,9 +238,9 @@ function renderProblemDetails(problem) {
         span.setAttribute('data-value', cat);
       
         span.addEventListener('click', () => {
-          localStorage.setItem('selectedCategory', cat);
-          localStorage.removeItem('selectedDifficulty');
-          window.handleNavigation('/problems');
+          const params = new URLSearchParams();
+          params.set('category', cat);
+          window.handleNavigation(`/problems?${params.toString()}`);
         });
       
         categoryContainer.appendChild(span);
@@ -247,39 +297,18 @@ function renderError(message) {
 }
 
 window.initProblem = function(problemId) {
-    const raw = sessionStorage.getItem('roadmapCtx');
-    window.__rd = raw
-        ? JSON.parse(raw)
-        : { ids: [], idx: -1, topic: '' };
+  if (problemId) {
+    fetchProblemDetails(problemId);
+  } else {
+    renderError('No problem ID specified');
+  }
 
-    if (problemId) {
-        fetchProblemDetails(problemId);
-    } else {
-        renderError('No problem ID specified');
-    }
+  const onSignedIn = () => updateProblemCompletion(problemId);
+  window.addEventListener("userSignedIn", onSignedIn);
 
-    window.addEventListener('popstate', () => {
-      const rd = window.__rd;
-      const params = new URLSearchParams(window.location.search);
-      const id     = parseInt(params.get('id'), 10);
-      if (isNaN(id)) return;
-    
-      rd.currentId = id;
-      rd.idx       = rd.ids.findIndex(x => x === id);
-      sessionStorage.setItem('roadmapCtx', JSON.stringify(rd));
-    
-      fetchProblemDetails(rd.currentId)
-        .then(wireHeaderButtons);
-  });
-  
-
-    const onSignedIn = () => updateProblemCompletion(problemId);
-    window.addEventListener("userSignedIn", onSignedIn);
-    return () => {
-        document.getElementById('problem-header-container').style.display = 'none';
-        document.body.classList.remove('with-header');
-        window.removeEventListener("userSignedIn", onSignedIn);
-    };
+  return () => {
+    document.getElementById('problem-header-container').style.display = 'none';
+    document.body.classList.remove('with-header');
+    window.removeEventListener("userSignedIn", onSignedIn);
+  };
 };
-
-
