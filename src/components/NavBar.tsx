@@ -1,11 +1,9 @@
 "use client"
 import Link from 'next/link';
 import Image from 'next/image';
-import { useAuth } from "@/context/AuthContext";
+import LoginButton from '@/components/LoginButton'
 
 export default function NavBar() {
-    const { user, loading, login, logout } = useAuth();
-
   return (
     <nav className="bg-[#24252A] mx-1 rounded-[12px] shadow-[0_4px_15px_rgba(0,0,0,0.6)]">
         <div className="flex flex-wrap items-center justify-between mx-auto p-4">
@@ -28,7 +26,7 @@ export default function NavBar() {
             </div>
 
             {/* Auth */}
-            <button id="signInButton" onClick={() => login()} className="bg-[linear-gradient(90deg,_#4848b5,_#48b5b5)] bg-[length:130%_auto] bg-[position:0%_center] p-3 min-w-[45px] min-h-[45px] rounded-lg cursor-pointer transition-[background-position] duration-300 ease-in-out hover:bg-[position:100%_center]">Sign In</button>
+            <LoginButton></LoginButton>
         </div>
     </nav>
   );
