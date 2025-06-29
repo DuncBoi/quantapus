@@ -20,3 +20,12 @@ body {
   color: var(--fg);
   font-family: var(--font-geist-sans);
 }
+
+.react-flow__attribution {
+  display: none !important;
+}
+
+.react-flow__handle {
+  visibility: hidden;
+  pointer-events: none;
+}

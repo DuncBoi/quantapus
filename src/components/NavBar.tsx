@@ -1,9 +1,12 @@
-"use client"
 import Link from 'next/link';
 import Image from 'next/image';
 import LoginButton from '@/components/LoginButton'
+import type { User } from '@supabase/supabase-js'
+import { getInitials } from '@/lib/getInitials'
 
-export default function NavBar() {
+interface NavBarProps { user: User | null }
+
+export default function NavBar( { user }: NavBarProps ) {
   return (
     <nav className="bg-[#24252A] mx-1 rounded-[12px] shadow-[0_4px_15px_rgba(0,0,0,0.6)]">
         <div className="flex flex-wrap items-center justify-between mx-auto p-4">
@@ -26,7 +29,7 @@ export default function NavBar() {
             </div>
 
             {/* Auth */}
-            <LoginButton></LoginButton>
+            <LoginButton initialLabel={user ? getInitials(user) : ''}/>
         </div>
     </nav>
   );

@@ -1,6 +1,8 @@
+export const dynamic = 'force-dynamic'
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import NavBar from "../components/NavBar";
+import { createClient } from '@/utils/supabase/server'
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,18 +25,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const supabase = await createClient()
+
+  const {data: { user },} = await supabase.auth.getUser()
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} text-white antialiased`}
       >
-        <NavBar />
-          {children}
+      <NavBar user={user} />  
+      {children}
       </body>
     </html>
   );
