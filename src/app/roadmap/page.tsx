@@ -1,35 +1,32 @@
-'use client'
+import { createClient } from '@/utils/supabase/server'
+import type { Node } from 'reactflow'
+import RoadmapFlow from '@/components/RoadmapFlow'
 
-import React from 'react'
-import ReactFlow, { ReactFlowProvider, MarkerType } from 'reactflow'
-import 'reactflow/dist/style.css'
-import RoadmapNode from '@/components/RoadmapNode'
+export const dynamic = 'force-dynamic'
 
-const nodeTypes = { roadmapNode: RoadmapNode }
+export default async function RoadmapPage() {
 
-// — simple example nodes & edges —
-const initialNodes = [
-  { id: '1', type: 'roadmapNode', position: { x: 0, y: 0 }, data: { label: 'Node 1' } },
-  { id: '2', type: 'roadmapNode', position: { x: 200, y: 200 }, data: { label: 'Node 2' } },
-]
-const initialEdges = [
-  { id: 'e1-2', source: '1', target: '2', animated: true,
-    style: { stroke: 'white', strokeWidth: 2.5 },
-    markerEnd: { type: MarkerType.ArrowClosed, color: 'white' }
+  const supabase = await createClient()
+
+  const { data: rows, error } = await supabase
+    .from('roadmap_nodes')
+    .select('id, label, position_x, position_y')
+
+  if (error) {
+    throw new Error('Failed to load roadmap nodes: ' + error.message)
   }
-]
 
-export default function RoadmapPage() {
+  const initialNodes: Node<{ label: string }>[]
+    = (rows ?? []).map(r => ({
+      id: r.id,
+      type: 'roadmapNode',
+      position: { x: r.position_x, y: r.position_y },
+      data: { label: r.label },
+    }))
+
   return (
     <div className="w-full h-screen">
-      <ReactFlowProvider>
-        <ReactFlow
-          nodes={initialNodes}
-          edges={initialEdges}
-          nodeTypes={nodeTypes}
-          fitView
-        />
-      </ReactFlowProvider>
+      <RoadmapFlow initialNodes={initialNodes} />
     </div>
   )
 }
