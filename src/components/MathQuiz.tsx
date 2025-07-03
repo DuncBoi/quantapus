@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { loadGeneratorsWithMeta, pickRandom } from '@/lib/generators'
 import type { Equation } from '@/lib/generators/types'
 import { Settings } from 'lucide-react'
+import { motion, AnimatePresence } from "framer-motion"; 
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -125,105 +126,154 @@ export default function MathQuiz({ generatorIds, digitChoices }: MathQuizProps) 
     }))
   }
   return (
-    <div className="max-w-sm mx-auto p-6">
-      <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-800 rounded-full px-4 py-2 mb-6">
-        {/* Score */}
-        <div className="font-bold text-gray-900 dark:text-gray-100">
-          Score: {score}
-        </div>
-
-        {/* Stopwatch */}
-        <div className="font-mono text-lg text-gray-700 dark:text-gray-300">
-          {minutes}:{seconds}
-        </div>
-
-        {/* Settings Icon */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
-              aria-label="Open settings"
+<div className="flex flex-col w-full items-center">
+    <div className="flex flex-col w-[95vw] max-w-xl p-6 rounded-3xl shadow-2xl bg-zinc-900 border border-zinc-800">
+        {/* Topbar */}
+        <div className="flex items-center justify-between bg-zinc-800 rounded-full px-5 py-2 mb-7 shadow-inner relative">
+          {/* Score with animated "+1" or "-1" */}
+          <div className="font-bold text-zinc-100 tracking-tight relative flex items-center min-w-[70px] justify-center">
+            <span>Score: {score}</span>
+            <AnimatePresence>
+              {status === "correct" && (
+                <motion.span
+                  key="plus"
+                  initial={{ y: 10, opacity: 0, scale: 0.9 }}
+                  animate={{ y: -18, opacity: 1, scale: 1.2 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.4 }}
+                  className="absolute left-1/2 -translate-x-1/2 text-green-400 font-bold text-lg drop-shadow"
+                >
+                  +1
+                </motion.span>
+              )}
+              {status === "wrong" && (
+                <motion.span
+                  key="minus"
+                  initial={{ y: 10, opacity: 0, scale: 0.9 }}
+                  animate={{ y: -18, opacity: 1, scale: 1.2 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.4 }}
+                  className="absolute left-1/2 -translate-x-1/2 text-red-400 font-bold text-lg drop-shadow"
+                >
+                  -1
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
+          {/* Stopwatch */}
+          <div className="font-mono text-lg text-zinc-400">
+            {minutes}:{seconds}
+          </div>
+          {/* Settings Icon */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="p-2 rounded-full hover:bg-zinc-700 focus:outline-none transition"
+                aria-label="Open settings"
+              >
+                <Settings className="w-6 h-6 text-zinc-400" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="min-w-[18rem] max-w-[40rem] w-fit bg-zinc-900 border-zinc-700 text-zinc-100 shadow-lg rounded-xl"
             >
-              <Settings className="w-6 h-6 text-gray-700 dark:text-gray-300" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="min-w-[18rem] max-w-[40rem] w-fit"
-          >
-            <DropdownMenuLabel className="text-xs font-semibold tracking-wide">
-              Number Generation
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {generatorIds.length === 0 && (
-              <DropdownMenuItem disabled>
-                Nothing selected
-              </DropdownMenuItem>
-            )}
-            {generatorIds.map(id => (
-              <div key={id} className="px-2 pt-1">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={generatorOptions[id]?.enabled}
-                    onChange={() => toggleGenerator(id)}
-                    className="mr-2 h-3 w-3 accent-blue-500"
-                    onClick={e => e.stopPropagation()}
-                  />
-                  <span className="text-sm font-normal">{generatorMetas[id]?.title ?? id}</span>
-                  <div className="flex-1" />
-                  <ToggleGroup
-                    type="multiple"
-                    value={generatorOptions[id]?.digits.map(String) ?? []}
-                    onValueChange={vals => {
-                      const digits = vals.map(Number)
-                      setGeneratorOptions(opts => ({
-                        ...opts,
-                        [id]: { ...opts[id], digits: digits.length ? digits : [digitChoices[id]?.[0] ?? 2] }
-                      }))
-                    }}
-                    className="flex gap-1 ml-4"
-                  >
-                    {(digitChoices[id] ?? [2, 3]).map(digit => (
-                      <ToggleGroupItem
-                        key={digit}
-                        value={String(digit)}
-                        className="px-1.5 py-0.5 h-6 text-[11px] rounded border data-[state=on]:bg-blue-100 data-[state=on]:border-blue-500"
-                        aria-label={`${digit}-digit`}
-                      >
-                        {digit}-digit
-                      </ToggleGroupItem>
-                    ))}
-                  </ToggleGroup>
+              <DropdownMenuLabel className="text-xs font-semibold tracking-wide text-zinc-400">
+                Number Generation
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-zinc-700" />
+              {generatorIds.length === 0 && (
+                <DropdownMenuItem disabled className="text-zinc-500">
+                  Nothing selected
+                </DropdownMenuItem>
+              )}
+              {generatorIds.map(id => (
+                <div key={id} className="px-2 pt-1">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={generatorOptions[id]?.enabled}
+                      onChange={() => toggleGenerator(id)}
+                      className="mr-2 h-3 w-3 accent-blue-500"
+                      onClick={e => e.stopPropagation()}
+                    />
+                    <span className="text-sm font-normal">{generatorMetas[id]?.title ?? id}</span>
+                    <div className="flex-1" />
+                    <ToggleGroup
+                      type="multiple"
+                      value={generatorOptions[id]?.digits.map(String) ?? []}
+                      onValueChange={vals => {
+                        const digits = vals.map(Number)
+                        setGeneratorOptions(opts => ({
+                          ...opts,
+                          [id]: { ...opts[id], digits: digits.length ? digits : [digitChoices[id]?.[0] ?? 2] }
+                        }))
+                      }}
+                      className="flex gap-1 ml-4"
+                    >
+                      {(digitChoices[id] ?? [2, 3]).map(digit => (
+                        <ToggleGroupItem
+                          key={digit}
+                          value={String(digit)}
+                          className="px-2 py-1 h-7 text-xs rounded-full border bg-zinc-800 border-zinc-700 text-zinc-300
+                            data-[state=on]:bg-blue-500 data-[state=on]:text-white data-[state=on]:border-blue-500 transition"
+                          aria-label={`${digit}-digit`}
+                        >
+                          {digit}-digit
+                        </ToggleGroupItem>
+                      ))}
+                    </ToggleGroup>
+                  </div>
+                  <div className="ml-5 mt-1 mb-2 text-xs italic text-zinc-500 leading-snug break-words w-full max-w-[14rem]">
+                    {generatorMetas[id]?.description ?? ''}
+                  </div>
                 </div>
-                <div className="ml-5 mt-0.5 mb-2 text-xs italic text-gray-500 leading-snug break-words w-full max-w-[14rem]">
-                  {generatorMetas[id]?.description ?? ''}
-                </div>
-              </div>
-            ))}
-
-          </DropdownMenuContent>
-
-        </DropdownMenu>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+  
+        {/* Question Box Card with only outer border glow on status */}
+        <motion.div
+          key={status}
+          initial={false}
+          animate={{
+            boxShadow:
+              status === "correct"
+                ? "0 0 12px 4px #22c55e88"
+                : status === "wrong"
+                ? "0 0 12px 4px #ef444488"
+                : "0 1px 12px 0 #00000044",
+            borderColor:
+              status === "correct"
+                ? "#22c55e"
+                : status === "wrong"
+                ? "#ef4444"
+                : "#27272a",
+          }}
+          transition={{ type: "spring", stiffness: 210, damping: 26 }}
+          className="rounded-2xl border bg-zinc-950/85 px-6 py-8 mb-2 flex flex-col items-center w-full"
+        >
+          <div className="text-4xl font-mono font-bold mb-7 text-center text-white tracking-tight">
+            {eq.question}
+          </div>
+          <input
+            ref={ref}
+            value={input}
+            onChange={e => setInput(e.target.value.trim())}
+            className={`
+              font-mono text-3xl text-center w-full max-w-xs px-6 py-3 rounded-full
+              bg-zinc-900 text-white border-none outline-none
+              focus:ring-2 focus:ring-blue-500
+              transition-all duration-200
+            `}
+            placeholder="input"
+            autoFocus
+            inputMode="numeric"
+            pattern="[0-9]*"
+          />
+        </motion.div>
       </div>
-
-      {/* Question */}
-      <div className="text-3xl font-mono mb-6 text-center">
-        {eq.question}
-      </div>
-      <input
-        ref={ref}
-        value={input}
-        onChange={e => setInput(e.target.value.trim())}
-        className={`
-          border-4 focus:outline-none px-3 py-2 w-full text-center
-          transition-colors duration-200
-          ${status === 'correct' ? 'border-green-500'
-            : status === 'wrong' ? 'border-red-500'
-              : 'border-gray-300'}
-        `}
-        placeholder="Type your answer"
-      />
     </div>
-  )
+  );
 }

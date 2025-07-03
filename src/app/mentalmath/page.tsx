@@ -21,16 +21,23 @@ export default async function MMPage({ searchParams }: { searchParams: { id?: st
   const { title, description, video, generator_ids , digit_choices} = lesson
 
   return (
-    <div className="p-8 max-w-3xl mx-auto">
-      {/* Header */}
-      <h1 className="text-3xl font-bold mb-2">{title}</h1>
-      <p className="mb-6 text-gray-700">{description}</p>
-
-      {/* Quiz: pass your DB-driven IDs here */}
-      <MathQuiz
-  generatorIds={generator_ids}
-  digitChoices={digit_choices ?? {}}
-/>
+    <div className="w-[95vw] mx-auto py-8">
+    {/* Outer Card */}
+    <div className="bg-zinc-900/90 rounded-3xl shadow-2xl border border-zinc-800 p-8 flex flex-col md:flex-row gap-8 items-start">
+  
+      {/* Left: Title and Description */}
+      <div className="flex-1 min-w-[200px]">
+        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-br from-blue-400 to-green-400 text-transparent bg-clip-text mb-1">
+          {title}
+        </h1>
+        <p className="mb-4 text-lg text-zinc-400 max-w-2xl">{description}</p>
+      </div>
+  
+      {/* Right: MathQuiz, top-aligned */}
+      <div className="flex-1 flex justify-end items-start w-full">
+        <MathQuiz generatorIds={generator_ids} digitChoices={digit_choices ?? {}} />
+      </div>
     </div>
+  </div>
   )
 }
