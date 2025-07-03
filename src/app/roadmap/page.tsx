@@ -2,9 +2,6 @@ import { createClient } from '@/utils/supabase/server'
 import type { Node } from 'reactflow'
 import RoadmapFlow from '@/components/RoadmapFlow'
 
-export const dynamic = 'force-static'
-export const revalidate = false
-
 export default async function RoadmapPage() {
 
   const supabase = await createClient()

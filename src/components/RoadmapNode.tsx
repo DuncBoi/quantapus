@@ -3,14 +3,21 @@
 import React from 'react'
 import { Handle, Position, NodeProps } from 'reactflow'
 
+type RoadmapNodeData = {
+  label: string
+  progress?: number
+  onClick?: (id: string) => void
+}
+
 export default function RoadmapNode({
   data,
-}: NodeProps<{ label: string; progress?: number }>) {
+  id,
+}: NodeProps<RoadmapNodeData>) {
   return (
-    <div
-      /* inline CSS var for progress */
-      style={{ ['--progress' as any]: `${data.progress ?? 0}%` }}
-      /* tailwindified custom‐node */
+    <div onClick={e => {
+        e.stopPropagation();
+        data.onClick?.(id)
+      }}
       className="
         w-[120px] h-[40px] overflow-visible
         bg-[#1e3353] text-white
@@ -29,7 +36,7 @@ export default function RoadmapNode({
       </div>
 
       {/* simple progress bar under the label */}
-      <div className="absolute bottom-1 left-1 right-1 h-1 bg-white/30 rounded">
+      <div className="absolute bottom-1 left-1 right-1 h-1 bg-[#132238] rounded">
         <div
           className="h-full bg-[#61a9f1] rounded transition-[width]_duration-300"
           style={{ width: 'var(--progress)' }}
