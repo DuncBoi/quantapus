@@ -1,36 +1,56 @@
+// src/components/RoadmapFlow.tsx
 'use client'
 
-import React, {useState} from 'react'
-import ReactFlow, { ReactFlowProvider, type Edge, type Node, MarkerType } from 'reactflow'
+import React, { useState, useMemo } from 'react'
+import ReactFlow, {
+  ReactFlowProvider,
+  type Edge,
+  type Node,
+  MarkerType,
+} from 'reactflow'
 import 'reactflow/dist/style.css'
-import RoadmapNode from '@/components/RoadmapNode'
-import NodeModal from './NodeModal'
 
-const nodeTypes = { roadmapNode: RoadmapNode }
-const initialEdges: Edge[] = []
+import RoadmapNode from '@/components/RoadmapNode'
+import PremiumNode from '@/components/PremiumNode'
+import NodeModal from './NodeModal'
+import { useData } from '@/context/DataContext'
+import type { Subcategory } from '@/types/data'
 
 interface RoadmapNodeData {
   label: string
-  progress?: number
-  onClick?: (id: string) => void
+  subcategories: Subcategory[]
+  onClick: () => void
 }
 
-interface RoadmapFlowProps {
-    initialNodes: Node<RoadmapNodeData>[]
+const nodeTypes = { roadmap: RoadmapNode, premium: PremiumNode }
+const initialEdges: Edge[] = []
+
+export default function RoadmapFlow() {
+  const { roadmap } = useData()
+
+   if (!roadmap) {
+    // You can return null, a spinner, or some placeholder.
+    return <div>Loading roadmap…</div>
   }
 
-export default function RoadmapFlow({ initialNodes }: RoadmapFlowProps) {
-    const [modalNode, setModalNode] = useState<Node | null>(null)
+  const [modalNode, setModalNode] = useState<Node<RoadmapNodeData> | null>(null)
 
-    const nodes = initialNodes.map(node => ({
-    ...node,
-    data: {
-      ...node.data,
-      onClick: () => {
-        setModalNode(node)
+  const nodes: Node<RoadmapNodeData>[] = useMemo(() => {
+    return roadmap.map(rn => {
+      const id = rn.id.toString()
+      const node: Node<RoadmapNodeData> = {
+        id,
+        type: rn.styling,
+        position: { x: rn.positionX, y: rn.positionY },
+        data: {
+          label: rn.label,
+          subcategories: rn.subcategories,
+          onClick: () => setModalNode(node),
+        },
       }
-    }
-  }))
+      return node
+    })
+  }, [roadmap])
 
   return (
     <div className="w-full h-screen">
@@ -46,12 +66,7 @@ export default function RoadmapFlow({ initialNodes }: RoadmapFlowProps) {
             markerEnd: { type: MarkerType.ArrowClosed, color: '#fff' },
           }}
         />
-        {modalNode && (
-          <NodeModal
-            node={modalNode}
-            onClose={() => setModalNode(null)}
-          />
-        )}
+        {modalNode && <NodeModal node={modalNode} onClose={() => setModalNode(null)} />}
       </ReactFlowProvider>
     </div>
   )

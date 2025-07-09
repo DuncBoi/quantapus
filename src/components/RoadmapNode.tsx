@@ -3,12 +3,6 @@
 import React from 'react'
 import { Handle, Position, NodeProps } from 'reactflow'
 
-type RoadmapNodeData = {
-  label: string
-  progress?: number
-  onClick?: (id: string) => void
-}
-
 export default function RoadmapNode({
   data,
   id,
@@ -25,7 +19,7 @@ export default function RoadmapNode({
         flex flex-col items-center justify-start
         relative
         pt-2 pb-3 px-2.5
-        text-center font-bold text-xs
+        text-center font-bold text-xs cursor-pointer
       "
     >
         <Handle type="target" position={Position.Top} className="react-flow__handle-top" />

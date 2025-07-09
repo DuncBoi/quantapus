@@ -1,19 +1,10 @@
-export const dynamic = 'force-dynamic'
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { UserProvider } from '@/context/UserContext'
+import { DataProvider } from '@/context/DataContext'
+import { CompletedProvider } from "@/context/CompletedContext";
 import NavBar from "../components/NavBar";
-import { createClient } from '@/utils/supabase/server'
+import { fetchData } from "@/utils/fetchData";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Quantapus",
@@ -25,23 +16,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-
-  const supabase = await createClient()
-
-  const {data: { user },} = await supabase.auth.getUser()
+export default async function RootLayout({children}: Readonly<{children: React.ReactNode;}>) {
+  const { user, problemsById, roadmap } = await fetchData()
 
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} text-white antialiased`}
-      >
-      <NavBar user={user} />  
-      {children}
+      <body className={"text-white antialiased font-mono"}>
+        <UserProvider initialUser={user}>
+          <CompletedProvider>
+          <DataProvider initialProblems={problemsById} initialRoadmap={roadmap}>
+            <NavBar/>
+            {children}
+          </DataProvider>
+          </CompletedProvider>
+        </UserProvider>
       </body>
     </html>
   );
