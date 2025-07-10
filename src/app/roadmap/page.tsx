@@ -1,4 +1,4 @@
-// src/app/roadmap/page.tsx
+'use client'
 import RoadmapFlow from '@/components/RoadmapFlow'
 
 export default function RoadmapPage() {

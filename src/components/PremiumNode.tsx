@@ -1,3 +1,4 @@
+'use client'
 import { NodeProps } from 'reactflow'
 
 export default function PremiumNode({ data }: NodeProps<RoadmapNodeData>) {

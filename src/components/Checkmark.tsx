@@ -1,13 +1,8 @@
 'use client'
-
 import React from 'react'
 import { useCompleted } from '@/context/CompletedContext'
 
-export default function Checkmark({
-  problemId,
-}: {
-  problemId: number
-}) {
+export default function Checkmark({ problemId }: { problemId: number }) {
   const { completedIds, toggleCompleted } = useCompleted()
   const completed = completedIds.has(problemId)
 
@@ -33,7 +28,7 @@ export default function Checkmark({
         <span
           className={
             `absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 \
-                text-white text-[18px] font-bold transition-transform duration-300 ease-in-out ` +
+                text-white text-[18px] transition-transform duration-300 ease-in-out font-extrabold ` +
             (completed
               ? 'scale-[1.2] text-shadow-[0_0_8px_rgba(255,255,255,0.9)]'
               : 'scale-0')

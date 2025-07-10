@@ -4,7 +4,14 @@ import { DataProvider } from '@/context/DataContext'
 import { CompletedProvider } from "@/context/CompletedContext";
 import NavBar from "../components/NavBar";
 import { fetchData } from "@/utils/fetchData";
+import { Roboto_Flex } from 'next/font/google'
 import "./globals.css";
+
+const roboto = Roboto_Flex({
+  subsets: ['latin'],
+  variable: '--font-roboto',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: "Quantapus",
@@ -17,13 +24,13 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({children}: Readonly<{children: React.ReactNode;}>) {
-  const { user, problemsById, roadmap } = await fetchData()
+  const { user, problemsById, roadmap, completedSet } = await fetchData()
 
   return (
-    <html lang="en">
-      <body className={"text-white antialiased font-mono"}>
+    <html lang="en" className={roboto.variable}>
+      <body>
         <UserProvider initialUser={user}>
-          <CompletedProvider>
+          <CompletedProvider initialCompleted={completedSet}>
           <DataProvider initialProblems={problemsById} initialRoadmap={roadmap}>
             <NavBar/>
             {children}

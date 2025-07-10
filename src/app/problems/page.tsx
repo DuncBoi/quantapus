@@ -1,4 +1,4 @@
-import React from 'react'
+'use client'
 import ProblemsList from '@/components/ProblemsList'
 
 export default function ProblemsPage() {

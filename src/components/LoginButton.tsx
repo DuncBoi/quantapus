@@ -1,6 +1,4 @@
-// src/components/LoginButton.tsx
 'use client'
-
 import { useRouter } from 'next/navigation'
 import { useUser } from '@/context/UserContext'
 import { createClient } from '@/utils/supabase/client'

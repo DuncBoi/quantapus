@@ -6,12 +6,14 @@ export async function fetchData(): Promise<{
     user: User | null
     problemsById: Map<number, Problem>
     roadmap: RoadmapNode[]
+    completedSet: Set<number>
 }> {
     const supabase = await createClient()
 
     const {
         data: { user },
     } = await supabase.auth.getUser()
+    const uid = user?.id
 
     const { data: problemsData, error } = await supabase
         .from('problems')
@@ -59,9 +61,21 @@ export async function fetchData(): Promise<{
         ),
     }))
 
+    let completedSet = new Set<number>()
+    if (uid) {
+      const { data: compRaw, error: cErr } = await supabase
+        .from('completed_problems')
+        .select('problem_id')
+        .eq('user_id', uid)
+      if (cErr) throw cErr
+      const comp = (compRaw as { problem_id: number }[]) || []
+      completedSet = new Set(comp.map((r) => r.problem_id))
+    }
+  
     return {
         user: user ?? null,
         problemsById,
         roadmap,
+        completedSet
     }
 }
