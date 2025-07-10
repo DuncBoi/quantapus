@@ -19,7 +19,7 @@ export interface SubcategoryRaw {
 }
 
 export interface NodeRaw {
-  id: number
+  id: string
   label: string
   position_x: number
   position_y: number
@@ -34,7 +34,7 @@ export interface Subcategory {
 }
 
 export interface RoadmapNode {
-  id: number
+  id: string
   label: string
   positionX: number
   positionY: number

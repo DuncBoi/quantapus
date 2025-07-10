@@ -53,7 +53,7 @@
 body {
   background: var(--bg);
   color: var(--fg);
-  font-family: var(--font-roboto);
+  font-family: var(--font-geist-sans);
 }
 
 .react-flow__attribution {
