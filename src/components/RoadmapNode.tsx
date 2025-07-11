@@ -1,4 +1,3 @@
-// src/components/CustomNode.tsx
 'use client'
 import React from 'react'
 import { Handle, Position, NodeProps } from 'reactflow'
@@ -9,10 +8,7 @@ export default function RoadmapNode({
   id,
 }: NodeProps<RoadmapNodeData>) {
   return (
-    <div onClick={e => {
-      e.stopPropagation();
-      data.onClick?.(id)
-    }}
+    <div
       className="
         w-[120px] h-[40px] overflow-visible
         bg-[#1e3353] text-white
@@ -35,8 +31,6 @@ export default function RoadmapNode({
         <ProgressBar nodeId={id} slim />
       </div>
       <Handle type="source" position={Position.Bottom} className="react-flow__handle-bottom" />
-
-
     </div>
   )
 }

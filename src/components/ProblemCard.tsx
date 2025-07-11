@@ -4,6 +4,7 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import type { Problem } from '@/types/data'
 import Checkmark from './Checkmark'
+import DifficultyBadge from './DifficultyBadge'
 
 export default function ProblemCard({
   problem,
@@ -54,9 +55,7 @@ export default function ProblemCard({
           {problem.title}
         </span>
       </div>
-      <span className="text-white text-[1.2rem] font-semibold px-[10px] py-[5px] rounded-[12px]">
-        {problem.difficulty ?? 'Unknown'}
-      </span>
+      <DifficultyBadge difficulty={problem.difficulty} />
     </div>
   )
 }

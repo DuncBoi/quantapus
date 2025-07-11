@@ -10,24 +10,23 @@ export default function LoginButton() {
   const supabase = createClient()
 
   const handleLogin = async () => {
-    if (user) {
-      // sign out; UserProvider subscription will clear context
-      await supabase.auth.signOut()
-      // optionally refresh any SSR data:
-      router.refresh()
-    } else {
-      // kick off OAuth flow
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-      })
-      if (error) {
-        console.error('OAuth error:', error)
-      } else if (data?.url) {
-        // navigate to Supabase-hosted OAuth URL
-        window.location.href = data.url
+  if (user) {
+    await supabase.auth.signOut()
+  } else {
+    const currUrl = window.location.origin + window.location.pathname + window.location.search
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: currUrl
       }
+    })
+    if (error) {
+      console.error('OAuth error:', error)
+    } else if (data?.url) {
+      window.location.href = data.url
     }
   }
+}
 
   return (
     <button

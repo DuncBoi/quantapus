@@ -42,18 +42,15 @@ export default function ProblemPage() {
 
   // Keep the URL param in sync with the displayed problem
   useEffect(() => {
-    const id = allIds[currentIdx]
-    if (id) {
-      // keep all query params (list=roadmap) intact
-      const query = searchParams?.toString()
-      window.history.replaceState(
-        null,
-        '',
-        `/problem/${id}${query ? '?' + query : ''}`
-      )
-    }
-    // eslint-disable-next-line
-  }, [currentIdx, allIds, searchParams])
+  const id = allIds[currentIdx]
+  if (!id) return
+  // Only update the URL if it's not already correct
+  const url = `/problem/${id}${searchParams?.toString() ? '?' + searchParams.toString() : ''}`
+  if (window.location.pathname + window.location.search !== url) {
+    window.history.replaceState(null, '', url)
+  }
+  // Only depend on currentIdx and allIds, NOT searchParams!
+}, [currentIdx, allIds])
 
   // Prev/Next only update state
   const goPrev = () => setCurrentIdx((i) => Math.max(0, i - 1))

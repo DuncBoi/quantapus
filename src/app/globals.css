@@ -66,6 +66,21 @@ body {
   pointer-events: none;
 }
 
+.katex,
+.katex-display {
+  font: inherit !important;
+}
+
+/* inline mode */
+.katex .mfrac .frac-line {
+  transform: translateY(0em) !important;
+}
+
+/* display mode */
+.katex-display .mfrac .frac-line {
+  transform: translateY(-0.1em) !important;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
