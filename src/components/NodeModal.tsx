@@ -1,10 +1,11 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Node } from 'reactflow'
 import { useData } from '@/context/DataContext'
 import ProblemCard from './ProblemCard'
 import ProgressBar from './ProgressBar'
 import type { Subcategory } from '@/types/data'
+import { useRouter } from 'next/navigation'
 
 interface RoadmapNodeData {
   label: string
@@ -22,6 +23,18 @@ export default function NodeModal({
   const subs = node.data.subcategories
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({})
 
+  const router = useRouter()
+
+useEffect(() => {
+  // When modal opens, update the URL (replace state, don't push)
+  router.replace(`?open=${node.id}`, { scroll: false })
+  return () => {
+    // When modal closes, remove the param
+    router.replace(`?`, { scroll: false })
+  }
+}, [node.id, router])
+
+
   const toggle = (id: string) =>
     setOpenMap(m => ({ ...m, [id]: !m[id] }))
 
@@ -34,7 +47,7 @@ export default function NodeModal({
         >
           Close
         </button>
-        <h1 className="text-center text-[5rem] font-bold">
+        <h1 className="text-center text-[5rem] font-bold mb-3">
           {node.data.label}
         </h1>
         <ProgressBar nodeId={node.id} showFraction={true} />
@@ -65,7 +78,7 @@ export default function NodeModal({
                       sub.problemIds.map(pid => {
                         const problem = problemsById.get(pid)
                         return problem ? (
-                          <ProblemCard key={pid} problem={problem} />
+                          <ProblemCard key={pid} problem={problem} variant='roadmap' />
                         ) : null
                       })
                     ) : (

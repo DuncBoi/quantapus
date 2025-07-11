@@ -53,7 +53,8 @@
 body {
   background: var(--bg);
   color: var(--fg);
-  font-family: var(--font-geist-sans);
+  font-family: var(--font-roboto);
+  line-height: 1.2;
 }
 
 .react-flow__attribution {

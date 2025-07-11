@@ -1,46 +1,65 @@
 'use client'
 import React, { useState, useMemo, useEffect } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import { useData } from '@/context/DataContext'
 import ProblemDetail from '@/components/ProblemDetail'
 
 export default function ProblemPage() {
   const params = useParams()
+  const searchParams = useSearchParams()
   let raw = params.problemId
   if (Array.isArray(raw)) raw = raw[0]
   const initialId = raw ?? ''
+  const { problemsById, roadmap } = useData()
 
-  const { problemsById } = useData()
+  // Route mode
+  const roadmapMode = searchParams?.get('list') === 'roadmap'
 
-  // 1) Build sorted ID list
-  const allIds = useMemo(
-    () =>
-      Array.from(problemsById.keys())
-        .sort((a, b) => a - b)
-        .map(String),
-    [problemsById]
-  )
+  // Helper to get the "current" Roadmap node and its full problem list
+  let currentNode = undefined as (typeof roadmap)[number] | undefined
+  let allIds: string[] = []
+  if (roadmapMode && problemsById.size && roadmap.length) {
+    // Find which node contains this problem
+    for (const node of roadmap) {
+      const subProblems = node.subcategories.flatMap(sc => sc.problemIds)
+      if (subProblems.includes(Number(initialId))) {
+        currentNode = node
+        allIds = subProblems.map(String)
+        break
+      }
+    }
+    // Fallback: just use all problems
+    if (!currentNode) {
+      allIds = Array.from(problemsById.keys()).sort((a, b) => a - b).map(String)
+    }
+  } else {
+    allIds = Array.from(problemsById.keys()).sort((a, b) => a - b).map(String)
+  }
 
-  // 2) Local index state, seeded from the URL param
+  // Local index state
   const initialIdx = allIds.indexOf(initialId)
-  const [currentIdx, setCurrentIdx] = useState(
-    initialIdx >= 0 ? initialIdx : 0
-  )
+  const [currentIdx, setCurrentIdx] = useState(initialIdx >= 0 ? initialIdx : 0)
 
-  // 3) Sync the URL bar to match the current problem
+  // Keep the URL param in sync with the displayed problem
   useEffect(() => {
     const id = allIds[currentIdx]
     if (id) {
-      window.history.replaceState(null, '', `/problem/${id}`)
+      // keep all query params (list=roadmap) intact
+      const query = searchParams?.toString()
+      window.history.replaceState(
+        null,
+        '',
+        `/problem/${id}${query ? '?' + query : ''}`
+      )
     }
-  }, [currentIdx, allIds])
+    // eslint-disable-next-line
+  }, [currentIdx, allIds, searchParams])
 
-  // 4) Prev/Next only update state
+  // Prev/Next only update state
   const goPrev = () => setCurrentIdx((i) => Math.max(0, i - 1))
-  const goNext = () =>
-    setCurrentIdx((i) => Math.min(allIds.length - 1, i + 1))
+  const goNext = () => setCurrentIdx((i) => Math.min(allIds.length - 1, i + 1))
 
-  // 5) Grab the current problem from context
+  // Current problem
   const currentId = allIds[currentIdx]
   const problem = problemsById.get(Number(currentId))
 
@@ -56,17 +75,23 @@ export default function ProblemPage() {
           <button
             onClick={goPrev}
             disabled={currentIdx === 0}
-            className="bg-transparent border-none text-[#f0f2f5] text-[2rem] mx-3 p-1 transition-colors duration-200 hover:text-[#61a9f1] nav-arrow"
+            className="bg-transparent border-none text-[#f0f2f5] text-[2rem] mx-3 p-1 transition-colors duration-200 nav-arrow cursor-pointer hover:scale-125"
           >
             ←
           </button>
-          <span className="flex-shrink-0 text-center text-[1.35rem] py-3 px-4 whitespace-nowrap tracking-[0.5px] bg-[#1e3353] border-2 border-[#61a9f1] rounded-[8px] transition-transform duration-200 ease-in-out text-white hover:scale-105 header-title">
-            {currentIdx + 1} / {allIds.length}
-          </span>
+          {roadmapMode && currentNode ? (
+            <span className="flex-shrink-0 text-center text-[1.35rem] py-3 px-4 whitespace-nowrap tracking-[0.5px] bg-[#1e3353] border-2 border-[#61a9f1] rounded-[8px] transition-transform duration-200 ease-in-out text-white hover:scale-105 header-title">
+              {currentNode.label} ({currentIdx + 1}/{allIds.length})
+            </span>
+          ) : (
+            <span className="flex-shrink-0 text-center text-[1.35rem] py-3 px-4 whitespace-nowrap tracking-[0.5px] bg-[#1e3353] border-2 border-[#61a9f1] rounded-[8px] transition-transform duration-200 ease-in-out text-white hover:scale-105 header-title">
+              {currentIdx + 1}/{allIds.length}
+            </span>
+          )}
           <button
             onClick={goNext}
             disabled={currentIdx === allIds.length - 1}
-            className="bg-transparent border-none text-[#f0f2f5] text-[2rem] mx-3 p-1 transition-colors duration-200 hover:text-[#61a9f1] nav-arrow"
+            className="bg-transparent border-none text-[#f0f2f5] text-[2rem] mx-3 p-1 transition-colors duration-200 cursor-pointer hover:scale-125 nav-arrow"
           >
             →
           </button>
@@ -74,9 +99,7 @@ export default function ProblemPage() {
       </div>
 
       {/* Problem Detail */}
-      <ProblemDetail
-        problemId={currentId}
-      />
+      <ProblemDetail problemId={currentId} />
     </div>
   )
 }

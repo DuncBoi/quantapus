@@ -7,14 +7,24 @@ import Checkmark from './Checkmark'
 
 export default function ProblemCard({
   problem,
+  variant = 'filter',
 }: {
   problem: Problem
+  variant?: 'roadmap' | 'filter'
 }) {
   const router = useRouter()
 
+  const handleClick = () => {
+    if (variant === 'roadmap') {
+      router.push(`/problem/${problem.id}?list=roadmap`)
+    } else {
+      router.push(`/problem/${problem.id}?list=filter`)
+    }
+  }
+
   return (
     <div
-      onClick={() => router.push(`/problem/${problem.id}`)}
+      onClick={handleClick}
       className="
         flex justify-between items-center p-[15px] my-2.5 mx-auto w-full
         bg-[#2c2d33] border-2 border-black rounded-lg
@@ -23,9 +33,7 @@ export default function ProblemCard({
       "
     >
       <div className="flex items-center gap-[15px]">
-        {/* only this toggles, and stops propagation so outer onClick won’t fire */}
-        <Checkmark problemId={problem.id}/>
-
+        <Checkmark problemId={problem.id} />
         <span
           className="
             inline-flex items-center justify-center
@@ -42,12 +50,10 @@ export default function ProblemCard({
         >
           #{problem.id}
         </span>
-
         <span className="text-white text-[1.5rem] font-extrabold">
           {problem.title}
         </span>
       </div>
-
       <span className="text-white text-[1.2rem] font-semibold px-[10px] py-[5px] rounded-[12px]">
         {problem.difficulty ?? 'Unknown'}
       </span>

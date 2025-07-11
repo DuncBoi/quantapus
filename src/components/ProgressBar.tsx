@@ -29,7 +29,7 @@ export default function ProgressBar({ nodeId, slim = false, showFraction = false
   // Bar size tweaks
   const barHeight = slim ? 'h-[7px]' : 'h-[18px]'
   const barRadius = slim ? 'rounded-[4px]' : 'rounded-[9px]'
-  const barWidth  = slim ? 'w-[100%]' : 'w-[85%]'
+  const barWidth  = slim ? 'w-[100%]' : 'w-[75%]'
   const barBg     = slim? 'bg-[#132238]' : 'bg-[#fff]'
   const fillRadius = slim ? 'rounded-[4px]' : 'rounded-l-[9px]'
   const fillTransition = 'transition-all duration-1000'
