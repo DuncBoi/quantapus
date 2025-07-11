@@ -57,10 +57,25 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
                     className="flex items-center text-[3rem] mb-[15px]"
                 >
                     <span className="ml-[5px] mr-[15px]">
-                        <Checkmark problemId={problem.id} />
+                        <Checkmark problemId={problem.id} size={40} />
                     </span>
-                    <span className="qp mr-[8px]">QP</span>
-                    <span className="problem-id text-[3rem]">#{problem.id}</span>
+                    <span className="qp mr-[8px] font-extrabold">QP</span>
+                    <span
+                        className="
+            inline-flex items-center justify-center
+            text-white 
+            pt-[6px] pr-[4px] pb-[4px] pl-[6px]
+            border-[5px] border-[rgba(72,126,181,0.5)]
+            rounded-[10px]
+            transition duration-200 ease-in-out
+            hover:bg-[rgba(72,126,181,0.25)]
+            hover:border-[rgba(72,126,181,1)]
+            hover:shadow-[0_0_12px_rgba(72,126,181,0.6)_inset,0_0_20px_rgba(72,126,181,0.4)_inset]
+            hover:scale-105
+          "
+                    >
+                        #{problem.id}
+                    </span>
                     <span className="title-colon ml-[4px] mr-[4px]">:</span>
                     <span className="ml-2 font-extrabold">{problem.title || 'Untitled'}</span>
                 </h1>

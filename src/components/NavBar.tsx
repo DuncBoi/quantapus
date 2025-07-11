@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import LoginButton from '@/components/LoginButton'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 
 export default function NavBar() {
   const pathname = usePathname()
@@ -11,6 +11,10 @@ export default function NavBar() {
     { href: '/roadmap', label: 'Roadmap' },
     { href: '/problems', label: 'Problems' }
   ]
+
+  const searchParams = useSearchParams()
+    const filterParams = searchParams?.toString()
+
 
   return (
     <nav className="bg-[#24252A] mx-1 rounded-[12px] shadow-[0_4px_15px_rgba(0,0,0,0.6)]">

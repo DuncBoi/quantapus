@@ -18,23 +18,28 @@ export const metadata: Metadata = {
   description: "Free Quant Finance Roadmap",
   icons: {
     icon: [
-      { url: '/logo.svg', type: 'image/svg+xml'}
+      { url: '/logo.svg', type: 'image/svg+xml' }
     ],
   },
 };
 
-export default async function RootLayout({children}: Readonly<{children: React.ReactNode;}>) {
-  const { user, problemsById, roadmap, completedSet } = await fetchData()
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
+  const { user, problemsById, roadmap, completedSet, categories, problemCategories } = await fetchData()
 
   return (
     <html lang="en" className={roboto.variable}>
       <body>
         <UserProvider initialUser={user}>
           <CompletedProvider initialCompleted={completedSet}>
-          <DataProvider initialProblems={problemsById} initialRoadmap={roadmap}>
-            <NavBar/>
-            {children}
-          </DataProvider>
+            <DataProvider
+              initialProblems={problemsById}
+              initialRoadmap={roadmap}
+              initialCategories={categories}
+              initialProblemCategories={problemCategories}
+            >            
+            <NavBar />
+              {children}
+            </DataProvider>
           </CompletedProvider>
         </UserProvider>
       </body>

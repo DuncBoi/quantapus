@@ -7,6 +7,8 @@ export async function fetchData(): Promise<{
     problemsById: Map<number, Problem>
     roadmap: RoadmapNode[]
     completedSet: Set<number>
+    categories: { id: string }[]
+    problemCategories: { problem_id: number, category_id: string }[]
 }> {
     const supabase = await createClient()
 
@@ -20,8 +22,20 @@ export async function fetchData(): Promise<{
         .select('*')
 
     if (error) throw error
-
     const problems = (problemsData ?? []) as Problem[]
+
+    const { data: categoriesData, error: catErr } = await supabase
+  .from('categories')
+  .select('*');
+if (catErr) throw catErr;
+const categories = categoriesData as { id: string }[];
+
+// Fetch problem_categories join table
+const { data: probCatData, error: pcErr } = await supabase
+  .from('problem_categories')
+  .select('*');
+if (pcErr) throw pcErr;
+const problemCategories = probCatData as { problem_id: number, category_id: string }[];
 
     const problemsById = new Map<number, Problem>()
     problems!.forEach(p => problemsById.set(p.id, p))
@@ -76,6 +90,8 @@ export async function fetchData(): Promise<{
         user: user ?? null,
         problemsById,
         roadmap,
-        completedSet
+        completedSet, 
+        categories,
+        problemCategories
     }
 }
