@@ -25,6 +25,7 @@ export interface NodeRaw {
   position_y: number
   styling: string
   roadmap_subcategories: SubcategoryRaw[]
+  children?: { child_id: string }[]
 }
 
 export interface Subcategory {
@@ -40,5 +41,6 @@ export interface RoadmapNode {
   positionY: number
   styling: string
   subcategories: Subcategory[]
+  children: string[]
 }
 

@@ -21,7 +21,6 @@ interface RoadmapNodeData {
 }
 
 const nodeTypes = { roadmap: RoadmapNode, premium: PremiumNode }
-const initialEdges: Edge[] = []
 
 function getOpenIdFromURL() {
   if (typeof window === 'undefined') return null
@@ -71,6 +70,16 @@ export default function RoadmapFlow() {
     })
   }, [roadmap])
 
+  const edges = useMemo<Edge[]>(() => {
+    return roadmap.flatMap(node =>
+      (node.children || []).map(childId => ({
+        id: `${node.id}-${childId}`,  // unique edge id
+        source: node.id,
+        target: childId,
+      }))
+    )
+  }, [roadmap])
+
   const modalNode = useMemo(
     () => nodes.find(n => n.id === modalId) || null,
     [nodes, modalId]
@@ -81,7 +90,7 @@ export default function RoadmapFlow() {
       <ReactFlowProvider>
         <ReactFlow
           nodes={nodes}
-          edges={initialEdges}
+          edges={edges}
           nodeTypes={nodeTypes}
           fitView
           defaultEdgeOptions={{

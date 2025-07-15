@@ -53,7 +53,8 @@ const problemCategories = probCatData as { problem_id: number, category_id: stri
         roadmap_node_id,
         order_index,
         problems ( id )
-      )
+      ),
+      children:roadmap_node_children!rodemap_node_children_parent_id_fkey ( child_id )
     `)
 
     if (nErr) throw nErr
@@ -73,6 +74,7 @@ const problemCategories = probCatData as { problem_id: number, category_id: stri
                 problemIds: sc.problems.map(p => p.id),
             })
         ),
+        children: (node.children ?? []).map(c => c.child_id),
     }))
 
     let completedSet = new Set<number>()
