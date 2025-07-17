@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useData } from '@/context/DataContext'
-import ProblemDetail from '@/components/ProblemDetail'
+import ProblemDetail from '@/components/problemcomponents/ProblemDetail'
 
 export default function ProblemPage() {
   const params = useParams()

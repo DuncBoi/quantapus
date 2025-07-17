@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react'
 import { Node } from 'reactflow'
 import { useData } from '@/context/DataContext'
-import ProblemCard from './ProblemCard'
-import ProgressBar from './ProgressBar'
+import ProblemCard from '../problemcomponents/ProblemCard'
+import ProgressBar from '../problemcomponents/ProgressBar'
 import type { Subcategory } from '@/types/data'
 
 interface RoadmapNodeData {
@@ -24,6 +24,11 @@ export default function NodeModal({
 
     const toggle = (id: string) =>
         setOpenMap(m => ({ ...m, [id]: !m[id] }))
+
+    useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
 
     return (
         <div

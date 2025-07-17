@@ -19,9 +19,9 @@ import ReactFlow, {
 import 'reactflow/dist/style.css'
 import { createClient } from '@/utils/supabase/client'
 import { useData } from '@/context/DataContext'
-import RoadmapNode from '@/components/RoadmapNode'
-import PremiumNode from '@/components/PremiumNode'
-import NodeModal from '@/components/NodeModal'
+import RoadmapNode from '@/components/roadmap/RoadmapNode'
+import PremiumNode from '@/components/roadmap/PremiumNode'
+import AdminNodeModal from '@/components/admin/AdminNodeModal'
 
 const nodeTypes = {
   roadmap: RoadmapNode,
@@ -280,7 +280,7 @@ export default function AdminRoadmapEditor() {
           onNodeClick={(_, n) => openModal(n.id)}
         />
         {modalNode && (
-          <NodeModal node={modalNode} onClose={closeModal} />
+          <AdminNodeModal node={modalNode} onClose={closeModal} />
         )}
       </ReactFlowProvider>
 

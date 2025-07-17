@@ -8,12 +8,12 @@ export interface Problem {
   difficulty?: string
   category?: string
   order_index?: number
-  subcategory_id?: string
+  subcategory_id?: string | null
 }
 
 export interface SubcategoryRaw {
-  id: number
-  roadmap_node_id: number
+  id: string
+  roadmap_node_id: string
   order_index: number
   problems: { id: number }[]
 }
@@ -29,7 +29,7 @@ export interface NodeRaw {
 }
 
 export interface Subcategory {
-  id: number
+  id: string
   orderIndex: number
   problemIds: number[]
 }

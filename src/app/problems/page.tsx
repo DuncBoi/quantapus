@@ -1,8 +1,8 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import ProblemsList from '@/components/ProblemsList'
-import FilterDropdown from '@/components/FilterDropdown'
+import ProblemsList from '@/components/problems/ProblemsList'
+import FilterDropdown from '@/components/problems/FilterDropdown'
 import { useCategories } from '@/context/DataContext'
 
 const DIFFICULTY_OPTIONS = ['All', 'Easy', 'Medium', 'Hard'] as const

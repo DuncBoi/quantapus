@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { UserProvider } from '@/context/UserContext'
 import { DataProvider } from '@/context/DataContext'
 import { CompletedProvider } from "@/context/CompletedContext";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/nav/NavBar";
 import { fetchData } from "@/utils/fetchData";
 import { Roboto_Flex } from 'next/font/google'
 import "./globals.css";

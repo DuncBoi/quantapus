@@ -26,11 +26,16 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
     const problem = problemsById.get(Number(problemId))
     const containerRef = useRef<HTMLDivElement>(null)
     const [showSolution, setShowSolution] = useState(false)
+    const [isMounted, setIsMounted] = useState(false)
 
     // Reset solution visibility on problem change
     useEffect(() => {
         setShowSolution(false)
     }, [problemId])
+
+    useEffect(() => {
+        setIsMounted(true)
+    }, [])
 
     // Early return if missing
     if (!problem) {
@@ -139,16 +144,16 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
                     </p>
                 )}
 
-                {problem.yt_link && (
-                    <div id="youtube-link" className="youtube-container mb-4">
-                        <iframe
-                            className="w-full h-[500px] rounded-lg shadow-lg"
-                            src={`${problem.yt_link}?enablejsapi=1&origin=${window.location.origin}`}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                        />
-                    </div>
-                )}
+                {isMounted && problem.yt_link && problem.yt_link.trim() !== null && (
+                <div id="youtube-link" className="youtube-container mb-4">
+                    <iframe
+                        className="w-full h-[500px] rounded-lg shadow-lg"
+                        src={`${problem.yt_link}?enablejsapi=1&origin=${window.location.origin}`}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    />
+                </div>
+            )}
 
                 <p
                     id="explanation"

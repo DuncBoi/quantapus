@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import { Handle, Position, NodeProps } from 'reactflow'
-import ProgressBar from './ProgressBar'
+import ProgressBar from '../problemcomponents/ProgressBar'
 
 export default function RoadmapNode({
   data,

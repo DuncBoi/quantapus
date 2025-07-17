@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useData, useCategories, useProblemCategories } from '@/context/DataContext'
-import ProblemCard from './ProblemCard'
+import ProblemCard from '../problemcomponents/ProblemCard'
 import type { Problem } from '@/types/data'
 import { useSearchParams } from 'next/navigation'
 

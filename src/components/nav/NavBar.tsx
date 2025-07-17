@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import Image from 'next/image'
-import LoginButton from '@/components/LoginButton'
+import LoginButton from '@/components/nav/LoginButton'
 import { usePathname, useSearchParams } from 'next/navigation'
 
 export default function NavBar() {

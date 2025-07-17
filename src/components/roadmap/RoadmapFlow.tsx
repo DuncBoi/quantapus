@@ -9,8 +9,8 @@ import ReactFlow, {
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 
-import RoadmapNode from '@/components/RoadmapNode'
-import PremiumNode from '@/components/PremiumNode'
+import RoadmapNode from '@/components/roadmap/RoadmapNode'
+import PremiumNode from '@/components/roadmap/PremiumNode'
 import NodeModal from './NodeModal'
 import { useData } from '@/context/DataContext'
 import type { Subcategory } from '@/types/data'
