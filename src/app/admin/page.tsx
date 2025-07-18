@@ -3,11 +3,10 @@
 import Link from 'next/link'
 import { Map, ListChecks } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
-
 export default function AdminPage() {
   return (
     <main className="flex flex-col md:flex-row min-h-screen bg-gradient-to-br from-[#4848b5] via-[#48b5b5] to-[#e1fcff] items-center justify-center">
+      
       <SectionLink
         title="Edit Roadmap"
         description="Roadmap tings ya heard?"
@@ -20,6 +19,7 @@ export default function AdminPage() {
         href="/admin/problems"
         icon={<ListChecks className="w-11 h-11 mb-3 text-[#48b5b5] group-hover:text-[#4848b5] transition-colors duration-300" />}
       />
+
     </main>
   )
 }

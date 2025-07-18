@@ -1,11 +1,10 @@
 'use client'
 import React, { useState, useMemo, useEffect } from 'react'
-import { useData } from '@/context/DataContext'
+import { useAdminData } from '@/context/AdminDataContext'
 import ProblemEditor from './ProblemEditor'
 import ProblemCard from '../problemcomponents/ProblemCard'
 import { Node } from 'reactflow'
 import type { Subcategory } from '@/types/data'
-
 import {
   DndContext,
   closestCenter,
@@ -22,6 +21,8 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
+const getSafeSubcatId = (s: string) => s.replace(/\s+/g, '-').toLowerCase().slice(0, 50)
+
 interface RoadmapNodeData {
   label: string
   subcategories: Subcategory[]
@@ -34,29 +35,55 @@ export default function AdminNodeModal({
   node: Node<RoadmapNodeData>
   onClose: () => void
 }) {
-  const { problemsById } = useData()
-  // Copy subcats + their problems so we can rearrange without mutating original
-  const [subcategories, setSubcategories] = useState<Subcategory[]>(
-    node.data.subcategories.map(sc => ({ ...sc, problemIds: [...sc.problemIds] }))
-  )
+  // Get context and always find the *live* roadmapNode (with any changes you made in other modals!)
+  const { problemsById, roadmap, setProblemsById, setRoadmap, setIsDirty } = useAdminData()
+  const roadmapNode = roadmap.find(n => n.id.toString() === node.id.toString())
+  const initialSubcategories = roadmapNode
+    ? roadmapNode.subcategories
+    : node.data.subcategories
+
+  // --- In-modal subcategories (kept in sync with context unless dirty) ---
+  const [subcategories, setSubcategories] = useState<Subcategory[]>(initialSubcategories.map(sc => ({
+    ...sc,
+    problemIds: [...sc.problemIds],
+  })))
+  useEffect(() => {
+    // Only update modal state if modal is opened for another node or context node changes externally
+    setSubcategories(initialSubcategories.map(sc => ({ ...sc, problemIds: [...sc.problemIds] })))
+    // eslint-disable-next-line
+  }, [roadmapNode?.id])
+
+  // Standard modal state
   const [editProblemId, setEditProblemId] = useState<number | null>(null)
   const [isEditingNew, setIsEditingNew] = useState(false)
   const [assigningSubcatId, setAssigningSubcatId] = useState<string | null>(null)
   const [showUnassignedModal, setShowUnassignedModal] = useState(false)
+  const [openMap, setOpenMap] = useState<Record<string, boolean>>({})
+  const [editingSubcatId, setEditingSubcatId] = useState<string | null>(null)
+  const [editSubcatValue, setEditSubcatValue] = useState<string>('')
+  const [problemSearch, setProblemSearch] = useState('')
 
-  // Find all problems not in *this* node (optionally not in any node, up to you!)
+  // --- Find all problem IDs that are in any subcategory in any roadmap node (global ban list) ---
+  const allUsedProblemIds = useMemo(() =>
+    new Set(roadmap.flatMap(n => n.subcategories.flatMap(sc => sc.problemIds))),
+    [roadmap]
+  )
+  // --- Show only problems not in ANY subcategory, anywhere ---
   const allProblems = Array.from(problemsById.values())
-  const problemsInThisNode = subcategories.flatMap(sc => sc.problemIds)
-  const unassignedProblems = useMemo(() =>
-    allProblems.filter(p => !problemsInThisNode.includes(p.id))
-  , [allProblems, problemsInThisNode])
+  const unassignedProblems = useMemo(
+    () =>
+      allProblems.filter(
+        p =>
+          !allUsedProblemIds.has(p.id) &&
+          (!problemSearch || `${p.id}`.includes(problemSearch.trim()))
+      ),
+    [allProblems, allUsedProblemIds, problemSearch]
+  )
 
-  // --- DND-KIT sensors setup ---
+  // --- Drag-n-drop logic ---
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   )
-
-  // --- Subcategory drag-n-drop logic
   const handleSubcatDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
     if (!over || active.id === over.id) return
@@ -64,8 +91,6 @@ export default function AdminNodeModal({
     const newIndex = subcategories.findIndex(sc => sc.id === over.id)
     setSubcategories(arrayMove(subcategories, oldIndex, newIndex))
   }
-
-  // --- Problem drag-n-drop within subcategory
   const handleProblemDragEnd = (subIdx: number) => (event: DragEndEvent) => {
     const { active, over } = event
     if (!over || active.id === over.id) return
@@ -81,7 +106,68 @@ export default function AdminNodeModal({
     }
   }
 
-  // --- Remove problem from subcategory
+  // --- Subcat CRUD ---
+  const handleAddSubcat = () => {
+    let name = prompt("Enter subcategory name:")
+    if (!name) return
+    name = name.trim()
+    const safeId = getSafeSubcatId(name)
+    if (subcategories.some(sc => sc.id === safeId)) {
+      alert('Subcategory with that name already exists!')
+      return
+    }
+    setSubcategories([
+      ...subcategories,
+      {
+        id: safeId,
+        orderIndex: subcategories.length,
+        problemIds: [],
+      }
+    ])
+    setOpenMap(m => ({ ...m, [safeId]: true }))
+    setIsDirty(true)
+  }
+  const handleRemoveSubcat = (id: string) => {
+    setSubcategories(subcategories.filter(sc => sc.id !== id))
+    setOpenMap(m => {
+      const x = { ...m }
+      delete x[id]
+      return x
+    })
+    setIsDirty(true)
+  }
+  // --- Edit subcat names (inline) ---
+  const handleStartEditSubcat = (id: string, currentValue: string) => {
+    setEditingSubcatId(id)
+    setEditSubcatValue(currentValue)
+  }
+  const handleChangeSubcatName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditSubcatValue(e.target.value)
+  }
+  const handleSaveEditSubcat = (oldId: string) => {
+    let newId = getSafeSubcatId(editSubcatValue)
+    if (!newId) return
+    if (subcategories.some(sc => sc.id === newId && sc.id !== oldId)) {
+      alert('Subcategory with that name already exists!')
+      return
+    }
+    setSubcategories(subcategories.map(sc =>
+      sc.id === oldId
+        ? { ...sc, id: newId }
+        : sc
+    ))
+    setOpenMap(map => {
+      const next = { ...map }
+      next[newId] = next[oldId]
+      delete next[oldId]
+      return next
+    })
+    setEditingSubcatId(null)
+    setEditSubcatValue('')
+    setIsDirty(true)
+  }
+
+  // --- Problem assign/remove ---
   const removeProblemFromSubcat = (subIdx: number, pid: number) => {
     const newSubcats = [...subcategories]
     newSubcats[subIdx] = {
@@ -89,9 +175,8 @@ export default function AdminNodeModal({
       problemIds: newSubcats[subIdx].problemIds.filter(id => id !== pid)
     }
     setSubcategories(newSubcats)
+    setIsDirty(true)
   }
-
-  // --- Assign problem to subcategory
   const assignProblemToSubcat = (subIdx: number, pid: number) => {
     if (subcategories[subIdx].problemIds.includes(pid)) return
     const newSubcats = [...subcategories]
@@ -100,20 +185,55 @@ export default function AdminNodeModal({
       problemIds: [...newSubcats[subIdx].problemIds, pid]
     }
     setSubcategories(newSubcats)
+    setIsDirty(true)
   }
 
-  // --- Save ordering & assignments to DB (replace this with your supabase call!)
-  const handleSave = async () => {
-    alert('TODO: Save the subcategory/problem order/assignment to DB')
+  // --- Save Order (write only to context, not DB!) ---
+  const handleSave = () => {
+    setRoadmap(prev =>
+      prev.map(rn =>
+        rn.id.toString() === node.id.toString()
+          ? {
+              ...rn,
+              subcategories: subcategories.map((sc, idx) => ({
+                ...sc,
+                problemIds: [...sc.problemIds],
+                orderIndex: idx,
+              })),
+            }
+          : rn
+      )
+    )
+    setProblemsById(prev => {
+      const next = new Map(prev)
+      roadmapNode?.subcategories.forEach(sc => {
+        sc.problemIds.forEach(pid => {
+          const p = next.get(pid)
+          if (p) next.set(pid, { ...p, subcategory_id: null })
+        })
+      })
+      subcategories.forEach((sc, subIdx) => {
+        sc.problemIds.forEach((pid, orderIdx) => {
+          const p = next.get(pid)
+          if (p) next.set(pid, { ...p, subcategory_id: sc.id, order_index: orderIdx })
+        })
+      })
+      return next
+    })
+    setIsDirty(true)
     onClose()
   }
 
-  useEffect(() => {
-      document.body.style.overflow = 'hidden'
-      return () => { document.body.style.overflow = '' }
-    }, [])
+  // --- Collapsible helpers ---
+  const toggle = (id: string) =>
+    setOpenMap(m => ({ ...m, [id]: !m[id] }))
 
-  // --- Subcategory Sortable Item
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
+  // --- Subcategory Sortable Item ---
   function SortableSubcategory({ sub, idx }: { sub: Subcategory, idx: number }) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: sub.id })
     const style = {
@@ -131,46 +251,83 @@ export default function AdminNodeModal({
         {...listeners}
       >
         <div className="flex items-center mb-2">
-          <span className="text-2xl font-semibold text-[#edf0f1] border-l-4 border-[#61a9f1] pl-3">
-            {sub.id}
-          </span>
+          {editingSubcatId === sub.id ? (
+            <>
+              <input
+                type="text"
+                className="text-2xl font-semibold text-[#edf0f1] bg-[#20232a] border-b-2 border-blue-400 px-2 w-40"
+                value={editSubcatValue}
+                autoFocus
+                onChange={handleChangeSubcatName}
+                onBlur={() => handleSaveEditSubcat(sub.id)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') handleSaveEditSubcat(sub.id)
+                  if (e.key === 'Escape') setEditingSubcatId(null)
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => toggle(sub.id)}
+                className="flex items-center cursor-pointer text-2xl font-semibold text-[#edf0f1] border-l-4 border-[#61a9f1] pl-3 subcategory-header select-none w-full"
+                type="button"
+              >
+                {sub.id}
+                <span className="ml-3 subcategory-check" />
+                <span className={`ml-auto transition-transform ${openMap[sub.id] ? "rotate-180" : ""}`}>
+                  ▼
+                </span>
+              </button>
+              <button
+                onClick={() => handleStartEditSubcat(sub.id, sub.id)}
+                className="ml-4 bg-yellow-400 text-black px-2 py-1 rounded font-semibold text-xs"
+                style={{marginLeft: 8}}
+              >Edit</button>
+              <button
+                onClick={() => handleRemoveSubcat(sub.id)}
+                className="ml-2 bg-red-500 text-white px-2 py-1 rounded font-semibold text-xs"
+              >Delete</button>
+            </>
+          )}
           <span className="ml-2 text-sm text-gray-300">(Drag to reorder)</span>
-          {/* Add/Remove/Other controls here if wanted */}
         </div>
-        {/* Problems sortable */}
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleProblemDragEnd(idx)}
-        >
-          <SortableContext
-            items={sub.problemIds}
-            strategy={verticalListSortingStrategy}
+        {openMap[sub.id] && (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleProblemDragEnd(idx)}
           >
-            <div className="mt-4 space-y-2 pl-4">
-              {sub.problemIds.length > 0 ? sub.problemIds.map(pid => {
-                const problem = problemsById.get(pid)
-                if (!problem) return null
-                return (
-                  <SortableProblem
-                    key={pid}
-                    pid={pid}
-                    problem={problem}
-                    onEdit={() => { setEditProblemId(pid); setIsEditingNew(false) }}
-                    onRemove={() => removeProblemFromSubcat(idx, pid)}
-                  />
-                )
-              }) : (
-                <p className="text-gray-500 italic">No problems in this subcategory.</p>
-              )}
-            </div>
-          </SortableContext>
-        </DndContext>
-        {/* Add problem button */}
-        <button
-          className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-          onClick={() => { setAssigningSubcatId(sub.id); setShowUnassignedModal(true) }}
-        >+ Add Existing Problem</button>
+            <SortableContext
+              items={sub.problemIds}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="mt-4 space-y-2 pl-4">
+                {sub.problemIds.length > 0 ? sub.problemIds.map(pid => {
+                  const problem = problemsById.get(pid)
+                  if (!problem) return null
+                  return (
+                    <SortableProblem
+                      key={pid}
+                      pid={pid}
+                      problem={problem}
+                      onEdit={() => { setEditProblemId(pid); setIsEditingNew(false) }}
+                      onRemove={() => removeProblemFromSubcat(idx, pid)}
+                    />
+                  )
+                }) : (
+                  <p className="text-gray-500 italic">No problems in this subcategory.</p>
+                )}
+              </div>
+            </SortableContext>
+          </DndContext>
+        )}
+        {openMap[sub.id] && (
+          <button
+            className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            onClick={() => { setAssigningSubcatId(sub.id); setShowUnassignedModal(true) }}
+          >+ Add Existing Problem</button>
+        )}
       </div>
     )
   }
@@ -208,6 +365,7 @@ export default function AdminNodeModal({
       assignProblemToSubcat(subIdx, pid)
     }
     setShowUnassignedModal(false)
+    setProblemSearch('')
   }
 
   return (
@@ -223,15 +381,18 @@ export default function AdminNodeModal({
           className="absolute top-4 right-4 bg-[#f20404] text-white px-4 py-2 rounded modal-close cursor-pointer"
         >x</button>
         <h1 className="text-center text-[5rem] font-bold mb-3">
-          {node.data.label}
+          {roadmapNode?.label || node.data.label}
         </h1>
-        <div className="flex justify-end mb-6">
+        <div className="flex justify-between mb-6">
+          <button
+            onClick={handleAddSubcat}
+            className="bg-green-700 text-white px-5 py-2 rounded font-bold hover:bg-green-800"
+          >+ Add Subcategory</button>
           <button
             onClick={handleSave}
             className="bg-blue-600 text-white px-5 py-2 rounded font-bold hover:bg-blue-700"
           >Save Order</button>
         </div>
-        {/* DND context for subcats */}
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -248,16 +409,22 @@ export default function AdminNodeModal({
             </div>
           </SortableContext>
         </DndContext>
-
-        {/* Modal to pick a problem to assign */}
         {showUnassignedModal && assigningSubcatId && (
           <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/80">
             <div className="bg-white p-4 rounded-lg w-[90vw] max-w-xl relative text-black">
               <button
                 className="absolute top-2 right-2 text-black font-bold text-2xl"
-                onClick={() => setShowUnassignedModal(false)}
+                onClick={() => { setShowUnassignedModal(false); setProblemSearch('') }}
               >×</button>
               <h2 className="font-bold mb-2 text-2xl">Add a Problem</h2>
+              <input
+                type="text"
+                className="mb-3 px-2 py-1 border rounded w-full"
+                placeholder="Search by ID..."
+                value={problemSearch}
+                onChange={e => setProblemSearch(e.target.value)}
+                autoFocus
+              />
               <div className="max-h-[50vh] overflow-y-auto">
                 {unassignedProblems.length === 0
                   ? <div className="text-gray-500 italic">No unassigned problems.</div>
@@ -275,7 +442,6 @@ export default function AdminNodeModal({
             </div>
           </div>
         )}
-
         {/* ProblemEditor modal */}
         {(editProblemId !== null) && (
           <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60">
@@ -283,7 +449,7 @@ export default function AdminNodeModal({
               <button
                 className="absolute top-2 right-2 text-black font-bold text-2xl"
                 onClick={() => setEditProblemId(null)}
-              >×</button>            
+              >×</button>
               <ProblemEditor
                 problemId={editProblemId}
                 isNew={isEditingNew}

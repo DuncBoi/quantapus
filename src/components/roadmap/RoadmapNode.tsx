@@ -24,6 +24,17 @@ export default function RoadmapNode({
       {/* your node label */}
       <div className="flex-1 flex items-center justify-center">
         {data.label}
+        {data.onDelete && (
+          <button
+            className="absolute top-[-12px] right-[-12px] bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-base hover:bg-red-700 shadow-md"
+            onClick={e => {
+              e.stopPropagation()
+              data.onDelete?.()
+            }}
+            title="Delete Node"
+            tabIndex={-1}
+          >×</button>
+        )}
       </div>
 
       {/* simple progress bar under the label */}

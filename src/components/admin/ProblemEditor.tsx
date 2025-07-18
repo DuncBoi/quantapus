@@ -1,15 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useData, useCategories, useProblemCategories } from '@/context/DataContext'
-import { createClient } from '@/utils/supabase/client'
-import type { Problem } from '@/types/data'
+import { useAdminData } from '@/context/AdminDataContext'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuCheckboxItem
 } from '@/components/ui/dropdown-menu'
+import type { Problem } from '@/types/data'
 
 const initialProblem: Problem = {
   id: 0,
@@ -31,10 +30,13 @@ export default function ProblemEditor({
   isNew: boolean
   onClose: () => void
 }) {
-  const { problemsById, roadmap } = useData()
-  const categories = useCategories()
-  const problemCategories = useProblemCategories()
-  const supabase = createClient()
+  const {
+    problemsById, setProblemsById,
+    roadmap,
+    categories,
+    problemCategories, setProblemCategories,
+    setIsDirty,
+  } = useAdminData()
 
   const [editProblem, setEditProblem] = useState<Problem>(initialProblem)
   const [selectedNodeId, setSelectedNodeId] = useState<string>("")
@@ -43,12 +45,12 @@ export default function ProblemEditor({
   const [idError, setIdError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
-  // Disable background scroll on mount
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = '' }
   }, [])
 
+  // Load problem for edit, or blank for create
   useEffect(() => {
     if (isNew) {
       setProblemIdInput("")
@@ -59,19 +61,10 @@ export default function ProblemEditor({
     } else if (problemId !== undefined) {
       const problem = problemsById.get(problemId)
       if (problem) {
-        setEditProblem({
-          id: problem.id ?? 0,
-          title: problem.title ?? "",
-          description: problem.description ?? "",
-          solution: problem.solution ?? "",
-          explanation: problem.explanation ?? "",
-          yt_link: problem.yt_link ?? "",
-          difficulty: problem.difficulty ?? "Easy",
-          subcategory_id: problem.subcategory_id ?? null,
-        })
+        setEditProblem({ ...problem, subcategory_id: problem.subcategory_id ?? null })
         setProblemIdInput(problem.id)
         setIdError(null)
-        // Roadmap node
+        // Get node that owns this subcategory
         let nodeId = ""
         if (problem.subcategory_id) {
           const node = roadmap.find(n =>
@@ -80,7 +73,7 @@ export default function ProblemEditor({
           nodeId = node?.id ?? ""
         }
         setSelectedNodeId(nodeId)
-        // Categories
+        // Get all categories assigned to this problem
         const catIds = problemCategories
           .filter(pc => pc.problem_id === problem.id)
           .map(pc => pc.category_id)
@@ -90,73 +83,85 @@ export default function ProblemEditor({
     // eslint-disable-next-line
   }, [problemId, isNew, problemsById, roadmap, problemCategories])
 
-  // Save or create
-  const handleSubmit = async () => {
-    if (isNew && idError) return // Block save if error
-    setIsSaving(true)
-    let upsertedId: number | null = null
-    if (isNew) {
-      const res = await supabase.from('problems').insert({
-        ...editProblem,
-        id: problemIdInput,
-        subcategory_id:
-          !editProblem.subcategory_id || editProblem.subcategory_id === ""
-            ? null
-            : editProblem.subcategory_id
-      }).select().single()
-      if (res.error || !res.data) {
-        setIsSaving(false)
-        alert(res.error?.message || 'Error creating problem')
-        return
-      }
-      upsertedId = res.data.id
-    } else {
-      upsertedId = editProblem.id
-      await supabase.from('problems').update({
-        ...editProblem,
-        subcategory_id:
-          !editProblem.subcategory_id || editProblem.subcategory_id === ""
-            ? null
-            : editProblem.subcategory_id,
-      }).eq('id', editProblem.id)
-      await supabase.from('problem_categories').delete().eq('problem_id', upsertedId)
-    }
-    // Insert new problem_categories
-    if (selectedCategoryIds.length > 0 && upsertedId) {
-      const newJoins = selectedCategoryIds.map(category_id => ({
-        problem_id: upsertedId!,
-        category_id,
-      }))
-      await supabase.from('problem_categories').insert(newJoins)
-    }
-    setIsSaving(false)
-    onClose()
-    window.location.reload()
-  }
-
-  // Delete
-  const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this problem?')) return
-    const { error } = await supabase.from('problems').delete().eq('id', id)
-    if (error) alert(error.message)
-    else {
-      onClose()
-      window.location.reload()
-    }
-  }
-
-  // Problem ID live validation
+  // Live validation for IDs (unique required)
   const validateId = (val: number | "") => {
-    if (problemsById.has(val as number)) {
-      setIdError("ID already taken")
-    } else if (!val || isNaN(Number(val))) {
+    if (!val || isNaN(Number(val))) {
       setIdError("Enter a valid number")
+    } else if (problemsById.has(val as number)) {
+      setIdError("ID already taken")
     } else {
       setIdError(null)
     }
   }
 
-  // Handle click outside the modal to close
+  // Save (to context only!)
+  const handleSubmit = () => {
+    setIsSaving(true)
+    let upsertedId: number
+    if (isNew) {
+      upsertedId = Number(problemIdInput)
+      if (idError || !upsertedId) {
+        setIsSaving(false)
+        return
+      }
+      const newProblem: Problem = {
+        ...editProblem,
+        id: upsertedId,
+        subcategory_id:
+          !editProblem.subcategory_id || editProblem.subcategory_id === ""
+            ? null
+            : editProblem.subcategory_id,
+      }
+      setProblemsById(prev => {
+        const next = new Map(prev)
+        next.set(upsertedId, newProblem)
+        return next
+      })
+    } else {
+      upsertedId = editProblem.id
+      setProblemsById(prev => {
+        const next = new Map(prev)
+        next.set(upsertedId, {
+          ...editProblem,
+          subcategory_id:
+            !editProblem.subcategory_id || editProblem.subcategory_id === ""
+              ? null
+              : editProblem.subcategory_id,
+        })
+        return next
+      })
+    }
+    // Write categories to context (replace all for this problem)
+    setProblemCategories(prev =>
+      [
+        ...prev.filter(pc => pc.problem_id !== upsertedId),
+        ...selectedCategoryIds.map(category_id => ({
+          problem_id: upsertedId,
+          category_id,
+        }))
+      ]
+    )
+    setIsDirty(true)
+    setIsSaving(false)
+    onClose()
+  }
+
+  // "Delete" = remove from context only
+  const handleDelete = (id: number) => {
+    if (!confirm('Are you sure you want to delete this problem?')) return
+    setProblemsById(prev => {
+      const next = new Map(prev)
+      next.delete(id)
+      return next
+    })
+    setProblemCategories(prev =>
+      prev.filter(pc => pc.problem_id !== id)
+    )
+    setIsDirty(true)
+    onClose()
+  }
+
+  // Handle overlay click (closes if click outside modal)
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onClose()
   }
@@ -167,15 +172,7 @@ export default function ProblemEditor({
       onClick={handleOverlayClick}
     >
       <div
-        className="
-          bg-white rounded-lg
-          w-[95vw]
-          max-h-[90vh]
-          overflow-y-auto
-          relative
-          flex flex-col
-          p-8
-        "
+        className="bg-white rounded-lg w-[95vw] max-h-[90vh] overflow-y-auto relative flex flex-col p-8"
         onClick={e => e.stopPropagation()}
       >
         <button

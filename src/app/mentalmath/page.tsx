@@ -1,4 +1,4 @@
-import MathQuiz from '@/components/MathQuiz'
+import MathQuiz from '@/components/problems/MathQuiz'
 import { createClient } from '@/utils/supabase/server'
 
 type PageProps = {

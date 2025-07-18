@@ -2,10 +2,10 @@
 import { useState } from 'react'
 import ProblemCard from '@/components/problemcomponents/ProblemCard'
 import ProblemEditor from '@/components/admin/ProblemEditor'
-import { useData } from '@/context/DataContext'
+import { useAdminData } from '@/context/AdminDataContext'
 
 export default function AdminProblemPage() {
-  const { problemsById } = useData()
+  const { problemsById } = useAdminData()
   // SORT problems by id (number ascending)
   const allProblems = Array.from(problemsById.values()).sort((a, b) => a.id - b.id)
 
