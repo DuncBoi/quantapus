@@ -5,22 +5,37 @@ import { useCompleted } from '@/context/CompletedContext'
 
 type ProgressBarProps = {
   nodeId: string
-  slim?: boolean // 👈 new!
-  showFraction?: boolean // existing, just for modal etc
+  slim?: boolean
+  showFraction?: boolean
+  totalOverride?: number
+  completedOverride?: number
 }
 
-export default function ProgressBar({ nodeId, slim = false, showFraction = false }: ProgressBarProps) {
+export default function ProgressBar({
+  nodeId,
+  slim = false,
+  showFraction = false,
+  totalOverride,
+  completedOverride,
+}: ProgressBarProps) {
   const { roadmap } = useData()
   const { completedIds } = useCompleted()
 
-  const node = roadmap.find(n => n.id === nodeId)
-  if (!node) return null
+  let total: number, completed: number
 
-  const allProblemIds = node.subcategories.flatMap(sc => sc.problemIds)
-  const total = allProblemIds.length
-  const completed = allProblemIds.filter(id => completedIds.has(id)).length
+  // If global override props are given, use them
+  if (typeof totalOverride === 'number' && typeof completedOverride === 'number') {
+    total = totalOverride
+    completed = completedOverride
+  } else {
+    const node = roadmap.find(n => n.id === nodeId)
+    if (!node) return null
+    const allProblemIds = node.subcategories.flatMap(sc => sc.problemIds)
+    total = allProblemIds.length
+    completed = allProblemIds.filter(id => completedIds.has(id)).length
+  }
+
   const percent = total === 0 ? 0 : Math.round((completed / total) * 100)
-
   const [animatedPercent, setAnimatedPercent] = useState(0)
   useEffect(() => {
     setAnimatedPercent(percent)

@@ -10,7 +10,7 @@ export default function RoadmapNode({
   return (
     <div
       className="
-        w-[120px] h-[40px] overflow-visible
+        w-[121px] h-[40px] overflow-visible
         bg-[#1e3353] text-white
         border-2 border-[#61a9f1] rounded-lg
         flex flex-col items-center justify-start
@@ -23,7 +23,7 @@ export default function RoadmapNode({
 
       {/* your node label */}
       <div className="flex-1 flex items-center justify-center">
-        {data.label}
+        {id}
         {data.onDelete && (
           <button
             className="absolute top-[-12px] right-[-12px] bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-base hover:bg-red-700 shadow-md"

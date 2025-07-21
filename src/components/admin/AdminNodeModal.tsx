@@ -21,8 +21,6 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-const getSafeSubcatId = (s: string) => s.replace(/\s+/g, '-').toLowerCase().slice(0, 50)
-
 interface RoadmapNodeData {
   label: string
   subcategories: Subcategory[]
@@ -111,20 +109,19 @@ export default function AdminNodeModal({
     let name = prompt("Enter subcategory name:")
     if (!name) return
     name = name.trim()
-    const safeId = getSafeSubcatId(name)
-    if (subcategories.some(sc => sc.id === safeId)) {
+    if (subcategories.some(sc => sc.id === name)) {
       alert('Subcategory with that name already exists!')
       return
     }
     setSubcategories([
       ...subcategories,
       {
-        id: safeId,
+        id: name,
         orderIndex: subcategories.length,
         problemIds: [],
       }
     ])
-    setOpenMap(m => ({ ...m, [safeId]: true }))
+    setOpenMap(m => ({ ...m, [name]: true }))
     setIsDirty(true)
   }
   const handleRemoveSubcat = (id: string) => {
@@ -145,7 +142,7 @@ export default function AdminNodeModal({
     setEditSubcatValue(e.target.value)
   }
   const handleSaveEditSubcat = (oldId: string) => {
-    let newId = getSafeSubcatId(editSubcatValue)
+    let newId = editSubcatValue
     if (!newId) return
     if (subcategories.some(sc => sc.id === newId && sc.id !== oldId)) {
       alert('Subcategory with that name already exists!')
@@ -442,7 +439,15 @@ export default function AdminNodeModal({
             </div>
           </div>
         )}
-        {/* ProblemEditor modal */}
+      </div>
+      <style jsx global>{`
+        .modal-content.animate-in { animation: zoomIn 0.25s ease-out forwards; }
+        @keyframes zoomIn {
+          0% { transform: scale(0.8); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+      `}</style>
+      {/* ProblemEditor modal */}
         {(editProblemId !== null) && (
           <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60">
             <div className="bg-white p-4 rounded-lg w-[90vw] max-w-2xl relative">
@@ -458,14 +463,7 @@ export default function AdminNodeModal({
             </div>
           </div>
         )}
-      </div>
-      <style jsx global>{`
-        .modal-content.animate-in { animation: zoomIn 0.25s ease-out forwards; }
-        @keyframes zoomIn {
-          0% { transform: scale(0.8); opacity: 0; }
-          100% { transform: scale(1); opacity: 1; }
-        }
-      `}</style>
     </div>
+    
   )
 }

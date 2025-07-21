@@ -13,6 +13,8 @@ import ReactFlow, {
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import RoadmapNode from '@/components/roadmap/RoadmapNode'
+import PremiumNode from '@/components/roadmap/PremiumNode'
+import RoadmapProgressDashboard from '@/components/roadmap/RoadmapProgressDashboard'
 import AdminNodeModal from '@/components/admin/AdminNodeModal'
 import { useAdminData } from '@/context/AdminDataContext'
 
@@ -57,22 +59,26 @@ export default function AdminRoadmapEditor() {
   )
   const [modalId, setModalId] = useState<string | null>(null)
 
-  // Add node button handler
   const addNode = () => {
-    const label = window.prompt('Enter label for new node:')
-    if (!label) return
-    const newId = crypto.randomUUID()
-    setNodes(prev => [
-      ...prev,
-      {
-        id: newId,
-        type: 'roadmap',
-        position: { x: 0, y: 0 },
-        data: { label, subcategories: [] },
-      },
-    ])
-    setIsDirty(true)
+  const id = window.prompt('Enter id for new node:')
+  if (!id) return
+  if (nodes.some(n => n.id === id)) {
+    alert('A node with that id already exists!')
+    return
   }
+  const label = window.prompt('Enter label for new node:') ?? id
+  setNodes(prev => [
+    ...prev,
+    {
+      id,
+      type: 'roadmap',
+      position: { x: 0, y: 0 },
+      data: { label, subcategories: [] },
+    },
+  ])
+  setIsDirty(true)
+}
+
 
   // --- Node Delete Handler
   function handleNodeDelete(id: string) {
@@ -83,16 +89,23 @@ export default function AdminRoadmapEditor() {
 
   // --- NodeTypes with onDelete ONLY for admin
   const nodeTypes = useMemo(() => ({
-    roadmap: (props: NodeProps<RoadmapNodeData>) => (
-      <RoadmapNode
-        {...props}
-        data={{
-          ...props.data,
-          onDelete: () => handleNodeDelete(props.id as string),
-        }}
-      />
-    ),
-  }), [])
+  roadmap: (props: NodeProps<RoadmapNodeData>) => (
+    <RoadmapNode
+      {...props}
+      data={{
+        ...props.data,
+        onDelete: () => handleNodeDelete(props.id as string),
+      }}
+    />
+  ),
+  premium: (props: NodeProps<any>) => <PremiumNode/>,
+  progressDashboard: () => (
+    <div className="w-[350px] min-h-[330px] flex items-center justify-center">
+      <RoadmapProgressDashboard />
+    </div>
+  ),
+}), [])
+
 
   // --- ReactFlow Events ---
   const handleNodesChange: OnNodesChange = changes => {

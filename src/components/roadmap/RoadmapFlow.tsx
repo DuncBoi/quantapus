@@ -13,14 +13,17 @@ import RoadmapNode from '@/components/roadmap/RoadmapNode'
 import PremiumNode from '@/components/roadmap/PremiumNode'
 import NodeModal from './NodeModal'
 import { useData } from '@/context/DataContext'
-import type { Subcategory } from '@/types/data'
+import RoadmapProgressDashboard from '@/components/roadmap/RoadmapProgressDashboard'
 
-interface RoadmapNodeData {
-  label: string
-  subcategories: Subcategory[]
+const nodeTypes = {
+  roadmap: RoadmapNode,
+  premium: PremiumNode,
+  progressDashboard: () => (
+    <div className="w-[350px] h-auto">
+      <RoadmapProgressDashboard />
+    </div>
+  ),
 }
-
-const nodeTypes = { roadmap: RoadmapNode, premium: PremiumNode }
 
 function getOpenIdFromURL() {
   if (typeof window === 'undefined') return null
@@ -30,6 +33,7 @@ function getOpenIdFromURL() {
 
 export default function RoadmapFlow() {
   const { roadmap } = useData()
+
   const [modalId, setModalId] = useState<string | null>(null)
 
   // On mount: open modal if URL has ?open=...
@@ -54,26 +58,23 @@ export default function RoadmapFlow() {
     window.history.replaceState(null, '', params.toString() ? `?${params.toString()}` : '/roadmap')
   }
 
-  const nodes: Node<RoadmapNodeData>[] = useMemo(() => {
-    return roadmap.map(rn => {
-      const id = rn.id.toString()
-      const node: Node<RoadmapNodeData> = {
-        id,
-        type: rn.styling,
-        position: { x: rn.positionX, y: rn.positionY },
-        data: {
-          label: rn.label,
-          subcategories: rn.subcategories,
-        },
-      }
-      return node
-    })
-  }, [roadmap])
+  const nodes: Node[] = useMemo(() => {
+  return roadmap.map(rn => ({
+    id: rn.id.toString(),
+    type: rn.styling, // or rn.type if you use that field
+    position: { x: rn.positionX, y: rn.positionY },
+    data: {
+      label: rn.label,
+      subcategories: rn.subcategories,
+    },
+    draggable: rn.styling === 'progressDashboard' ? true : undefined, // if you want to control drag per node
+  }))
+}, [roadmap])
 
   const edges = useMemo<Edge[]>(() => {
     return roadmap.flatMap(node =>
       (node.children || []).map(childId => ({
-        id: `${node.id}-${childId}`,  // unique edge id
+        id: `${node.id}-${childId}`,
         source: node.id,
         target: childId,
       }))
@@ -98,7 +99,10 @@ export default function RoadmapFlow() {
             style: { stroke: '#fff', strokeWidth: 2 },
             markerEnd: { type: MarkerType.ArrowClosed, color: '#fff' },
           }}
-          onNodeClick={(_, node) => openModal(node.id)}
+          onNodeClick={(_, node) => {
+    if (node.id === 'RoadmapDashboard') return
+    openModal(node.id)
+  }}
         />
         {modalNode && <NodeModal node={modalNode} onClose={closeModal} />}
       </ReactFlowProvider>
