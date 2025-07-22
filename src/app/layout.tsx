@@ -6,6 +6,7 @@ import NavBar from "../components/nav/NavBar";
 import { fetchData } from "@/utils/fetchData";
 import { Roboto_Flex } from 'next/font/google'
 import "./globals.css";
+import Script from "next/script";
 
 const roboto = Roboto_Flex({
   subsets: ['latin'],
@@ -28,6 +29,10 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
   return (
     <html lang="en" className={roboto.variable}>
+      <head>
+        <Script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js" strategy="beforeInteractive" />
+        <Script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js" strategy="beforeInteractive" />
+      </head>
       <body>
         <UserProvider initialUser={user}>
           <CompletedProvider initialCompleted={completedSet}>

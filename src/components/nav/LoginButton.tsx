@@ -3,30 +3,44 @@ import { useRouter } from 'next/navigation'
 import { useUser } from '@/context/UserContext'
 import { createClient } from '@/utils/supabase/client'
 import { getInitials } from '@/lib/getInitials'
+import { useEffect } from 'react'
 
-export default function LoginButton() {
+interface LoginButtonProps {
+  onShowModal: () => void
+}
+
+export default function LoginButton({ onShowModal }: LoginButtonProps) {
   const user = useUser()
   const router = useRouter()
   const supabase = createClient()
 
-  const handleLogin = async () => {
-  if (user) {
-    await supabase.auth.signOut()
-  } else {
-    const currUrl = window.location.origin + window.location.pathname + window.location.search
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: currUrl
+  useEffect(() => {
+    // Listen for custom event to trigger Google login
+    const handler = async () => {
+      const currUrl = window.location.origin + window.location.pathname + window.location.search
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: currUrl
+        }
+      })
+      if (error) {
+        console.error('OAuth error:', error)
+      } else if (data?.url) {
+        window.location.href = data.url
       }
-    })
-    if (error) {
-      console.error('OAuth error:', error)
-    } else if (data?.url) {
-      window.location.href = data.url
+    }
+    window.addEventListener('trigger-google-login', handler)
+    return () => window.removeEventListener('trigger-google-login', handler)
+  }, [supabase])
+
+  const handleLogin = async () => {
+    if (user) {
+      await supabase.auth.signOut()
+    } else {
+      onShowModal()
     }
   }
-}
 
   return (
     <button

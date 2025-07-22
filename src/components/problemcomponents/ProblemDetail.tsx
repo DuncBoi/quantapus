@@ -53,7 +53,7 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
         <div
           ref={containerRef}
           id="problem-details"
-          className="max-w-[95%] mx-auto my-[30px] p-[30px] bg-[#2c2d33] rounded-[12px] shadow-[0_4px_16px_rgba(0,0,0,0.3)] border-2 border-black"
+          className="max-w-[95%] mx-auto my-[10px] p-[30px] bg-[#2c2d33] rounded-[12px] shadow-[0_4px_16px_rgba(0,0,0,0.3)] border-2 border-black"
         >
           {/* Title and checkmark */}
           <div className="flex justify-between items-center mb-[10px] title-container">

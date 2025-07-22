@@ -81,9 +81,9 @@ export default function ProblemPage() {
   }
 
   return (
-    <div className="px-4">
+    <div className="px-4 pt-20">
       {/* Header */}
-      <div className="flex justify-center mt-[30px]" id="problem-header-container">
+      <div className="flex justify-center mt-[10px]" id="problem-header-container">
         <div className="inline-flex items-center gap-2 font-bold py-2 px-4 bg-[#2c2d33] border-2 border-black rounded-[12px] cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.6)] backdrop-blur-[8px]">
           <button
             onClick={goPrev}

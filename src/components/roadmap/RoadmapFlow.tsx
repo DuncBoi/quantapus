@@ -10,14 +10,13 @@ import ReactFlow, {
 import 'reactflow/dist/style.css'
 
 import RoadmapNode from '@/components/roadmap/RoadmapNode'
-import PremiumNode from '@/components/roadmap/PremiumNode'
 import NodeModal from './NodeModal'
 import { useData } from '@/context/DataContext'
 import RoadmapProgressDashboard from '@/components/roadmap/RoadmapProgressDashboard'
 
 const nodeTypes = {
   roadmap: RoadmapNode,
-  premium: PremiumNode,
+  premium: RoadmapNode,
   progressDashboard: () => (
     <div className="w-[350px] h-auto">
       <RoadmapProgressDashboard />
@@ -66,7 +65,9 @@ export default function RoadmapFlow() {
     data: {
       label: rn.label,
       subcategories: rn.subcategories,
-    }  
+      styling: rn.styling
+    },
+    draggable: rn.styling === 'progressDashboard' ? true : undefined, 
   }))
 }, [roadmap])
 
@@ -86,13 +87,14 @@ export default function RoadmapFlow() {
   )
 
   return (
-    <div className="w-full h-screen">
+    <div className="w-full h-screen pt-16">
       <ReactFlowProvider>
         <ReactFlow
           nodes={nodes}
           edges={edges}
           nodeTypes={nodeTypes}
           fitView
+          fitViewOptions={{padding: .1}}
           defaultEdgeOptions={{
             animated: true,
             style: { stroke: '#fff', strokeWidth: 2 },

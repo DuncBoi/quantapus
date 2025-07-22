@@ -3,21 +3,38 @@ import React from 'react'
 import { Handle, Position, NodeProps } from 'reactflow'
 import ProgressBar from '../problemcomponents/ProgressBar'
 
+function getNodeColors(styling?: string) {
+  if (styling === 'premium') {
+    return {
+      bg: 'bg-[#ff8551]',
+      border: 'border-[#F1D48B]',
+      text: 'text-white',
+    }
+  }
+  return {
+    bg: 'bg-[#1e3353]',
+    border: 'border-[#61a9f1]',
+    text: 'text-white',
+  }
+}
+
 export default function RoadmapNode({
   data,
   id,
 }: NodeProps<RoadmapNodeData>) {
+  const colors = getNodeColors(data.styling)
+
   return (
     <div
-      className="
+      className={`
         w-[121px] h-[40px] overflow-visible
-        bg-[#1e3353] text-white
-        border-2 border-[#61a9f1] rounded-lg
+        ${colors.bg} ${colors.text}
+        border-2 ${colors.border} rounded-lg
         flex flex-col items-center justify-start
         relative
         pt-2 pb-3 px-2.5
         text-center font-bold text-xs cursor-pointer
-      "
+      `}
     >
       <Handle type="target" position={Position.Top} className="react-flow__handle-top" />
 

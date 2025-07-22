@@ -9,10 +9,10 @@ import type { Subcategory } from '@/types/data'
 interface RoadmapNodeData {
   label: string
   subcategories: Subcategory[]
+  styling?: string // add this if it isn't already included
 }
 
 function getInitialOpenMap(nodeId: string, subIds: (string | number)[]): Record<string, boolean> {
-  // Try localStorage
   if (typeof window !== 'undefined') {
     const key = `roadmapNodeOpenMap_${nodeId}`
     const stored = localStorage.getItem(key)
@@ -23,7 +23,6 @@ function getInitialOpenMap(nodeId: string, subIds: (string | number)[]): Record<
       } catch { /* ignore */ }
     }
   }
-  // By default, open all
   const initial: Record<string, boolean> = {}
   for (const id of subIds) initial[id.toString()] = true
   return initial
@@ -45,21 +44,19 @@ export default function NodeModal({
 }) {
   const { problemsById } = useData()
   const subs = node.data.subcategories
+  const isPremium = node.data.styling === 'premium'
 
   const [openMap, setOpenMap] = useState<Record<string, boolean>>(
     () => getInitialOpenMap(node.id, subs.map(s => s.id))
   )
 
-  // When subcategory list changes (e.g. due to context refresh), re-open missing subs
   useEffect(() => {
     setOpenMap(prev => {
-      // Carry forward existing keys; add new ones as open
       const updated: Record<string, boolean> = { ...prev }
       for (const sub of subs) {
         const k = sub.id.toString()
         if (!(k in updated)) updated[k] = true
       }
-      // Clean up any deleted subs
       Object.keys(updated).forEach(k => {
         if (!subs.some(s => s.id.toString() === k)) delete updated[k]
       })
@@ -68,13 +65,11 @@ export default function NodeModal({
     // eslint-disable-next-line
   }, [subs.map(s => s.id).join(',')])
 
-  // Disable body scroll on mount, restore on unmount
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = '' }
   }, [])
 
-  // Save openMap to localStorage when modal closes
   const handleClose = () => {
     saveOpenMap(node.id, openMap)
     onClose()
@@ -89,63 +84,75 @@ export default function NodeModal({
 
   return (
     <div
-      className="fixed inset-0 flex justify-center items-end z-[1000] bg-black/70 pb-8 modal-overlay"
+      className="fixed inset-0 flex justify-center items-end z-[1000] bg-black/70 pb-8 modal-overlay backdrop-blur-sm"
       onClick={handleClose}
     >
       <div
         className="relative bg-[#24252A] p-8 rounded-lg w-[85vw] h-[90vh] overflow-y-auto modal-content animate-in"
-        onClick={e => e.stopPropagation()}>
+        onClick={e => e.stopPropagation()}
+      >
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 bg-[#f20404] text-white px-4 py-2 rounded modal-close cursor-pointer"
         >
           x
         </button>
-        <h1 className="text-center text-[5rem] font-bold mb-3">
-          {node.data.label}
-        </h1>
-        <ProgressBar nodeId={node.id} showFraction={true} />
 
-        <div className="space-y-6 mt-6">
-          {subs.map(sub => {
-            return (
-              <div
-                key={sub.id}
-                className={
-                  "bg-[rgba(0,0,0,0.3)] p-6 rounded-[8px] shadow-[0_4px_15px_rgba(0,0,0,0.3)] mb-6 relative subcategory-group"
-                }
-              >
-                <button
-                  onClick={() => toggle(sub.id.toString())}
-                  className="flex items-center cursor-pointer text-[2.2rem] font-bold text-[#edf0f1] border-l-4 border-[#61a9f1] pl-3 subcategory-header select-none w-full"
-                  type="button"
+        {/* Premium Under Construction */}
+        {isPremium ? (
+          <div className="absolute inset-0 flex flex-col justify-center items-center bg-[#24252A]/80 z-20 rounded-lg backdrop-blur-lg">
+            <span className="text-7xl mb-4">🔨</span>
+            <h2 className="text-4xl font-extrabold text-white mb-2 text-center">
+              Under Construction
+            </h2>
+          </div>
+        ) : (
+          <>
+            <h1 className="text-center text-[5rem] font-bold mb-3">
+              {node.data.label}
+            </h1>
+            <ProgressBar nodeId={node.id} showFraction={true} />
+
+            <div className="space-y-6 mt-6">
+              {subs.map(sub => (
+                <div
+                  key={sub.id}
+                  className={
+                    "bg-[rgba(0,0,0,0.3)] p-6 rounded-[8px] shadow-[0_4px_15px_rgba(0,0,0,0.3)] mb-6 relative subcategory-group"
+                  }
                 >
-                  {sub.id}
-                  <span className="ml-3 subcategory-check" />
-                  <span className={`ml-auto transition-transform ${openMap[sub.id] ? "rotate-180" : ""}`}>
-                    ▼
-                  </span>
-                </button>
-                {openMap[sub.id] && (
-                  <div className="mt-4 space-y-2 pl-4">
-                    {sub.problemIds.length > 0 ? (
-                      sub.problemIds.map(pid => {
-                        const problem = problemsById.get(pid)
-                        return problem ? (
-                          <ProblemCard key={pid} problem={problem} variant='roadmap' />
-                        ) : null
-                      })
-                    ) : (
-                      <p className="text-gray-500 italic">
-                        No problems in this subcategory.
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
+                  <button
+                    onClick={() => toggle(sub.id.toString())}
+                    className="flex items-center cursor-pointer text-[2rem] font-bold text-[#edf0f1] border-l-4 border-[#61a9f1] pl-3 subcategory-header select-none w-full"
+                    type="button"
+                  >
+                    {sub.id}
+                    <span className="ml-3 subcategory-check" />
+                    <span className={`ml-auto transition-transform ${openMap[sub.id] ? "rotate-180" : ""}`}>
+                      ▼
+                    </span>
+                  </button>
+                  {openMap[sub.id] && (
+                    <div className="mt-4 space-y-2 pl-4">
+                      {sub.problemIds.length > 0 ? (
+                        sub.problemIds.map(pid => {
+                          const problem = problemsById.get(pid)
+                          return problem ? (
+                            <ProblemCard key={pid} problem={problem} variant='roadmap' />
+                          ) : null
+                        })
+                      ) : (
+                        <p className="text-gray-500 italic">
+                          No problems in this subcategory.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
       <style jsx global>{`
         .modal-content.animate-in { animation: zoomIn 0.25s ease-out forwards; }

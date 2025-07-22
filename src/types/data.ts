@@ -9,6 +9,7 @@ export interface Problem {
   category?: string
   order_index?: number
   subcategory_id?: string | null
+  premium?: boolean
 }
 
 export interface SubcategoryRaw {

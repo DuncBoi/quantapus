@@ -1,13 +1,21 @@
 'use client'
-import React, { createContext, useContext, ReactNode } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useRef,
+  ReactNode,
+  useCallback,
+} from 'react'
 import type { Problem, RoadmapNode } from '@/types/data'
+import { createClient } from '@/utils/supabase/client'
 
-// Update type
 type DataContextType = {
   problemsById: Map<number, Problem>
   roadmap: RoadmapNode[]
   categories: { id: string }[]
   problemCategories: { problem_id: number, category_id: string }[]
+  refreshProblems: () => Promise<void>
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -25,13 +33,35 @@ export function DataProvider({
   initialCategories: { id: string }[]
   initialProblemCategories: { problem_id: number, category_id: string }[]
 }) {
+  // Store state for problems only (other data is static, change if needed)
+  const [problemsById, setProblemsById] = useState(initialProblems)
+
+  // These are just fixed at load (unless you want to make those refreshable too)
+  const roadmap = initialRoadmap
+  const categories = initialCategories
+  const problemCategories = initialProblemCategories
+
+  const supabase = useRef(createClient()).current
+
+  // Refetch problems from DB
+  const refreshProblems = useCallback(async () => {
+    const { data, error } = await supabase.from('problems').select('*')
+    if (!error && data) {
+      const updated = new Map<number, Problem>()
+      data.forEach((p: Problem) => updated.set(p.id, p))
+      setProblemsById(updated)
+    }
+    // else maybe handle error
+  }, [supabase])
+
   return (
     <DataContext.Provider
       value={{
-        problemsById: initialProblems,
-        roadmap: initialRoadmap,
-        categories: initialCategories,
-        problemCategories: initialProblemCategories,
+        problemsById,
+        roadmap,
+        categories,
+        problemCategories,
+        refreshProblems,
       }}
     >
       {children}

@@ -19,6 +19,7 @@ const initialProblem: Problem = {
   yt_link: '',
   difficulty: 'Easy',
   subcategory_id: '',
+  premium: false
 }
 
 export default function ProblemEditor({
@@ -239,6 +240,20 @@ export default function ProblemEditor({
                       <option>Hard</option>
                     </select>
                   </div>
+                  <div>
+  <label className="inline-flex items-center gap-2 font-semibold text-black mb-1">
+    <input
+      type="checkbox"
+      checked={!!editProblem.premium}
+      onChange={e =>
+        setEditProblem({ ...editProblem, premium: e.target.checked })
+      }
+      className="form-checkbox accent-blue-600 h-5 w-5"
+    />
+    Premium problem
+  </label>
+</div>
+
                   <div>
                     <label className="block font-semibold text-black mb-1">Roadmap Node</label>
                     <select

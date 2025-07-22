@@ -43,7 +43,7 @@ export default function ProblemsList({
     const query = `?${params.toString()}`;
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+        <div className="flex flex-col w-full mx-auto px-2">
             {problems.map((problem: Problem) => (
                 <ProblemCard key={problem.id} problem={problem} query={query} />
             ))}

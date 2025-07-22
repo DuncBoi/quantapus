@@ -33,7 +33,7 @@ export default function ProblemCard({
         <div
             onClick={handleClick}
             className="
-        flex justify-between items-center p-[15px] my-2.5 mx-auto w-full
+        flex justify-between items-center p-[15px] my-1 mx-auto w-full
         bg-[#2c2d33] border-2 border-black rounded-lg
         transition-all duration-300 ease-in-out cursor-pointer
         hover:-translate-y-0.5 hover:shadow-[0_4px_8px_rgba(0,0,0,0.2)]
