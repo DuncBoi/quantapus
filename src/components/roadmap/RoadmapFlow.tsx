@@ -61,13 +61,12 @@ export default function RoadmapFlow() {
   const nodes: Node[] = useMemo(() => {
   return roadmap.map(rn => ({
     id: rn.id.toString(),
-    type: rn.styling, // or rn.type if you use that field
+    type: rn.styling,
     position: { x: rn.positionX, y: rn.positionY },
     data: {
       label: rn.label,
       subcategories: rn.subcategories,
-    },
-    draggable: rn.styling === 'progressDashboard' ? true : undefined, // if you want to control drag per node
+    }  
   }))
 }, [roadmap])
 
