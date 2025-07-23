@@ -66,6 +66,10 @@ body {
   pointer-events: none;
 }
 
+.react-flow__edge-path {
+  vector-effect: non-scaling-stroke;
+}
+
 .katex,
 .katex-display {
   font: inherit !important;

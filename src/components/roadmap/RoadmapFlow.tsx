@@ -94,6 +94,8 @@ export default function RoadmapFlow() {
           edges={edges}
           nodeTypes={nodeTypes}
           fitView
+          minZoom={0.4}
+          maxZoom={5} 
           fitViewOptions={{padding: .1}}
           defaultEdgeOptions={{
             animated: true,

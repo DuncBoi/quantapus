@@ -44,6 +44,8 @@ export default function GooglePromptModal({
         <Image
           src="/logo.svg"
           alt="Quantapus Logo"
+          width={40}
+          height={40}
           className="w-[90px] h-[90px] mb-6"
           draggable={false}
         />

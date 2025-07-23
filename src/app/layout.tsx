@@ -6,6 +6,7 @@ import NavBar from "../components/nav/NavBar";
 import { fetchData } from "@/utils/fetchData";
 import { Roboto_Flex } from 'next/font/google'
 import { Toaster } from "../components/ui/sonner";
+import { AnalyticsPageView } from "@/components/nav/AnalyticsPageView";
 import "./globals.css";
 import Script from "next/script";
 
@@ -33,6 +34,31 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <head>
         <Script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js" strategy="beforeInteractive" />
         <Script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js" strategy="beforeInteractive" />
+        {/* --- Google Analytics --- */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-8RD1SC826C"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
+            gtag('js', new Date());
+            gtag('config', 'G-8RD1SC826C', { 'send_page_view': false });
+          `}
+        </Script>
+
+        {/* --- Microsoft Clarity --- */}
+        <Script id="clarity-init" strategy="afterInteractive">
+          {`
+            (function(c,l,a,r,i,t,y){
+              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "r43p2wr72d");
+          `}
+        </Script>
       </head>
       <body>
         <UserProvider initialUser={user}>
@@ -44,6 +70,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
               initialProblemCategories={problemCategories}
             >            
             <NavBar />
+            <AnalyticsPageView />
               {children}
                <Toaster />
             </DataProvider>
