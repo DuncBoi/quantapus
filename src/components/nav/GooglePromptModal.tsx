@@ -76,17 +76,17 @@ export default function GooglePromptModal({
 
         <button
           className="
-            flex items-center justify-center gap-3 mt-1 mb-0
-            bg-[linear-gradient(90deg,_#4848b5,_#48b5b5)]
-            bg-[length:130%_auto]
-            bg-[position:0%_center]
-            hover:bg-[position:100%_center]
-            duration-300 ease-in-out
-            text-white font-extrabold
-            px-7 py-4 rounded-xl text-xl shadow-lg transition
-            w-full
-            select-none cursor-pointer
-          "
+          flex items-center justify-center gap-3 mt-1 mb-0
+          bg-[linear-gradient(90deg,_#4848b5,_#48b5b5)]
+          bg-[length:130%_auto]
+          bg-[position:0%_center]
+          hover:bg-[position:100%_center]
+          duration-600 ease-in-out
+          text-white font-extrabold
+          px-7 py-4 rounded-xl text-xl shadow-lg transition-[background-position]
+          w-full
+          select-none cursor-pointer
+        "
           onClick={onGoogleSignIn}
         >
           {/* Google G, all white */}

@@ -31,12 +31,10 @@ export default function RoadmapProgressDashboard() {
         w-full max-w-[900px] mx-auto
         rounded-3xl
         px-7 py-7
-        bg-[#15161dbf] backdrop-blur-sm
-        border-2 border-[#61a9f1]/60
-        shadow-[0_0_28px_0_#61a9f180]
+        bg-[#15161d] b
+        border-2 border-[#61a9f1]
         flex flex-col gap-4
       "
-      style={{ boxShadow: '0 0 28px 0 #61a9f180' }}
     >
       {/* Header */}
       <div className="w-full flex items-center justify-between select-none">
@@ -44,7 +42,7 @@ export default function RoadmapProgressDashboard() {
           Roadmap Progress
         </h2>
         <div className="flex items-center gap-2">
-          <Flame size={26} className="text-[#ff6b6b] drop-shadow-[0_0_4px_#ff6b6b80]" />
+          <Flame size={26} className="text-[#ff6b6b]" />
           <span className="text-white/90 font-bold text-[1.05rem] tabular-nums">
             {completed}
           </span>

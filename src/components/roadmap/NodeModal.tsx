@@ -84,7 +84,7 @@ export default function NodeModal({
 
   return (
     <div
-      className="fixed inset-0 flex justify-center items-end z-[1000] bg-black/70 pb-8 modal-overlay backdrop-blur-sm"
+      className="fixed inset-0 flex justify-center items-end z-[1000] bg-black/50 pb-8 modal-overlay backdrop-blur-lg"
       onClick={handleClose}
     >
       <div

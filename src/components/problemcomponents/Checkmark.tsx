@@ -17,32 +17,34 @@ export default function Checkmark({
 
   const showSignInToast = () => {
     toast.custom((tId) => (
-      <div
-        className="
-          w-full max-w-sm bg-[#1a1b22f0] text-white/90
-          border-2 border-red-500/90 rounded-xl
-          shadow-[0_0_18px_rgba(255,0,0,0.35)]
-          px-3 py-3 flex items-center justify-between gap-2
-        "
-      >
-        
+      <div className="
+        pointer-events-auto flex items-center gap-1 max-w-sm
+        bg-red-600 text-white border-2 border-red-500 rounded-2xl
+        px-3 py-3 shadow-[0_0_22px_rgba(255,0,0,0.18)]
+      ">
         <button
           onClick={() => {
             toast.dismiss(tId)
             openGooglePrompt()
           }}
-          className="px-3 py-1 rounded-md text-sm font-semibold bg-[#61a9f1] hover:bg-[#4d96df] transition cursor-pointer"
+          className="
+            px-3 py-1 rounded-md text-sm font-semibold
+            bg-white text-red-700 hover:bg-red-100 transition cursor-pointer
+            shadow-sm
+          "
         >
           Sign in
         </button>
-        <span className="text-sm">to complete problems</span>
-        
+        <span className="text-base font-semibold ml-2">
+          to complete problems
+        </span>
       </div>
     ), {
-      position: 'top-center',
-      duration: 5000,
+      position: 'bottom-right',
+      duration: 3000,
     })
   }
+  
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
