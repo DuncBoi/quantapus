@@ -1,6 +1,19 @@
 'use client'
 
+import type { ReactNode } from 'react'
+import type { Problem, RoadmapNode } from '@/types/data'
 import { AdminDataProvider } from '@/context/AdminDataContext'
+
+type Category = { id: string }
+type ProblemCategory = { problem_id: number, category_id: string }
+
+type AdminClientLayoutProps = {
+  children: ReactNode
+  initialProblems: Map<number, Problem>
+  initialRoadmap: RoadmapNode[]
+  initialCategories: Category[]
+  initialProblemCategories: ProblemCategory[]
+}
 
 export default function AdminClientLayout({
   children,
@@ -8,7 +21,7 @@ export default function AdminClientLayout({
   initialRoadmap,
   initialCategories,
   initialProblemCategories,
-}: any) {
+}: AdminClientLayoutProps) {
   return (
     <AdminDataProvider
       initialProblems={initialProblems}
@@ -20,6 +33,3 @@ export default function AdminClientLayout({
     </AdminDataProvider>
   )
 }
-
-
-

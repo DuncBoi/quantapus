@@ -5,6 +5,7 @@ import { CompletedProvider } from "@/context/CompletedContext";
 import NavBar from "../components/nav/NavBar";
 import { fetchData } from "@/utils/fetchData";
 import { Roboto_Flex } from 'next/font/google'
+import { Toaster } from "../components/ui/sonner";
 import "./globals.css";
 import Script from "next/script";
 
@@ -44,6 +45,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             >            
             <NavBar />
               {children}
+               <Toaster />
             </DataProvider>
           </CompletedProvider>
         </UserProvider>

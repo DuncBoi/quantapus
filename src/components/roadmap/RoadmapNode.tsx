@@ -7,7 +7,7 @@ function getNodeColors(styling?: string) {
   if (styling === 'premium') {
     return {
       bg: 'bg-[#ff8551]',
-      border: 'border-[#F1D48B]',
+      border: 'border-[#ff4e4e]',
       text: 'text-white',
     }
   }
@@ -17,6 +17,13 @@ function getNodeColors(styling?: string) {
     text: 'text-white',
   }
 }
+
+interface RoadmapNodeData {
+  label: string
+  styling?: string
+  onDelete?: () => void
+}
+
 
 export default function RoadmapNode({
   data,

@@ -24,11 +24,11 @@ export default function ProblemsPage() {
   const categoryOptions = ['All', ...categories.map(cat => cat.id)]
 
   // "Types Of" label for categories
-  const typesOf = categoryOptions.length > 1 ? categoryOptions[1] : 'All'
+  // const typesOf = categoryOptions.length > 1 ? categoryOptions[1] : 'All'
 
   function getFilterStateFromUrlOrStorage(): FilterState {
-    let urlDifficulty = searchParams?.get('difficulty')
-    let urlCategory = searchParams?.get('category')
+    const urlDifficulty = searchParams?.get('difficulty')
+    const urlCategory = searchParams?.get('category')
     let local = { difficulty: 'All', category: 'All' }
     if (typeof window !== 'undefined') {
       try {
@@ -60,7 +60,7 @@ export default function ProblemsPage() {
     if (typeof window !== 'undefined') {
       localStorage.setItem('problemsFilter', JSON.stringify({ difficulty, category }))
     }
-  }, [difficulty, category])
+  }, [difficulty, category, router])
 
   useEffect(() => {
     const urlDifficulty = searchParams?.get('difficulty')

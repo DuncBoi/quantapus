@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Footer() {
   return (
@@ -8,11 +9,11 @@ export default function Footer() {
         {/* Left: Logo and site name, copyright below */}
         <div className="flex flex-col items-center md:items-start gap-2">
           <div className="flex items-center gap-3">
-            <img
+            <Image
               src="/logo.svg"
               alt="Quantapus Logo"
-              className="w-10 h-10"
-              draggable={false}
+              width={40}   // or whatever size you want
+  height={40}
             />
             <span className="font-extrabold text-lg text-white tracking-tight select-none">
               Quantapus

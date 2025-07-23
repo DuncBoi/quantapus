@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo, useRef } from 'react'
+import React, { useCallback, useState, useMemo } from 'react'
 import ReactFlow, {
   ReactFlowProvider,
   type Edge,
@@ -17,11 +17,12 @@ import PremiumNode from '@/components/roadmap/PremiumNode'
 import RoadmapProgressDashboard from '@/components/roadmap/RoadmapProgressDashboard'
 import AdminNodeModal from '@/components/admin/AdminNodeModal'
 import { useAdminData } from '@/context/AdminDataContext'
+import type { Subcategory } from '@/types/data'
 
 // ---- Types ----
 interface RoadmapNodeData {
   label: string
-  subcategories: any[]
+  subcategories: Subcategory[]
   onDelete?: () => void
 }
 
@@ -81,11 +82,13 @@ export default function AdminRoadmapEditor() {
 
 
   // --- Node Delete Handler
-  function handleNodeDelete(id: string) {
-    setNodes(prev => prev.filter(n => n.id !== id))
-    setEdges(prev => prev.filter(e => e.source !== id && e.target !== id))
-    setIsDirty(true)
-  }
+  const handleNodeDelete = useCallback((id: string) => {
+  setNodes(prev => prev.filter(n => n.id !== id))
+  setEdges(prev => prev.filter(e => e.source !== id && e.target !== id))
+  setIsDirty(true)
+}, [setNodes, setEdges, setIsDirty])
+
+
 
   // --- NodeTypes with onDelete ONLY for admin
   const nodeTypes = useMemo(() => ({
@@ -98,13 +101,13 @@ export default function AdminRoadmapEditor() {
       }}
     />
   ),
-  premium: (props: NodeProps<any>) => <PremiumNode/>,
+  premium: () => <PremiumNode/>,
   progressDashboard: () => (
     <div className="w-[350px] min-h-[330px] flex items-center justify-center">
       <RoadmapProgressDashboard />
     </div>
   ),
-}), [])
+}), [handleNodeDelete])
 
 
   // --- ReactFlow Events ---
@@ -131,7 +134,7 @@ export default function AdminRoadmapEditor() {
     setIsDirty(true)
   }
 
-  const handleEdgeClick = (_: any, edge: Edge) => {
+  const handleEdgeClick = (_: React.MouseEvent, edge: Edge) => {
     setEdges(prev => prev.filter(e => e.id !== edge.id))
     setIsDirty(true)
   }

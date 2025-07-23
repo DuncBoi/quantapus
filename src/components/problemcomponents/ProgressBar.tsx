@@ -5,47 +5,34 @@ import { useCompleted } from '@/context/CompletedContext'
 
 type ProgressBarProps = {
   nodeId: string
-  slim?: boolean
-  showFraction?: boolean
-  totalOverride?: number
-  completedOverride?: number
+  slim?: boolean // 👈 new!
+  showFraction?: boolean // existing, just for modal etc
 }
 
-export default function ProgressBar({
-  nodeId,
-  slim = false,
-  showFraction = false,
-  totalOverride,
-  completedOverride,
-}: ProgressBarProps) {
+export default function ProgressBar({ nodeId, slim = false, showFraction = false }: ProgressBarProps) {
   const { roadmap } = useData()
   const { completedIds } = useCompleted()
-
-  let total: number, completed: number
-
-  // If global override props are given, use them
-  if (typeof totalOverride === 'number' && typeof completedOverride === 'number') {
-    total = totalOverride
-    completed = completedOverride
-  } else {
-    const node = roadmap.find(n => n.id === nodeId)
-    if (!node) return null
-    const allProblemIds = node.subcategories.flatMap(sc => sc.problemIds)
-    total = allProblemIds.length
-    completed = allProblemIds.filter(id => completedIds.has(id)).length
-  }
-
-  const percent = total === 0 ? 0 : Math.round((completed / total) * 100)
   const [animatedPercent, setAnimatedPercent] = useState(0)
+
+
+  const node = roadmap.find(n => n.id === nodeId)
+
+  const allProblemIds = node?.subcategories.flatMap(sc => sc.problemIds) ?? []
+  const total = allProblemIds.length
+  const completed = allProblemIds.filter(id => completedIds.has(id)).length
+  const percent = total === 0 ? 0 : Math.round((completed / total) * 100)
+
   useEffect(() => {
     setAnimatedPercent(percent)
   }, [percent])
 
+  if (!node) return null
+
   // Bar size tweaks
   const barHeight = slim ? 'h-[7px]' : 'h-[18px]'
   const barRadius = slim ? 'rounded-[4px]' : 'rounded-[9px]'
-  const barWidth  = slim ? 'w-[100%]' : 'w-[75%]'
-  const barBg     = slim? 'bg-[#132238]' : 'bg-[#fff]'
+  const barWidth = slim ? 'w-[100%]' : 'w-[75%]'
+  const barBg = slim ? 'bg-[#132238]' : 'bg-[#fff]'
   const fillRadius = slim ? 'rounded-[4px]' : 'rounded-l-[9px]'
   const fillTransition = 'transition-all duration-1000'
 

@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useData, useCategories, useProblemCategories } from '@/context/DataContext'
+import { useData, useProblemCategories } from '@/context/DataContext'
 import ProblemCard from '../problemcomponents/ProblemCard'
 import type { Problem } from '@/types/data'
 import { useSearchParams } from 'next/navigation'

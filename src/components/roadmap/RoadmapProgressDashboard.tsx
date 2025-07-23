@@ -1,92 +1,83 @@
 'use client'
 
-import React from 'react'
+import React, { useMemo } from 'react'
+import { Flame } from 'lucide-react'
 import { useData } from '@/context/DataContext'
 import { useCompleted } from '@/context/CompletedContext'
-import ProgressBar from '@/components/problemcomponents/ProgressBar'
-
-// SVG fire icon for super-sleek look
-const FireIcon = () => (
-  <svg viewBox="0 0 24 24" width={28} height={28} fill="none" aria-hidden="true">
-    <defs>
-      <radialGradient id="fireG" cx="50%" cy="50%" r="80%">
-        <stop offset="0%" stopColor="#ffe27a" />
-        <stop offset="70%" stopColor="#ff983a" />
-        <stop offset="100%" stopColor="#ff345a" />
-      </radialGradient>
-    </defs>
-    <path
-      d="M12.4 3.1c.1-.2.5-.2.6 0C17 8 19.2 12.2 19.2 15.2c0 4-3.2 5.9-5.8 5.9-2.5 0-5.6-1.8-5.6-5.9 0-3 2.3-7.2 4.6-12.1z"
-      fill="url(#fireG)"
-      stroke="#fd3c65"
-      strokeWidth="0.5"
-      style={{ filter: 'drop-shadow(0 1px 2px #fd3c6560)' }}
-    />
-  </svg>
-);
 
 export default function RoadmapProgressDashboard() {
   const { roadmap } = useData()
   const { completedIds } = useCompleted()
 
-  // Unique problem IDs
-  const allProblemIds = React.useMemo(() => {
+  const { total, completed, percent } = useMemo(() => {
     const ids = new Set<number>()
     roadmap.forEach(node => {
-      node.subcategories?.forEach(sub => {
+      node.subcategories?.forEach(sub =>
         sub.problemIds?.forEach(pid => ids.add(pid))
-      })
+      )
     })
-    return Array.from(ids)
-  }, [roadmap])
-
-  const total = allProblemIds.length
-  const completed = allProblemIds.filter(id => completedIds.has(id)).length
-  const percent = total > 0 ? Math.round((completed / total) * 100) : 0
-
-  // If you want streak logic, swap this in
-  const fireCount = completed
+    const all = Array.from(ids)
+    const done = all.filter(id => completedIds.has(id)).length
+    return {
+      total: all.length,
+      completed: done,
+      percent: all.length ? Math.round((done / all.length) * 100) : 0,
+    }
+  }, [roadmap, completedIds])
 
   return (
-    <div className="
-      w-full max-w-[480px]
-      rounded-2xl
-      px-5 py-6
-      bg-[#12131a] border border-[#232841]
-      shadow-[0_2px_16px_0_rgba(30,40,50,0.55)]
-      flex flex-col items-center
-    ">
-      {/* Title row with percentage tight */}
-      <div className="w-full flex items-baseline mb-3 select-none">
-        <h2 className="text-[1.18rem] sm:text-xl font-extrabold text-white tracking-wide leading-tight">
+    <div
+      className="
+        w-full max-w-[900px] mx-auto
+        rounded-3xl
+        px-7 py-7
+        bg-[#15161dbf] backdrop-blur-sm
+        border-2 border-[#61a9f1]/60
+        shadow-[0_0_28px_0_#61a9f180]
+        flex flex-col gap-4
+      "
+      style={{ boxShadow: '0 0 28px 0 #61a9f180' }}
+    >
+      {/* Header */}
+      <div className="w-full flex items-center justify-between select-none">
+        <h2 className="text-[1.35rem] sm:text-xl font-extrabold text-white tracking-wide leading-tight">
           Roadmap Progress
         </h2>
-        <span className="ml-2 text-[#36ffc1] text-base font-bold">
-          ({percent}%)
-        </span>
+        <div className="flex items-center gap-2">
+          <Flame size={26} className="text-[#ff6b6b] drop-shadow-[0_0_4px_#ff6b6b80]" />
+          <span className="text-white/90 font-bold text-[1.05rem] tabular-nums">
+            {completed}
+          </span>
+        </div>
       </div>
 
-      {/* Main content: progress bar full width, fire chip right */}
-      <div className="w-full flex flex-row items-center gap-2">
-        {/* Progress bar big and tight */}
-        <div className="flex-1 min-w-0">
-          <ProgressBar
-            nodeId="__roadmap_total__"
-            slim={false}
-            showFraction={true}
-            totalOverride={total}
-            completedOverride={completed}
-          />
-        </div>
-        {/* Sleek fire "chip" */}
-        <div className="flex flex-col items-center justify-center ml-1 mr-1">
-          <span className="block">
-            <FireIcon />
-          </span>
-          <span className="text-white/90 font-bold text-[1.02rem] mt-1 tabular-nums leading-none">
-            {fireCount}
-          </span>
-        </div>
+      {/* Fraction */}
+      <span className="italic font-medium text-[1.05rem] text-[#ccc] text-center -mb-1 select-none">
+        ({completed} / {total})
+      </span>
+
+      {/* Progress Bar */}
+      <div className="relative w-full h-[24px] bg-[#0d1117] rounded-[12px] overflow-hidden border border-[#1f2a3d]">
+        {/* fill */}
+        <div
+          className="
+            absolute top-0 left-0 h-full
+            bg-gradient-to-r from-[#5dd39e] to-[#38b88f]
+            transition-[width] duration-700 ease-out
+            rounded-[12px]
+          "
+          style={{ width: `${percent}%` }}
+        />
+        {/* centered % label */}
+        <span
+          className="
+            absolute inset-0 flex items-center justify-center
+            text-white/90 text-[0.9rem] font-semibold
+            pointer-events-none select-none
+          "
+        >
+          {percent}%
+        </span>
       </div>
     </div>
   )

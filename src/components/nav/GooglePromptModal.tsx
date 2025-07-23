@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect, ReactNode } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface GooglePromptModalProps {
   open: boolean
@@ -26,8 +27,8 @@ export default function GooglePromptModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
-      onClick={onClose}
+  className="fixed inset-0 z-[1001] flex items-center justify-center backdrop-blur-lg"
+        onClick={onClose}
       aria-modal="true"
       role="dialog"
     >
@@ -40,7 +41,7 @@ export default function GooglePromptModal({
         style={{ minWidth: 300 }}
         onClick={e => e.stopPropagation()}
       >
-        <img
+        <Image
           src="/logo.svg"
           alt="Quantapus Logo"
           className="w-[90px] h-[90px] mb-6"
@@ -78,7 +79,7 @@ export default function GooglePromptModal({
             bg-[length:130%_auto]
             bg-[position:0%_center]
             hover:bg-[position:100%_center]
-            transition-[background-position] duration-300 ease-in-out
+            duration-300 ease-in-out
             text-white font-extrabold
             px-7 py-4 rounded-xl text-xl shadow-lg transition
             w-full

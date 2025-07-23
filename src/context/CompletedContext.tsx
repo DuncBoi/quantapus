@@ -10,7 +10,7 @@ type CompletedContextType = {
 
 const CompletedContext = createContext<CompletedContextType>({
   completedIds: new Set(),
-  toggleCompleted: () => {},
+  toggleCompleted: () => { },
 })
 
 export function CompletedProvider({
@@ -41,7 +41,7 @@ export function CompletedProvider({
           setCompletedIds(new Set(data?.map((r) => r.problem_id) || []))
         }
       })
-  }, [user])
+  }, [user, supabase])
 
   // Debounced save to db
   const flush = () => {
@@ -68,7 +68,11 @@ export function CompletedProvider({
     setCompletedIds((prev) => {
       const next = new Set(prev)
       const newState = !next.has(id)
-      newState ? next.add(id) : next.delete(id)
+      if (newState) {
+        next.add(id)
+      } else {
+        next.delete(id)
+      }
       pendingOpsRef.current.set(id, newState)
       scheduleFlush()
       return next

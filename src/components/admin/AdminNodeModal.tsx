@@ -4,7 +4,7 @@ import { useAdminData } from '@/context/AdminDataContext'
 import ProblemEditor from './ProblemEditor'
 import ProblemCard from '../problemcomponents/ProblemCard'
 import { Node } from 'reactflow'
-import type { Subcategory } from '@/types/data'
+import type { Subcategory, Problem} from '@/types/data'
 import {
   DndContext,
   closestCenter,
@@ -25,6 +25,13 @@ interface RoadmapNodeData {
   label: string
   subcategories: Subcategory[]
 }
+interface SortableProblemProps {
+  pid: number
+  problem: Problem
+  onEdit: () => void
+  onRemove: () => void
+}
+
 
 export default function AdminNodeModal({
   node,
@@ -142,7 +149,7 @@ export default function AdminNodeModal({
     setEditSubcatValue(e.target.value)
   }
   const handleSaveEditSubcat = (oldId: string) => {
-    let newId = editSubcatValue
+    const newId = editSubcatValue
     if (!newId) return
     if (subcategories.some(sc => sc.id === newId && sc.id !== oldId)) {
       alert('Subcategory with that name already exists!')
@@ -209,7 +216,7 @@ export default function AdminNodeModal({
           if (p) next.set(pid, { ...p, subcategory_id: null })
         })
       })
-      subcategories.forEach((sc, subIdx) => {
+      subcategories.forEach((sc) => {
         sc.problemIds.forEach((pid, orderIdx) => {
           const p = next.get(pid)
           if (p) next.set(pid, { ...p, subcategory_id: sc.id, order_index: orderIdx })
@@ -330,7 +337,7 @@ export default function AdminNodeModal({
   }
 
   // --- Problem Sortable Item
-  function SortableProblem({ pid, problem, onEdit, onRemove }: any) {
+  function SortableProblem({ pid, problem, onEdit, onRemove }: SortableProblemProps) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: pid })
     const style = {
       transform: CSS.Transform.toString(transform),

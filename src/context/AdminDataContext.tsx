@@ -72,7 +72,7 @@ export function AdminDataProvider({
                 ...sc,
                 roadmap_node_id: n.id
             })))
-            const subcatKey = (sc: any) => `${sc.id}|${sc.roadmap_node_id}`
+            const subcatKey = (sc: {id: string; roadmap_node_id: string}) => `${sc.id}|${sc.roadmap_node_id}`
             const origSubcatMap = new Map(origSubcats.map(sc => [subcatKey(sc), sc]))
             const changedSubcats = currSubcats.filter(sc => {
                 const orig = origSubcatMap.get(subcatKey(sc))
@@ -171,7 +171,7 @@ export function AdminDataProvider({
                     child_id,
                 }))
             )
-            const edgeKey = (e: any) => `${e.parent_id}|${e.child_id}`
+            const edgeKey = (e: {parent_id: string; child_id: string}) => `${e.parent_id}|${e.child_id}`
             const origEdgeSet = new Set(origEdges.map(edgeKey))
             const currEdgeSet = new Set(currEdges.map(edgeKey))
 
@@ -190,7 +190,7 @@ export function AdminDataProvider({
             }
 
             // --- Problem Categories (diff and only insert/delete links) ---
-            const pcKey = (pc: any) => `${pc.problem_id}|${pc.category_id}`
+            const pcKey = (pc: {problem_id: number; category_id: string}) => `${pc.problem_id}|${pc.category_id}`
             const origPCSet = new Set(originalProblemCategories.map(pcKey))
             const currPCSet = new Set(problemCategories.map(pcKey))
 

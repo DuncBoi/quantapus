@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useData } from '@/context/DataContext'
 import ProblemDetail from '@/components/problemcomponents/ProblemDetail'
+import type { RoadmapNode } from '@/types/data'
 
 export default function ProblemPage() {
   const params = useParams()
@@ -35,8 +36,9 @@ export default function ProblemPage() {
   }, [problemsById, filterDifficulty, filterCategory, problemCategories, categories])
 
   // What set of problems to rotate through?
+  const { allIds, currentNode } = useMemo(() => {
   let allIds: string[] = []
-  let currentNode: any = undefined
+  let currentNode: RoadmapNode | undefined
 
   if (roadmapMode && roadmap.length) {
     for (const node of roadmap) {
@@ -51,9 +53,12 @@ export default function ProblemPage() {
       allIds = Array.from(problemsById.keys()).sort((a, b) => a - b).map(String)
     }
   } else {
-    // Use filtered problems if NOT in roadmap mode
     allIds = filteredProblems.map(p => String(p.id))
   }
+
+  return { allIds, currentNode }
+}, [roadmapMode, roadmap, filteredProblems, problemsById, initialId])
+
 
   // Local index state (seeded from the URL param)
   const initialIdx = allIds.indexOf(initialId)

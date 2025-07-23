@@ -81,7 +81,6 @@ export default function ProblemEditor({
         setSelectedCategoryIds(catIds)
       }
     }
-    // eslint-disable-next-line
   }, [problemId, isNew, problemsById, roadmap, problemCategories])
 
   // Live validation for IDs (unique required)
