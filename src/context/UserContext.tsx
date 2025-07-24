@@ -4,8 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import type { User } from '@supabase/supabase-js'
 import { createClient } from '@/utils/supabase/client'
 import GooglePromptModal from '@/components/nav/GooglePromptModal'
-import { toast } from 'sonner'
-import { Check } from 'lucide-react'
+import { goodToast, badToast } from "@/components/ui/toasts"
 
 interface Ctx {
   user: User | null
@@ -24,15 +23,6 @@ export function UserProvider({ children, initialUser }: { children: React.ReactN
   // prevents duplicate toasts
   const lastEventRef = useRef<string | null>(null)
 
-  const greenToast = (msg: string) =>
-    toast.custom(() => (
-      <div className="pointer-events-auto flex items-center gap-2 w-full max-w-sm
-                      bg-green-500 text-white rounded-2xl px-5 py-4 shadow-[0_0_22px_rgba(0,255,120,0.35)]">
-        <Check className="w-5 h-5" strokeWidth={3} />
-        <span className="text-base font-semibold">{msg}</span>
-      </div>
-    ), { duration: 2000, position: 'bottom-right' })
-
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null)
@@ -41,8 +31,8 @@ export function UserProvider({ children, initialUser }: { children: React.ReactN
       if (event === 'INITIAL_SESSION' || lastEventRef.current === event) return
       lastEventRef.current = event
 
-      if (event === 'SIGNED_IN')  greenToast('Signed in')
-      if (event === 'SIGNED_OUT') greenToast('Signed out')
+      if (event === 'SIGNED_IN')  goodToast('Signed in')
+      if (event === 'SIGNED_OUT') goodToast('Signed out')
     })
     return () => subscription.unsubscribe()
   }, [supabase])
@@ -56,7 +46,10 @@ export function UserProvider({ children, initialUser }: { children: React.ReactN
       provider: 'google',
       options: { redirectTo: currUrl },
     })
-    if (error) console.error(error)
+    if (error) {
+      console.error(error)
+      badToast('Google sign-in failed')
+    }
     // don't close; redirect will wipe anyway
   }
 

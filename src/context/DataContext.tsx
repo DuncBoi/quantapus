@@ -9,6 +9,7 @@ import React, {
 } from 'react'
 import type { Problem, RoadmapNode } from '@/types/data'
 import { createClient } from '@/utils/supabase/client'
+import { badToast } from '@/components/ui/toasts'
 
 type DataContextType = {
   problemsById: Map<number, Problem>
@@ -51,7 +52,9 @@ export function DataProvider({
       data.forEach((p: Problem) => updated.set(p.id, p))
       setProblemsById(updated)
     }
-    // else maybe handle error
+   else {
+      badToast('Failed to refresh problems from database.')
+    }   
   }, [supabase])
 
   return (

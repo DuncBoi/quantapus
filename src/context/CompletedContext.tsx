@@ -2,15 +2,18 @@
 import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useUser } from '@/context/UserContext'
+import { badToast } from '@/components/ui/toasts'
 
 type CompletedContextType = {
   completedIds: Set<number>
   toggleCompleted: (id: number) => void
+  clearCompleted: () => void
 }
 
 const CompletedContext = createContext<CompletedContextType>({
   completedIds: new Set(),
   toggleCompleted: () => { },
+  clearCompleted: () => { },
 })
 
 export function CompletedProvider({
@@ -40,6 +43,10 @@ export function CompletedProvider({
         if (!error) {
           setCompletedIds(new Set(data?.map((r) => r.problem_id) || []))
         }
+        else {
+          badToast('Error Loading Completed Problems')
+          console.error(error)
+        }
       })
   }, [user, supabase])
 
@@ -51,13 +58,24 @@ export function CompletedProvider({
       if (!user) return
       const q = supabase.from('completed_problems')
       if (shouldComplete) {
-        q.insert({ user_id: user.id, problem_id: id }).then()
+        q.insert({ user_id: user.id, problem_id: id }).then(({ error }) => {
+          if (error) {
+            badToast('Failed to update completion status.')
+            console.error(error)
+          }
+        })
       } else {
-        q.delete().match({ user_id: user.id, problem_id: id }).then()
+        q.delete().match({ user_id: user.id, problem_id: id }).then(({ error }) => {
+          if (error) {
+            badToast('Failed to update completion status.')
+            console.error(error)
+          }
+        })
       }
     })
     timeoutRef.current = null
   }
+
   const scheduleFlush = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
     timeoutRef.current = setTimeout(flush, 800)
@@ -79,8 +97,15 @@ export function CompletedProvider({
     })
   }
 
+  // <--- ADDED: clearCompleted
+  const clearCompleted = () => {
+    setCompletedIds(new Set())
+    pendingOpsRef.current = new Map()
+    // optionally, flush() if you want to push deletes to db immediately
+  }
+
   return (
-    <CompletedContext.Provider value={{ completedIds, toggleCompleted }}>
+    <CompletedContext.Provider value={{ completedIds, toggleCompleted, clearCompleted }}>
       {children}
     </CompletedContext.Provider>
   )
