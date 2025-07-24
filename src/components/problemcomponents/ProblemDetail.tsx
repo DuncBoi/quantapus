@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { useData } from '@/context/DataContext'
 import Checkmark from './Checkmark'
 import DifficultyBadge from './DifficultyBadge'
+import { useCategories, useProblemCategories } from '@/context/DataContext'
 
 const delimiters = [
   { left: '$$', right: '$$', display: true },
@@ -15,7 +16,6 @@ const delimiters = [
   { left: '\\[', right: '\\]', display: true },
   { left: '\\(', right: '\\)', display: false },
 ]
-
 
 function injectAndRender(el: HTMLDivElement | null, html: string | undefined) {
   if (!el) return
@@ -31,6 +31,15 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
   const router = useRouter()
   const { problemsById } = useData()
   const problem = problemsById.get(Number(problemId))
+  const categories = useCategories()
+  const problemCategories = useProblemCategories()
+  const problemCategoryIds = problemCategories
+  .filter(pc => pc.problem_id === problem?.id)
+  .map(pc => pc.category_id)
+
+  const problemCategoryNames = categories
+  .filter(cat => problemCategoryIds.includes(cat.id))
+  .map(cat => cat.id) // Or cat.name
 
   const descRef = useRef<HTMLDivElement>(null)
   const solRef  = useRef<HTMLDivElement>(null)
@@ -43,7 +52,6 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
   useEffect(() => setShowSolution(false), [problemId])
   useEffect(() => setIsMounted(true), [])
 
-  // --- MOVE THESE UP ---
   useLayoutEffect(() => {
     if (!problem) return
     injectAndRender(descRef.current, problem.description)
@@ -54,7 +62,6 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
     injectAndRender(solRef.current, problem.solution)
     injectAndRender(expRef.current, problem.explanation)
   }, [problem, showSolution])
-  // --- END MOVE ---
 
   if (!problem) return <p className="text-white p-4">Problem not found.</p>
 
@@ -92,26 +99,25 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
       </div>
 
       {/* Difficulty & Category */}
-      <div className="mb-[20px] meta-info">
-        <DifficultyBadge difficulty={problem.difficulty} />
-        <span id="category-container" className="inline ml-[12px]">
-          {problem.category?.split(',').map((c, i, arr) => (
-            <React.Fragment key={i}>
-              <button
-                onClick={() =>
-                  router.push(`/problems?category=${encodeURIComponent(c.trim())}`)
-                }
-                className="inline-block italic font-semibold mr-1 text-[1.2rem] clickable-tag transition-colors duration-200 hover:underline hover:scale-105"
-              >
-                {c.trim()}
-              </button>
-              {i < arr.length - 1 && ','}
-            </React.Fragment>
-          ))}
+     <div className="mb-[20px] meta-info flex items-center flex-wrap gap-3">
+  <DifficultyBadge difficulty={problem.difficulty} />
+  {problemCategoryNames.length > 0 && (
+    <div className="flex gap-2 flex-wrap ml-2">
+      {problemCategoryNames.map(cat => (
+        <span
+          key={cat}
+          className="bg-[#243858] text-[#b7e5ff] px-3 py-1 rounded-md font-semibold text-base shadow-sm
+            border border-[#375784] hover:bg-[#355a7b]/80 cursor-pointer transition"
+          onClick={() => router.push(`/problems?category=${encodeURIComponent(cat)}`)}
+        >
+          {cat}
         </span>
-      </div>
+      ))}
+    </div>
+  )}
+</div>
 
-      {/* DESCRIPTION (no dangerouslySetInnerHTML) */}
+      {/* DESCRIPTION */}
       <div
         ref={descRef}
         id="description"
@@ -127,7 +133,7 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
         {showSolution ? 'Hide Solution' : 'Show Solution'}
       </button>
 
-      {/* SOLUTION & EXPLANATION (kept mounted, just hidden) */}
+      {/* SOLUTION & EXPLANATION */}
       <div
         id="solution"
         style={{ display: showSolution ? 'block' : 'none' }}

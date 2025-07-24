@@ -3,16 +3,21 @@ import React, { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import ProblemsList from '@/components/problems/ProblemsList'
 import { useCategories } from '@/context/DataContext'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu'
 import { ChevronDown } from 'lucide-react'
 
-// Dropdown color logic
 const DIFFICULTY_OPTIONS = ['All', 'Easy', 'Medium', 'Hard'] as const
 type Difficulty = typeof DIFFICULTY_OPTIONS[number]
 const difficultyColors: Record<Difficulty, string> = {
-  All: '#4f8cff',
+  All: '#fff',
   Easy: '#22c55e',
   Medium: '#eab308',
-  Hard: '#ef4444'
+  Hard: '#ef4444',
 }
 
 type FilterState = { difficulty: Difficulty; category: string }
@@ -21,15 +26,12 @@ export default function ProblemsPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const categories = useCategories()
-  const categoryOptions = ['All', ...categories.map(cat => cat.id)]
-
-  // "Types Of" label for categories
-  // const typesOf = categoryOptions.length > 1 ? categoryOptions[1] : 'All'
+  const categoryOptions = ['Types Of', ...categories.map(cat => cat.id)]
 
   function getFilterStateFromUrlOrStorage(): FilterState {
     const urlDifficulty = searchParams?.get('difficulty')
     const urlCategory = searchParams?.get('category')
-    let local = { difficulty: 'All', category: 'All' }
+    let local = { difficulty: 'All', category: 'Types Of' }
     if (typeof window !== 'undefined') {
       try {
         local = JSON.parse(localStorage.getItem('problemsFilter') || '{}')
@@ -43,7 +45,7 @@ export default function ProblemsPage() {
       category:
         urlCategory && categoryOptions.includes(urlCategory)
           ? urlCategory
-          : local.category || 'All',
+          : local.category || 'Types Of',
     }
   }
 
@@ -54,8 +56,11 @@ export default function ProblemsPage() {
     const params = new URLSearchParams(window.location.search)
     if (difficulty && difficulty !== 'All') params.set('difficulty', difficulty)
     else params.delete('difficulty')
-    if (category && category !== 'All') params.set('category', category)
+
+    // Don't write 'category' if it's "Types Of"
+    if (category && category !== 'Types Of') params.set('category', category)
     else params.delete('category')
+
     router.replace(`?${params.toString()}`, { scroll: false })
     if (typeof window !== 'undefined') {
       localStorage.setItem('problemsFilter', JSON.stringify({ difficulty, category }))
@@ -85,98 +90,127 @@ export default function ProblemsPage() {
     }))
   }
 
-  // Dynamic color for difficulty dropdown
   const difficultyColor = difficultyColors[difficulty]
 
   return (
     <main className="min-h-screen bg-[#181a1f] pb-10 pt-20">
       <div className="w-full flex flex-col items-center justify-center">
-        {/* Filter Bar */}
+        {/* Glassy Filter Bar */}
         <div
           className="
-            flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center
-            w-full max-w-3xl px-3 py-8 mt-4 mb-4
-            rounded-2xl bg-[#24252A]
-            shadow-[0_2px_18px_rgba(24,44,74,0.16)] border border-[#3c4250]/60
-            "
+            flex flex-row flex-wrap gap-1 justify-center items-center
+            w-full max-w-[95%] py-6 mb-8 mt-4
+            rounded-2xl
+            bg-gradient-to-r from-[rgba(40,44,52,0.7)] to-[rgba(72,126,181,0.18)]
+            shadow-[0_4px_20px_rgba(0,0,0,0.6)] border border-[#3c4250]/60
+          "
         >
-          {/* Difficulty */}
-          <div className="w-full sm:w-1/2 relative group">
-            <label className="block text-lg font-extrabold text-[#b7e5ff] mb-2 ml-1">
-              <span
-                style={{
-                  color: difficulty !== 'All' ? difficultyColor : '#b7e5ff',
-                  transition: 'color 0.18s'
-                }}
-              >
-                {difficulty}
-              </span>
-            </label>
-            <select
-              value={difficulty}
-              onChange={e => handleFilterChange('difficulty', e.target.value)}
-              className={`
-                w-full text-xl font-extrabold py-5 px-6 rounded-xl bg-[#1c1d22]
-                border border-[#3e465a] shadow-lg
-                appearance-none focus:outline-none
-                focus:ring-2 focus:ring-[#4f8cff]
-                text-white
-                transition-all
-                cursor-pointer
-                ${difficulty !== 'All' ? '' : ''}
-              `}
-              style={{
-                color: difficulty !== 'All' ? difficultyColor : '#fff'
-              }}
-            >
-              {DIFFICULTY_OPTIONS.map(opt => (
-                <option
-                  key={opt}
-                  value={opt}
+          {/* Difficulty Dropdown */}
+          <div className="dropdown-container flex flex-col items-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className={`
+                    dropdown2 text-5xl font-extrabold py-3 rounded-xl cursor-pointer
+                    flex items-center px-2
+                    border-2 border-transparent
+                    transition-all duration-200
+                    focus:outline-none
+                    hover:scale-105 hover:bg-[rgba(255,255,255,0.06)] hover:shadow-[0_4px_14px_rgba(0,0,0,0.24)]
+                  `}
                   style={{
-                    color: difficultyColors[opt],
-                    fontWeight: opt === difficulty ? 700 : 500,
+                    color: difficulty !== 'All' ? difficultyColor : '#fff',
+                    textDecoration: 'underline',
+                    background: 'transparent',
                   }}
-                >{opt}</option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-5 top-12 pointer-events-none text-[#4f8cff] w-7 h-7" />
+                  aria-label="Filter by difficulty"
+                >
+                  {difficulty}
+                  <ChevronDown className="ml-1 w-5 h-5 text-white" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                className="min-w-[160px] mt-2 rounded-xl border-none bg-[#1e1f26] shadow-[0_4px_16px_rgba(0,0,0,1)] text-lg font-semibold p-1"
+              >
+                {DIFFICULTY_OPTIONS.map(opt => (
+                  <DropdownMenuItem
+                    key={opt}
+                    onSelect={() => handleFilterChange('difficulty', opt)}
+                    className={`dropdown-item px-4 py-2 cursor-pointer transition bg-transparent hover:bg-[#3d3d3d] rounded-lg
+                      ${opt !== 'All' ? '' : ''}
+                    `}
+                    data-value={opt}
+                    style={{
+                      color: difficultyColors[opt],
+                      fontWeight: opt === difficulty ? 700 : 500,
+                    }}
+                  >
+                    {opt}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
-          {/* Category */}
-          <div className="w-full sm:w-1/2 relative group">
-            <label className="block text-lg font-extrabold text-[#b7e5ff] mb-2 ml-1">
-              <span style={{ color: '#fff', letterSpacing: 1 }}>
-                Types Of
-              </span>
-            </label>
-            <select
-              value={category}
-              onChange={e => handleFilterChange('category', e.target.value)}
-              className="
-                w-full text-xl font-extrabold py-5 px-6 rounded-xl bg-[#1c1d22]
-                border border-[#3e465a] shadow-lg
-                appearance-none focus:outline-none
-                focus:ring-2 focus:ring-[#4f8cff]
-                text-white
-                transition-all
-                cursor-pointer
-              "
-            >
-              {categoryOptions.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-5 top-12 pointer-events-none text-[#4f8cff] w-7 h-7" />
+          {/* Category Dropdown */}
+          <div className="dropdown-container flex flex-col items-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="
+                    dropdown2 text-5xl font-extrabold py-3 rounded-xl cursor-pointer
+                    flex items-center px-2
+                    border-2 border-transparent
+                    transition-all duration-200
+                    focus:outline-none
+                    text-white
+                    hover:scale-105 hover:bg-[rgba(255,255,255,0.06)] hover:shadow-[0_4px_14px_rgba(0,0,0,0.24)]
+                  "
+                  aria-label="Filter by category"
+                  style={{
+                    textDecoration: 'underline',
+                    background: 'transparent',
+                  }}
+                >
+                  {category === 'Types Of' ? 'Types Of' : category}
+                  <ChevronDown className="ml-1 w-5 h-5 text-white" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="start"
+                className="min-w-[160px] mt-2 rounded-xl border-none bg-[#1e1f26] shadow-[0_4px_16px_rgba(0,0,0,1)] text-lg font-semibold p-1"
+              >
+                {categoryOptions.map(opt => (
+                  <DropdownMenuItem
+                    key={opt}
+                    onSelect={() => handleFilterChange('category', opt)}
+                    className="dropdown-item px-4 py-2 cursor-pointer transition bg-transparent hover:bg-[#3d3d3d] rounded-lg"
+                    data-value={opt}
+                    style={{
+                      color: opt === 'Types Of' ? '#fff' : '#61a9f1',
+                      fontWeight: opt === category ? 700 : 500,
+                    }}
+                  >
+                    {opt}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
+
+          {/* Static "Problems" label */}
+          <span className="text-white text-5xl font-extrabold select-none">
+            Problems
+          </span>
         </div>
       </div>
 
       {/* Problems List */}
-      <div className="flex flex-col gap-2 items-center w-full">
+      <div className="flex flex-col gap-2 items-center w-full mx-auto max-w-[95%]">
         <ProblemsList
           filterDifficulty={difficulty}
-          filterCategory={category}
+          filterCategory={category === 'Types Of' ? 'All' : category}
         />
       </div>
     </main>
