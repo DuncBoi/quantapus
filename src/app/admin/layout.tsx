@@ -1,9 +1,10 @@
+export const dynamic = 'force-dynamic'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { fetchData } from '@/utils/fetchData'
 import AdminSaveButton from '@/components/admin/AdminSaveButton'
 import AdminClientLayout from './AdminClientLayout'
-import Link from 'next/link' // <-- ADD THIS!
+import Link from 'next/link'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -37,7 +38,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       initialCategories={categories}
       initialProblemCategories={problemCategories}
     >
-    <div className="min-h-screen bg-[#181a1b]">
+    <div className="min-h-screen bg-[#181a1b] pt-20">
       {/* --- Admin Nav Bar --- */}
       <nav className="bg-[#242b32] px-8 py-3 flex items-center border-b border-[#222] shadow-sm z-30">
         <span className="font-bold text-white text-xl tracking-wider mr-8">Admin Panel</span>

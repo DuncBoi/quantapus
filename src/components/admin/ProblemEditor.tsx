@@ -297,7 +297,7 @@ export default function ProblemEditor({
                     <label className="block font-semibold text-black mb-1">YouTube Link</label>
                     <input
                       className="w-full rounded border px-3 py-2 text-black text-base bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                      value={editProblem.yt_link || ''}
+                      value={editProblem.yt_link || 'https://www.youtube.com/embed/'}
                       onChange={e => setEditProblem({ ...editProblem, yt_link: e.target.value })}
                     />
                   </div>

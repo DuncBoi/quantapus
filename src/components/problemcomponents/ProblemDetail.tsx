@@ -141,7 +141,7 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
           />
         )}
 
-        {isMounted && problem.yt_link && problem.yt_link.trim() !== '' && (
+        {showSolution && isMounted && problem.yt_link && problem.yt_link.trim() !== '' && (
           <div id="youtube-link" className="youtube-container mb-4">
             <iframe
               className="w-full h-[500px] rounded-lg shadow-lg"

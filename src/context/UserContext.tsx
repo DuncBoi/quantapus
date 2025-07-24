@@ -31,7 +31,7 @@ export function UserProvider({ children, initialUser }: { children: React.ReactN
         <Check className="w-5 h-5" strokeWidth={3} />
         <span className="text-base font-semibold">{msg}</span>
       </div>
-    ), { duration: 3000, position: 'bottom-right' })
+    ), { duration: 2000, position: 'bottom-right' })
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {

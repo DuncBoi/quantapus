@@ -72,7 +72,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             <NavBar />
             <AnalyticsPageView />
               {children}
-               <Toaster />
+               <Toaster 
+                       />
             </DataProvider>
           </CompletedProvider>
         </UserProvider>
