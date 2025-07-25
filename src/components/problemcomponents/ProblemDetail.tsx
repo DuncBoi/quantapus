@@ -71,7 +71,7 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
     >
       {/* Title and checkmark */}
       <div className="flex justify-between items-center mb-[10px] title-container">
-        <h1 id="problem-title" className="flex items-center text-[3rem] mb-[15px]">
+        <h1 id="problem-title" className="flex flex-wrap items-center text-fluid-large mb-[15px]">
           <span className="ml-[5px] mr-[15px]">
             <Checkmark problemId={problem.id} size={40} />
           </span>
@@ -113,14 +113,14 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
       <div
         ref={descRef}
         id="description"
-        className="mb-[30px] text-[1.5rem] overflow-x-auto description"
+        className="mb-[30px] text-fluid-small overflow-x-auto description"
       />
 
       {/* Show/Hide Solution Button */}
       <button
         id="solution-button"
         onClick={() => setShowSolution(s => !s)}
-        className="block w-full text-center bg-[#487eb5] p-[15px] text-[20px] font-bold text-white rounded-[50px] my-[20px] transition-all duration-300 ease-in-out solution-button hover:bg-[#487eb5]/80 cursor-pointer"
+        className="block w-full text-center bg-[#487eb5] p-[15px] text-fluid-small font-bold text-white rounded-[50px] my-[20px] transition-all duration-300 ease-in-out solution-button hover:bg-[#487eb5]/80 cursor-pointer"
       >
         {showSolution ? 'Hide Solution' : 'Show Solution'}
       </button>

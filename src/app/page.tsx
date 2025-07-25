@@ -4,7 +4,6 @@
 import React, { useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Footer from '@/components/nav/Footer'
-import { ArrowUpRight } from 'lucide-react'
 
 function loadVantaScript(): Promise<void> {
   if (typeof window !== 'undefined' && !(window as any).VANTA) {
@@ -43,8 +42,8 @@ export default function Home() {
           color: 0x61a9f1,
           backgroundColor: 0x24252A,
           points: 14.0,
-          maxDistance: 25.0,
-          spacing: 18.0,
+          maxDistance: 20.0,
+          spacing: 10.0,
           showDots: false,
         })
       }
@@ -87,11 +86,11 @@ export default function Home() {
             borderStyle: 'solid',
           }}
         >
-          <h1 className="font-extrabold text-white text-[clamp(2.5rem,8vw,6rem)] drop-shadow-2xl tracking-tight select-none text-center">
+          <h1 className="font-extrabold text-white text-fluid-xl drop-shadow-2xl tracking-tight select-none text-center">
             Quantapus
           </h1>
 
-          <p className="mt-2 text-[1.7rem] sm:text-2xl font-semibold text-white/80 drop-shadow-xl text-center leading-tight">
+          <p className="mt-2 text-fluid-small font-semibold text-white/80 drop-shadow-xl text-center leading-tight">
             The complete{' '}
             <Link
               href="/roadmap"
@@ -101,11 +100,9 @@ export default function Home() {
               <span className="bg-gradient-to-r from-[#48e0ff] to-[#36ffc1] bg-clip-text text-transparent animate-gradient">
                 Roadmap
               </span>
-              <ArrowUpRight size={22} strokeWidth={2.5} className="translate-y-[1px]" />
-            </Link>{' '}
-            to
-            <span className="ml-2 font-extrabold text-white/80">quantitative finance</span>
-            <span className="ml-2">interview prep.</span>
+            </Link> to
+            <span className=" font-extrabold text-white/80"> quantitative finance</span>
+            <span> interview prep.</span>
           </p>
 
         </div>

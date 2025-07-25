@@ -104,7 +104,7 @@ export default function ProblemPage() {
   // Build header label, click handler
   let headerOnClick: () => void
   let headerClass =
-    'flex-shrink-0 text-center text-[1.35rem] py-3 px-4 whitespace-nowrap tracking-[0.5px] cursor-pointer'
+    'flex-shrink-0 text-center text-fluid-small py-3 px-4 whitespace-nowrap tracking-[0.5px] cursor-pointer'
   let headerLabel: React.ReactNode = null
 
   if (roadmapMode && currentNode) {

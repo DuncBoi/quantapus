@@ -20,16 +20,32 @@ export default function CategoryPill({
     }
     router.push('/problems')
   }
+  // Keyboard accessibility: Enter triggers click if focused and clickable
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!clickable) return
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      handleClick()
+    }
+  }
+
   return (
     <span
       className={`
-        bg-[#243858] text-[#b7e5ff] px-3 py-1 rounded-md font-semibold text-base shadow-sm
-        border border-[#375784] transition
-        ${clickable ? 'hover:bg-[#355a7b]/80 cursor-pointer' : ''}
+        inline-block font-semibold italic underline underline-offset-4 decoration-2
+        text-white transition-all duration-200 text-fluid-xs
+        ${clickable
+          ? 'cursor-pointer hover:scale-110 hover:decoration-[3px] hover:underline opacity-100'
+          : 'opacity-100 cursor-default'}
       `}
-      onClick={clickable ? handleClick : undefined}
+      style={{
+        background: 'transparent',
+        border: 'none',
+        outline: 'none',
+      }}
       tabIndex={clickable ? 0 : -1}
-      style={clickable ? {} : { pointerEvents: 'none', opacity: 1 }}
+      onClick={clickable ? handleClick : undefined}
+      onKeyDown={clickable ? handleKeyDown : undefined}
     >
       {category}
     </span>

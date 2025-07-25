@@ -15,7 +15,7 @@ export default function DifficultyBadge({ difficulty }: { difficulty?: string })
   return (
     <span
       className={
-        `px-[10px] py-[5px] rounded-[12px] font-semibold text-[1.2rem] transition-colors duration-200 ${color}`
+        `px-[10px] py-[5px] rounded-[12px] font-semibold text-fluid-xs transition-colors duration-200 ${color}`
       }
     >
       {difficulty ?? 'Unknown'}

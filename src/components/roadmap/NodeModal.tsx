@@ -108,7 +108,7 @@ export default function NodeModal({
           </div>
         ) : (
           <>
-            <h1 className="text-center text-[5rem] font-bold mb-3">
+            <h1 className="text-center text-fluid-xl font-bold mb-3">
               {node.data.label}
             </h1>
             <ProgressBar nodeId={node.id} showFraction={true} />
@@ -123,7 +123,7 @@ export default function NodeModal({
                 >
                   <button
                     onClick={() => toggle(sub.id.toString())}
-                    className="flex items-center cursor-pointer text-[2rem] font-bold text-[#edf0f1] border-l-4 border-[#61a9f1] pl-3 subcategory-header select-none w-full"
+                    className="flex items-center cursor-pointer text-fluid-medium font-bold text-[#edf0f1] border-l-4 border-[#61a9f1] pl-3 subcategory-header select-none w-full"
                     type="button"
                   >
                     {sub.id}
