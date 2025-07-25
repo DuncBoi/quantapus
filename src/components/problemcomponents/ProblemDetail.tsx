@@ -4,11 +4,11 @@ import React, { useState, useRef, useLayoutEffect, useEffect } from 'react'
 import 'katex/dist/katex.min.css'
 // @ts-expect-error katex insertion
 import renderMathInElement from 'katex/dist/contrib/auto-render.mjs'
-import { useRouter } from 'next/navigation'
 import { useData } from '@/context/DataContext'
 import Checkmark from './Checkmark'
 import DifficultyBadge from './DifficultyBadge'
 import { useCategories, useProblemCategories } from '@/context/DataContext'
+import CategoryPill from './CategoryPill'
 
 const delimiters = [
   { left: '$$', right: '$$', display: true },
@@ -28,7 +28,6 @@ interface ProblemDetailProps {
 }
 
 export default function ProblemDetail({ problemId }: ProblemDetailProps) {
-  const router = useRouter()
   const { problemsById } = useData()
   const problem = problemsById.get(Number(problemId))
   const categories = useCategories()
@@ -102,19 +101,12 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
      <div className="mb-[20px] meta-info flex items-center flex-wrap gap-3">
   <DifficultyBadge difficulty={problem.difficulty} />
   {problemCategoryNames.length > 0 && (
-    <div className="flex gap-2 flex-wrap ml-2">
-      {problemCategoryNames.map(cat => (
-        <span
-          key={cat}
-          className="bg-[#243858] text-[#b7e5ff] px-3 py-1 rounded-md font-semibold text-base shadow-sm
-            border border-[#375784] hover:bg-[#355a7b]/80 cursor-pointer transition"
-          onClick={() => router.push(`/problems?category=${encodeURIComponent(cat)}`)}
-        >
-          {cat}
-        </span>
-      ))}
-    </div>
-  )}
+  <div className="flex gap-2 flex-wrap ml-2">
+    {problemCategoryNames.map(cat => (
+      <CategoryPill key={cat} category={cat} />
+    ))}
+  </div>
+)}
 </div>
 
       {/* DESCRIPTION */}
@@ -128,7 +120,7 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
       <button
         id="solution-button"
         onClick={() => setShowSolution(s => !s)}
-        className="block w-full text-center bg-[#487eb5] p-[15px] text-[20px] font-bold text-white rounded-[50px] my-[20px] transition-all duration-300 ease-in-out solution-button hover:bg-[#487eb5]/80"
+        className="block w-full text-center bg-[#487eb5] p-[15px] text-[20px] font-bold text-white rounded-[50px] my-[20px] transition-all duration-300 ease-in-out solution-button hover:bg-[#487eb5]/80 cursor-pointer"
       >
         {showSolution ? 'Hide Solution' : 'Show Solution'}
       </button>

@@ -1,6 +1,6 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+
+import React, { useState, useEffect, useMemo } from 'react'
 import ProblemsList from '@/components/problems/ProblemsList'
 import { useCategories } from '@/context/DataContext'
 import {
@@ -13,6 +13,7 @@ import { ChevronDown } from 'lucide-react'
 
 const DIFFICULTY_OPTIONS = ['All', 'Easy', 'Medium', 'Hard'] as const
 type Difficulty = typeof DIFFICULTY_OPTIONS[number]
+
 const difficultyColors: Record<Difficulty, string> = {
   All: '#fff',
   Easy: '#22c55e',
@@ -20,77 +21,66 @@ const difficultyColors: Record<Difficulty, string> = {
   Hard: '#ef4444',
 }
 
-type FilterState = { difficulty: Difficulty; category: string }
+const CAT_DEFAULT = 'Types Of'
+const STORAGE_KEY = 'problemsFilter'
 
 export default function ProblemsPage() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
   const categories = useCategories()
-  const categoryOptions = ['Types Of', ...categories.map(cat => cat.id)]
+  const categoryOptions = useMemo(
+    () => [CAT_DEFAULT, ...categories.map(cat => cat.id)],
+    [categories]
+  )
 
-  function getFilterStateFromUrlOrStorage(): FilterState {
-    const urlDifficulty = searchParams?.get('difficulty')
-    const urlCategory = searchParams?.get('category')
-    let local = { difficulty: 'All', category: 'Types Of' }
+  // Lazy initial state from localStorage
+  const [filterDifficulty, setFilterDifficulty] = useState<Difficulty>(() => {
     if (typeof window !== 'undefined') {
       try {
-        local = JSON.parse(localStorage.getItem('problemsFilter') || '{}')
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+        if (DIFFICULTY_OPTIONS.includes(stored.difficulty)) {
+          return stored.difficulty
+        }
       } catch {}
     }
-    return {
-      difficulty:
-        urlDifficulty && DIFFICULTY_OPTIONS.includes(urlDifficulty as Difficulty)
-          ? (urlDifficulty as Difficulty)
-          : (local.difficulty as Difficulty) || 'All',
-      category:
-        urlCategory && categoryOptions.includes(urlCategory)
-          ? urlCategory
-          : local.category || 'Types Of',
-    }
-  }
+    return 'All'
+  })
 
-  const [filterState, setFilterState] = useState<FilterState>(getFilterStateFromUrlOrStorage)
-  const { difficulty, category } = filterState
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    if (difficulty && difficulty !== 'All') params.set('difficulty', difficulty)
-    else params.delete('difficulty')
-
-    // Don't write 'category' if it's "Types Of"
-    if (category && category !== 'Types Of') params.set('category', category)
-    else params.delete('category')
-
-    router.replace(`?${params.toString()}`, { scroll: false })
+  const [filterCategory, setFilterCategory] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('problemsFilter', JSON.stringify({ difficulty, category }))
+      try {
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+        if (categoryOptions.includes(stored.category)) {
+          return stored.category
+        }
+      } catch {}
     }
-  }, [difficulty, category, router])
+    return CAT_DEFAULT
+  })
 
+  // Persist on changes
   useEffect(() => {
-    const urlDifficulty = searchParams?.get('difficulty')
-    const urlCategory = searchParams?.get('category')
-    setFilterState(prev => ({
-      difficulty:
-        urlDifficulty && DIFFICULTY_OPTIONS.includes(urlDifficulty as Difficulty)
-          ? (urlDifficulty as Difficulty)
-          : prev.difficulty,
-      category:
-        urlCategory && categoryOptions.includes(urlCategory)
-          ? urlCategory
-          : prev.category,
-    }))
-    // eslint-disable-next-line
-  }, [searchParams])
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ difficulty: filterDifficulty, category: filterCategory })
+    )
+  }, [filterDifficulty, filterCategory])
 
-  const handleFilterChange = (which: 'difficulty' | 'category', value: string) => {
-    setFilterState(prev => ({
-      ...prev,
-      [which]: value
-    }))
+  function updateFilter(
+    which: 'difficulty' | 'category',
+    value: string
+  ) {
+    if (which === 'difficulty') {
+      setFilterDifficulty(value as Difficulty)
+    } else {
+      setFilterCategory(value)
+    }
   }
 
-  const difficultyColor = difficultyColors[difficulty]
+  // Carry filters into problem links
+  const linkQuery =
+    `?difficulty=${filterDifficulty}` +
+    `&category=${
+      filterCategory === CAT_DEFAULT ? 'All' : filterCategory
+    }`
 
   return (
     <main className="min-h-screen bg-[#181a1f] pb-10 pt-20">
@@ -119,13 +109,16 @@ export default function ProblemsPage() {
                     hover:scale-105 hover:bg-[rgba(255,255,255,0.06)] hover:shadow-[0_4px_14px_rgba(0,0,0,0.24)]
                   `}
                   style={{
-                    color: difficulty !== 'All' ? difficultyColor : '#fff',
+                    color:
+                      filterDifficulty !== 'All'
+                        ? difficultyColors[filterDifficulty]
+                        : '#fff',
                     textDecoration: 'underline',
                     background: 'transparent',
                   }}
                   aria-label="Filter by difficulty"
                 >
-                  {difficulty}
+                  {filterDifficulty}
                   <ChevronDown className="ml-1 w-5 h-5 text-white" />
                 </button>
               </DropdownMenuTrigger>
@@ -136,14 +129,11 @@ export default function ProblemsPage() {
                 {DIFFICULTY_OPTIONS.map(opt => (
                   <DropdownMenuItem
                     key={opt}
-                    onSelect={() => handleFilterChange('difficulty', opt)}
-                    className={`dropdown-item px-4 py-2 cursor-pointer transition bg-transparent hover:bg-[#3d3d3d] rounded-lg
-                      ${opt !== 'All' ? '' : ''}
-                    `}
-                    data-value={opt}
+                    onSelect={() => updateFilter('difficulty', opt)}
+                    className="dropdown-item px-4 py-2 cursor-pointer transition bg-transparent hover:bg-[#3d3d3d] rounded-lg"
                     style={{
                       color: difficultyColors[opt],
-                      fontWeight: opt === difficulty ? 700 : 500,
+                      fontWeight: opt === filterDifficulty ? 700 : 500,
                     }}
                   >
                     {opt}
@@ -173,7 +163,7 @@ export default function ProblemsPage() {
                     background: 'transparent',
                   }}
                 >
-                  {category === 'Types Of' ? 'Types Of' : category}
+                  {filterCategory}
                   <ChevronDown className="ml-1 w-5 h-5 text-white" />
                 </button>
               </DropdownMenuTrigger>
@@ -184,12 +174,11 @@ export default function ProblemsPage() {
                 {categoryOptions.map(opt => (
                   <DropdownMenuItem
                     key={opt}
-                    onSelect={() => handleFilterChange('category', opt)}
+                    onSelect={() => updateFilter('category', opt)}
                     className="dropdown-item px-4 py-2 cursor-pointer transition bg-transparent hover:bg-[#3d3d3d] rounded-lg"
-                    data-value={opt}
                     style={{
-                      color: opt === 'Types Of' ? '#fff' : '#61a9f1',
-                      fontWeight: opt === category ? 700 : 500,
+                      color: opt === CAT_DEFAULT ? '#fff' : '#61a9f1',
+                      fontWeight: opt === filterCategory ? 700 : 500,
                     }}
                   >
                     {opt}
@@ -206,13 +195,17 @@ export default function ProblemsPage() {
         </div>
       </div>
 
-      {/* Problems List */}
+      {/* Problems List with linkQuery */}
       <div className="flex flex-col gap-2 items-center w-full mx-auto max-w-[95%]">
         <ProblemsList
-          filterDifficulty={difficulty}
-          filterCategory={category === 'Types Of' ? 'All' : category}
+          filterDifficulty={filterDifficulty}
+          filterCategory={
+            filterCategory === CAT_DEFAULT ? 'All' : filterCategory
+          }
+          linkQuery={linkQuery}
         />
       </div>
     </main>
+
   )
 }
