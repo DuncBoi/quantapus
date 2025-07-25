@@ -5,6 +5,7 @@ import type { User } from '@supabase/supabase-js'
 import { createClient } from '@/utils/supabase/client'
 import GooglePromptModal from '@/components/nav/GooglePromptModal'
 import { goodToast, badToast } from "@/components/ui/toasts"
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 interface Ctx {
   user: User | null
@@ -20,8 +21,27 @@ export function UserProvider({ children, initialUser }: { children: React.ReactN
   const [showPrompt, setShowPrompt] = useState(false)
   const supabase = createClient()
 
+    const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   // prevents duplicate toasts
   const lastEventRef = useRef<string | null>(null)
+
+  // Remove ?code=... and ?state=... from URL after sign-in
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (searchParams.get('code') || searchParams.get('state')) {
+      const params = new URLSearchParams(searchParams.toString())
+      params.delete('code')
+      params.delete('state')
+      // Only replace if something actually changed
+      router.replace(
+        pathname + (params.toString() ? '?' + params.toString() : ''),
+        { scroll: false }
+      )
+    }
+  }, [router, pathname, searchParams])
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
