@@ -1,4 +1,3 @@
-export const dynamic = 'force-dynamic'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { fetchData } from '@/utils/fetchData'

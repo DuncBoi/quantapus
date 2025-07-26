@@ -100,9 +100,8 @@ export default function Home() {
               <span className="bg-gradient-to-r from-[#48e0ff] to-[#36ffc1] bg-clip-text text-transparent animate-gradient">
                 Roadmap
               </span>
-            </Link> to
-            <span className=" font-extrabold text-white/80"> quantitative finance</span>
-            <span> interview prep.</span>
+            </Link> to learning 
+            <span className=" font-extrabold text-white/80"> probability theory</span>
           </p>
 
         </div>
