@@ -9,14 +9,22 @@ const COLORS: Record<string, string> = {
   unknown: 'bg-gray-600 text-white',
 }
 
-export default function DifficultyBadge({ difficulty }: { difficulty?: string }) {
+export default function DifficultyBadge({
+  difficulty,
+  size = "sm"
+}: {
+  difficulty?: string
+  size?: "sm" | "lg"
+}) {
   const d = (difficulty || 'Unknown').toLowerCase()
   const color = COLORS[d] || COLORS['unknown']
+  const sizeClass =
+    size === "lg"
+      ? "text-fluid-large px-[20px] py-[10px] rounded-[18px]"
+      : "text-fluid-xs px-[10px] py-[5px] rounded-[12px]"
   return (
     <span
-      className={
-        `px-[10px] py-[5px] rounded-[12px] font-semibold text-fluid-xs transition-colors duration-200 ${color}`
-      }
+      className={`font-semibold transition-colors duration-200 ${sizeClass} ${color}`}
     >
       {difficulty ?? 'Unknown'}
     </span>

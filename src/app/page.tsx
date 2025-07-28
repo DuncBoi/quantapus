@@ -67,7 +67,7 @@ export default function Home() {
         aria-hidden="true"
       />
 
-      {/* GLASSY ANIMATED BOX */}
+      {/* BOX */}
       <div className="fixed inset-0 z-10 flex items-center justify-center pointer-events-none">
         <div
           className="

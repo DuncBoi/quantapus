@@ -168,7 +168,7 @@ export default function ProblemEditor({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
+      className="fixed inset-0 z-2001 bg-black/50 flex items-center justify-center"
       onClick={handleOverlayClick}
     >
       <div
@@ -315,7 +315,7 @@ export default function ProblemEditor({
                             : categories.filter(c => selectedCategoryIds.includes(c.id)).map(c => c.id).join(', ')}
                         </button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-full max-h-56 overflow-y-auto">
+                      <DropdownMenuContent className="w-full max-h-56 overflow-y-auto z-[2100]">
                         {categories.map(cat => (
                           <DropdownMenuCheckboxItem
                             key={cat.id}

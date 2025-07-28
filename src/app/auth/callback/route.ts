@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-// The client you created from the Server-Side Auth instructions
 import { createClient } from '@/utils/supabase/server'
 
 export async function GET(request: Request) {
@@ -19,7 +18,6 @@ export async function GET(request: Request) {
       const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === 'development'
       if (isLocalEnv) {
-        // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
         return NextResponse.redirect(`${origin}${next}`)
       } else if (forwardedHost) {
         return NextResponse.redirect(`https://${forwardedHost}${next}`)
@@ -29,6 +27,6 @@ export async function GET(request: Request) {
     }
   }
 
-  // return the user to an error page with instructions
+  //an error page 
   return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }

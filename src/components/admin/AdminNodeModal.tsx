@@ -456,7 +456,6 @@ export default function AdminNodeModal({
       `}</style>
       {/* ProblemEditor modal */}
         {(editProblemId !== null) && (
-          <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60">
             <div className="bg-white p-4 rounded-lg w-[90vw] max-w-2xl relative">
               <button
                 className="absolute top-2 right-2 text-black font-bold text-2xl"
@@ -468,7 +467,6 @@ export default function AdminNodeModal({
                 onClose={() => setEditProblemId(null)}
               />
             </div>
-          </div>
         )}
     </div>
     

@@ -23,6 +23,32 @@ function injectAndRender(el: HTMLDivElement | null, html: string | undefined) {
   renderMathInElement(el, { delimiters })
 }
 
+function YouTubeWithLoader({ ytLink }: { ytLink: string }) {
+  const [loading, setLoading] = useState(true)
+  // For SSR safety, only set origin if window exists
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
+  return (
+    <div className="relative w-full h-[500px] rounded-lg overflow-hidden">
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/60">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-400" />
+        </div>
+      )}
+      <iframe
+        className="w-full h-full block rounded-lg shadow-lg"
+        src={`${ytLink}?enablejsapi=1&origin=${origin}`}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        onLoad={() => setLoading(false)}
+        style={{
+          opacity: loading ? 0 : 1,
+        }}
+      />
+    </div>
+  )
+}
+
+
 interface ProblemDetailProps {
   problemId: string
 }
@@ -140,15 +166,11 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
         )}
 
         {showSolution && isMounted && problem.yt_link && problem.yt_link.trim() !== '' && (
-          <div id="youtube-link" className="youtube-container mb-4">
-            <iframe
-              className="w-full h-[500px] rounded-lg shadow-lg"
-              src={`${problem.yt_link}?enablejsapi=1&origin=${window.location.origin}`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        )}
+  <div id="youtube-link" className="youtube-container mb-4 relative" style={{ minHeight: 300 }}>
+    {/* Loader overlay while iframe loads */}
+    <YouTubeWithLoader ytLink={problem.yt_link} />
+  </div>
+)}
 
         <div
           ref={expRef}

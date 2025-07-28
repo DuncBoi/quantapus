@@ -92,22 +92,22 @@ body {
 }
 
 .text-fluid-large {
-  font-size: clamp(2rem, 4vw, 3rem);      /* Desktop 3rem, mobile 2rem, grows fast */
+  font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1.1;
 }
 
 .text-fluid-medium {
-  font-size: clamp(1.25rem, 3vw, 2.25rem);   /* Desktop 2rem, mobile 1.25rem */
+  font-size: clamp(1.25rem, 3vw, 2.25rem);
   line-height: 1.2;
 }
 
 .text-fluid-small {
-  font-size: clamp(1rem, 2vw, 1.4rem);   /* Desktop 1.25rem, mobile 1rem */
+  font-size: clamp(1rem, 2vw, 1.4rem);
   line-height: 1.3;
 }
 
 .text-fluid-xs {
-  font-size: clamp(0.8rem, 2vw, 1.2rem);   /* Desktop 1.25rem, mobile 1rem */
+  font-size: clamp(0.8rem, 2vw, 1.2rem);  
   line-height: 1.3;
 }
 

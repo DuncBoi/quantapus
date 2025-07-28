@@ -2,12 +2,22 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 
+// Remove blue background/gradient; just italic, white text now
+const CATEGORY_PILL_BASE = `
+  text-white italic font-semibold
+  transition-all duration-200 mr-2 cursor-pointer
+`
+
 export default function CategoryPill({
   category,
   clickable = true,
+  size = "sm",
+  underline = true,
 }: {
   category: string
   clickable?: boolean
+  size?: "sm" | "lg"
+  underline?: boolean
 }) {
   const router = useRouter()
   const handleClick = () => {
@@ -20,7 +30,6 @@ export default function CategoryPill({
     }
     router.push('/problems')
   }
-  // Keyboard accessibility: Enter triggers click if focused and clickable
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!clickable) return
     if (e.key === 'Enter' || e.key === ' ') {
@@ -29,20 +38,23 @@ export default function CategoryPill({
     }
   }
 
+  const sizeClass =
+    size === "lg"
+      ? "text-fluid-large"
+      : "text-fluid-xs leading-tight"
+
+  const underlineClass = underline ? "underline underline-offset-4 decoration-2" : ""
+
   return (
     <span
       className={`
-        inline-block font-semibold italic underline underline-offset-4 decoration-2
-        text-white transition-all duration-200 text-fluid-xs
-        ${clickable
-          ? 'cursor-pointer hover:scale-110 hover:decoration-[3px] hover:underline opacity-100'
-          : 'opacity-100 cursor-default'}
-      `}
-      style={{
-        background: 'transparent',
-        border: 'none',
-        outline: 'none',
-      }}
+        inline-block select-none
+        ${CATEGORY_PILL_BASE}
+        ${sizeClass}
+        ${clickable ? 'hover:scale-110': ''}
+        ${underlineClass}`      
+      }
+
       tabIndex={clickable ? 0 : -1}
       onClick={clickable ? handleClick : undefined}
       onKeyDown={clickable ? handleKeyDown : undefined}

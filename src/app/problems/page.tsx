@@ -10,16 +10,11 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
 import { ChevronDown } from 'lucide-react'
+import DifficultyBadge from '@/components/problemcomponents/DifficultyBadge'
+import CategoryPill from '@/components/problemcomponents/CategoryPill'
 
 const DIFFICULTY_OPTIONS = ['All', 'Easy', 'Medium', 'Hard'] as const
 type Difficulty = typeof DIFFICULTY_OPTIONS[number]
-
-const difficultyColors: Record<Difficulty, string> = {
-  All: '#fff',
-  Easy: '#22c55e',
-  Medium: '#eab308',
-  Hard: '#ef4444',
-}
 
 const CAT_DEFAULT = 'Types Of'
 const STORAGE_KEY = 'problemsFilter'
@@ -39,7 +34,7 @@ export default function ProblemsPage() {
         if (DIFFICULTY_OPTIONS.includes(stored.difficulty)) {
           return stored.difficulty
         }
-      } catch {}
+      } catch { }
     }
     return 'All'
   })
@@ -51,7 +46,7 @@ export default function ProblemsPage() {
         if (categoryOptions.includes(stored.category)) {
           return stored.category
         }
-      } catch {}
+      } catch { }
     }
     return CAT_DEFAULT
   })
@@ -78,8 +73,7 @@ export default function ProblemsPage() {
   // Carry filters into problem links
   const linkQuery =
     `?difficulty=${filterDifficulty}` +
-    `&category=${
-      filterCategory === CAT_DEFAULT ? 'All' : filterCategory
+    `&category=${filterCategory === CAT_DEFAULT ? 'All' : filterCategory
     }`
 
   return (
@@ -101,42 +95,37 @@ export default function ProblemsPage() {
               <DropdownMenuTrigger asChild>
                 <button
                   className={`
-                    dropdown2 text-5xl font-extrabold py-3 rounded-xl cursor-pointer
-                    flex items-center px-2
-                    border-2 border-transparent
-                    transition-all duration-200
-                    focus:outline-none
-                    hover:scale-105 hover:bg-[rgba(255,255,255,0.06)] hover:shadow-[0_4px_14px_rgba(0,0,0,0.24)]
-                  `}
+          dropdown2 text-5xl font-extrabold py-3 rounded-xl cursor-pointer
+          flex items-center px-2
+          border-2 border-transparent
+          transition-all duration-200
+          focus:outline-none
+          hover:scale-105 hover:bg-[rgba(255,255,255,0.06)] hover:shadow-[0_4px_14px_rgba(0,0,0,0.24)]
+        `}
+                  aria-label="Filter by difficulty"
                   style={{
-                    color:
-                      filterDifficulty !== 'All'
-                        ? difficultyColors[filterDifficulty]
-                        : '#fff',
-                    textDecoration: 'underline',
                     background: 'transparent',
                   }}
-                  aria-label="Filter by difficulty"
                 >
-                  {filterDifficulty}
+                  <DifficultyBadge difficulty={filterDifficulty} size={"lg"} />
                   <ChevronDown className="ml-1 w-5 h-5 text-white" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="start"
-                className="min-w-[160px] mt-2 rounded-xl border-none bg-[#1e1f26] shadow-[0_4px_16px_rgba(0,0,0,1)] text-lg font-semibold p-1"
+                className="min-w-full mt-2 rounded-xl border-none bg-[#1e1f26] shadow-[0_4px_16px_rgba(0,0,0,1)] text-lg font-semibold p-1"
               >
+
                 {DIFFICULTY_OPTIONS.map(opt => (
                   <DropdownMenuItem
                     key={opt}
                     onSelect={() => updateFilter('difficulty', opt)}
-                    className="dropdown-item px-4 py-2 cursor-pointer transition bg-transparent hover:bg-[#3d3d3d] rounded-lg"
+                    className="dropdown-item flex items-center gap-2 px-4 py-2 cursor-pointer transition bg-transparent hover:bg-[#3d3d3d] rounded-lg"
                     style={{
-                      color: difficultyColors[opt],
                       fontWeight: opt === filterDifficulty ? 700 : 500,
                     }}
                   >
-                    {opt}
+                    <DifficultyBadge difficulty={opt} />
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -149,47 +138,57 @@ export default function ProblemsPage() {
               <DropdownMenuTrigger asChild>
                 <button
                   className="
-                    dropdown2 text-5xl font-extrabold py-3 rounded-xl cursor-pointer
-                    flex items-center px-2
-                    border-2 border-transparent
-                    transition-all duration-200
-                    focus:outline-none
-                    text-white
-                    hover:scale-105 hover:bg-[rgba(255,255,255,0.06)] hover:shadow-[0_4px_14px_rgba(0,0,0,0.24)]
-                  "
+          dropdown2 text-5xl font-extrabold py-3 rounded-xl cursor-pointer
+          flex items-center px-2
+          border-2 border-transparent
+          transition-all duration-200
+          focus:outline-none
+          text-white
+          hover:scale-105 hover:bg-[rgba(255,255,255,0.06)] hover:shadow-[0_4px_14px_rgba(0,0,0,0.24)]
+        "
                   aria-label="Filter by category"
                   style={{
                     textDecoration: 'underline',
                     background: 'transparent',
                   }}
                 >
-                  {filterCategory}
+                  <CategoryPill
+                    category={filterCategory}
+                    size="lg"
+                    clickable={false}
+                  />
                   <ChevronDown className="ml-1 w-5 h-5 text-white" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="start"
-                className="min-w-[160px] mt-2 rounded-xl border-none bg-[#1e1f26] shadow-[0_4px_16px_rgba(0,0,0,1)] text-lg font-semibold p-1"
+                className="min-w-full mt-2 rounded-xl border-none bg-[#1e1f26] shadow-[0_4px_16px_rgba(0,0,0,1)] text-lg font-semibold p-1"
               >
+
                 {categoryOptions.map(opt => (
                   <DropdownMenuItem
                     key={opt}
                     onSelect={() => updateFilter('category', opt)}
-                    className="dropdown-item px-4 py-2 cursor-pointer transition bg-transparent hover:bg-[#3d3d3d] rounded-lg"
+                    className="dropdown-item flex items-center gap-2 px-4 py-2 cursor-pointer transition bg-transparent hover:bg-[#3d3d3d] rounded-lg"
                     style={{
-                      color: opt === CAT_DEFAULT ? '#fff' : '#61a9f1',
                       fontWeight: opt === filterCategory ? 700 : 500,
                     }}
                   >
-                    {opt}
+                    <CategoryPill
+                      category={opt}
+                      size="sm"
+                      clickable={false}
+                      underline={false}
+                    />
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
 
+
           {/* Static "Problems" label */}
-          <span className="text-white text-5xl font-extrabold select-none">
+          <span className="text-white text-fluid-large font-extrabold select-none">
             Problems
           </span>
         </div>
