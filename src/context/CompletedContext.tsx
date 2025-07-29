@@ -60,14 +60,12 @@ export function CompletedProvider({
       if (shouldComplete) {
         q.insert({ user_id: user.id, problem_id: id }).then(({ error }) => {
           if (error) {
-            badToast('Failed to update completion status.')
             console.error(error)
           }
         })
       } else {
         q.delete().match({ user_id: user.id, problem_id: id }).then(({ error }) => {
           if (error) {
-            badToast('Failed to update completion status.')
             console.error(error)
           }
         })
