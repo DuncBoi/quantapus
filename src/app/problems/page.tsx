@@ -120,7 +120,7 @@ export default function ProblemsPage() {
                   <DropdownMenuItem
                     key={opt}
                     onSelect={() => updateFilter('difficulty', opt)}
-                    className="dropdown-item flex items-center gap-2 px-4 py-2 cursor-pointer transition bg-transparent hover:bg-[#3d3d3d] rounded-lg"
+                    className="dropdown-item flex items-center gap-2 px-4 py-2 cursor-pointer transition hover:!bg-[#3d3d3d] rounded-lg"
                     style={{
                       fontWeight: opt === filterDifficulty ? 700 : 500,
                     }}
@@ -169,7 +169,7 @@ export default function ProblemsPage() {
                   <DropdownMenuItem
                     key={opt}
                     onSelect={() => updateFilter('category', opt)}
-                    className="dropdown-item flex items-center gap-2 px-4 py-2 cursor-pointer transition bg-transparent hover:bg-[#3d3d3d] rounded-lg"
+                    className="dropdown-item flex items-center gap-2 px-4 py-2 cursor-pointer transition hover:!bg-[#3d3d3d] rounded-lg"
                     style={{
                       fontWeight: opt === filterCategory ? 700 : 500,
                     }}

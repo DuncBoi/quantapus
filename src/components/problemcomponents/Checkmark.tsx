@@ -66,7 +66,7 @@ export default function Checkmark({
       `}</style>
 
       <div
-  className="relative flex items-center justify-center group"   // <- add group
+  className="relative flex items-center justify-center group"
   style={{ width: size, height: size }}
 >
   <div

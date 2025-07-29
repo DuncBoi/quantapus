@@ -2,7 +2,6 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 
-// Remove blue background/gradient; just italic, white text now
 const CATEGORY_PILL_BASE = `
   text-white italic font-semibold
   transition-all duration-200 mr-2 cursor-pointer

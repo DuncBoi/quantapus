@@ -12,7 +12,7 @@ import CategoryPill from './CategoryPill'
 
 const delimiters = [
   { left: '$$', right: '$$', display: true },
-  { left: '$',  right: '$',  display: false },
+  { left: '$', right: '$', display: false },
   { left: '\\[', right: '\\]', display: true },
   { left: '\\(', right: '\\)', display: false },
 ]
@@ -59,16 +59,16 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
   const categories = useCategories()
   const problemCategories = useProblemCategories()
   const problemCategoryIds = problemCategories
-  .filter(pc => pc.problem_id === problem?.id)
-  .map(pc => pc.category_id)
+    .filter(pc => pc.problem_id === problem?.id)
+    .map(pc => pc.category_id)
 
   const problemCategoryNames = categories
-  .filter(cat => problemCategoryIds.includes(cat.id))
-  .map(cat => cat.id) // Or cat.name
+    .filter(cat => problemCategoryIds.includes(cat.id))
+    .map(cat => cat.id) // Or cat.name
 
   const descRef = useRef<HTMLDivElement>(null)
-  const solRef  = useRef<HTMLDivElement>(null)
-  const expRef  = useRef<HTMLDivElement>(null)
+  const solRef = useRef<HTMLDivElement>(null)
+  const expRef = useRef<HTMLDivElement>(null)
 
   const [showSolution, setShowSolution] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
@@ -124,16 +124,16 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
       </div>
 
       {/* Difficulty & Category */}
-     <div className="mb-[20px] meta-info flex items-center flex-wrap gap-3">
-  <DifficultyBadge difficulty={problem.difficulty} />
-  {problemCategoryNames.length > 0 && (
-  <div className="flex gap-2 flex-wrap ml-2">
-    {problemCategoryNames.map(cat => (
-      <CategoryPill key={cat} category={cat} />
-    ))}
-  </div>
-)}
-</div>
+      <div className="mb-[20px] meta-info flex items-center flex-wrap gap-3">
+        <DifficultyBadge difficulty={problem.difficulty} />
+        {problemCategoryNames.length > 0 && (
+          <div className="flex gap-2 flex-wrap ml-2">
+            {problemCategoryNames.map(cat => (
+              <CategoryPill key={cat} category={cat} />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* DESCRIPTION */}
       <div
@@ -166,11 +166,11 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
         )}
 
         {showSolution && isMounted && problem.yt_link && problem.yt_link.trim() !== '' && (
-  <div id="youtube-link" className="youtube-container mb-4 relative" style={{ minHeight: 300 }}>
-    {/* Loader overlay while iframe loads */}
-    <YouTubeWithLoader ytLink={problem.yt_link} />
-  </div>
-)}
+          <div id="youtube-link" className="youtube-container mb-4 relative" style={{ minHeight: 300 }}>
+            {/* Loader overlay while iframe loads */}
+            <YouTubeWithLoader ytLink={problem.yt_link} />
+          </div>
+        )}
 
         <div
           ref={expRef}
