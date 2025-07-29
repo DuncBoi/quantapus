@@ -84,13 +84,23 @@ export default function NodeModal({
 
   return (
     <div
-      className="fixed inset-0 flex justify-center items-end z-[1000] bg-black/50 pb-8 modal-overlay backdrop-blur-lg"
-      onClick={handleClose}
-    >
-      <div
-        className="relative bg-[#24252A] p-8 rounded-lg w-[85vw] h-[90vh] overflow-y-auto modal-content animate-in"
-        onClick={e => e.stopPropagation()}
-      >
+  className={`
+    fixed inset-0 flex justify-center items-end z-[1000] bg-black/50 pb-8 modal-overlay backdrop-blur-lg
+    sm:items-end
+  `}
+  onClick={handleClose}
+>
+  <div
+    className={`
+      relative bg-[#24252A] p-4 sm:p-8 rounded-none sm:rounded-lg
+      w-full h-full
+      sm:w-[85vw] sm:h-[90vh]
+      overflow-y-auto modal-content animate-in
+      max-w-[100vw] max-h-[100vh]
+    `}
+    onClick={e => e.stopPropagation()}
+  >
+
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 bg-[#f20404] text-white px-4 py-2 rounded modal-close cursor-pointer"
@@ -117,9 +127,13 @@ export default function NodeModal({
               {subs.map(sub => (
                 <div
                   key={sub.id}
-                  className={
-                    "bg-[rgba(0,0,0,0.3)] p-6 rounded-[8px] shadow-[0_4px_15px_rgba(0,0,0,0.3)] mb-6 relative subcategory-group"
-                  }
+                  className={`
+  bg-[rgba(0,0,0,0.3)] p-3 sm:p-5
+  rounded-none sm:rounded-[8px]
+  shadow-[0_4px_15px_rgba(0,0,0,0.3)] mb-4
+  relative subcategory-group
+  w-[100vw] -mx-4 sm:w-auto sm:mx-0
+`}
                 >
                   <button
                     onClick={() => toggle(sub.id.toString())}

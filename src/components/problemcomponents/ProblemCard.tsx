@@ -3,6 +3,19 @@ import type { Problem } from '@/types/data'
 import Checkmark from './Checkmark'
 import DifficultyBadge from './DifficultyBadge'
 
+function isNoFilters(query: string) {
+  if (!query) return true;
+  const params = new URLSearchParams(query.startsWith('?') ? query.slice(1) : query);
+  const diff = params.get('difficulty');
+  const cat = params.get('category');
+  return (
+    (!diff || diff === 'All') &&
+    (!cat || cat === 'All') &&
+    params.keys.length <= 2
+  );
+}
+
+
 export default function ProblemCard({
     problem,
     variant = 'filter',
@@ -12,14 +25,13 @@ export default function ProblemCard({
     variant?: 'roadmap' | 'filter'
     query?: string
 }) {
+    const noFilters = variant !== 'roadmap' && isNoFilters(query);
     const href =
-      variant === 'roadmap'
-        ? `/problem/${problem.id}?list=roadmap`
-        : (
-            query
-              ? `/problem/${problem.id}${query.startsWith('?') ? query : '?' + query}`
-              : `/problem/${problem.id}`
-          )
+  variant === 'roadmap'
+    ? `/problem/${problem.id}?list=roadmap`
+    : noFilters
+      ? `/problem/${problem.id}`
+      : `/problem/${problem.id}${query.startsWith('?') ? query : '?' + query}`;
 
     return (
         <Link

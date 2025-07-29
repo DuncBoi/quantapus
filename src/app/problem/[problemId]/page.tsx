@@ -8,6 +8,7 @@ import DifficultyBadge from '@/components/problemcomponents/DifficultyBadge'
 import CategoryPill from '@/components/problemcomponents/CategoryPill'
 import type { RoadmapNode } from '@/types/data'
 import Link from 'next/link'
+import { notFound } from 'next/navigation';
 
 export default function ProblemPage() {
   const params = useParams()
@@ -118,82 +119,92 @@ export default function ProblemPage() {
   // ---- Render ----
   const currentId = allIds[currentIdx]
   const problem = problemsById.get(Number(currentId))
-  if (!problem) return <p className="p-4 text-center text-white">Problem not found.</p>
+  if (!problem) return notFound()
+  if (
+    filteredProblems.length === 0 ||
+    !filteredProblems.some(p => String(p.id) === currentId)
+  ) {
+    notFound();
+  }
 
   // Header label logic
   let headerClass =
     'flex-shrink-0 text-center text-fluid-small py-3 px-4 whitespace-nowrap tracking-[0.5px] cursor-pointer'
-  let headerLabel: React.ReactNode = null
-
   if (roadmapMode && currentNode) {
-    headerLabel = `${currentNode.label} (${currentIdx + 1}/${allIds.length})`
     headerClass +=
       ' bg-[#1e3353] border-2 border-[#61a9f1] rounded-[8px] text-white hover:scale-105 transition-transform duration-200 ease-in-out'
   } else {
     if (filterDifficulty === 'All' && filterCategory === 'All') {
-      headerLabel = <span style={{ color: "#fff", fontWeight: 700 }}>All Problems</span>
       headerClass += ' text-white'
-    } else {
-      headerLabel = (
-  <>
-    {filterDifficulty !== 'All' && (
-      <span className="mr-2 inline-flex items-center align-middle">
-        <DifficultyBadge difficulty={filterDifficulty} />
-      </span>
-    )}
-    {filterCategory !== 'All' && (
-      <span className="ml-1 inline-flex items-center align-middle">
-        <CategoryPill category={filterCategory} clickable={false} />
-      </span>
-    )}
-    <span className="ml-1 align-middle text-fluid-xs font-semibold">
-       Problems
-    </span>
-  </>
-)
     }
   }
 
   return (
     <div className="px-4 pt-20">
       <div className="flex justify-center mt-[10px]" id="problem-header-container">
-        <div className="inline-flex items-center gap-2 font-bold py-2 px-4 bg-[#2c2d33] border-2 border-black rounded-[12px] cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.6)] backdrop-blur-[8px]">
-          <button
-            onClick={goPrev}
-            disabled={currentIdx === 0}
-            className="bg-transparent border-none text-[#f0f2f5] text-[2rem] mx-3 p-1 transition-colors duration-200 nav-arrow cursor-pointer hover:scale-125"
-          >
-            ←
-          </button>
+        <div className="inline-flex items-center font-bold py-2 px-4 bg-[#2c2d33] border-2 border-black rounded-[12px] cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.6)] min-w-0 ">          <button
+          onClick={goPrev}
+          disabled={currentIdx === 0}
+          className="bg-transparent border-none text-[#f0f2f5] text-[2rem] mx-3 p-1 transition-colors duration-200 nav-arrow cursor-pointer hover:scale-125"
+        >
+          ←
+        </button>
           {/* Box (hover on scale) */}
-          {roadmapMode && currentNode ? (
-            <Link
-              href={`/roadmap?open=${currentNode.id}`}
-              className={
-                headerClass +
-                " bg-[#1e3353] border-2 border-[#61a9f1] rounded-[8px] text-white hover:scale-105 transition-transform duration-200 ease-in-out"
-              }
-              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
-            >
-              {headerLabel}
-            </Link>
-          ) : (
-            <Link
-              href="/problems"
-              className={
-                headerClass +
-                " flex items-center px-3 py-1 rounded-lg transition-all duration-200 cursor-pointer bg-[#2c2d33] hover:bg-[#23242b] hover:scale-105"
-              }
-              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
-            >
-              {!roadmapMode && (
-                <span className="text-[1.1rem] text-white/70 font-bold mr-3 align-middle">
-                  ({currentIdx + 1}/{allIds.length})
+          <div className="flex-1 min-w-0">
+            {roadmapMode && currentNode ? (
+              <Link
+                href={`/roadmap?open=${currentNode.id}`}
+                className={
+                  headerClass +
+                  " flex flex-1 min-w-0 items-center justify-center transition-all duration-200 hover:scale-105"
+                }
+                style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
+              >
+                <span className="truncate text-fluid-xs font-semibold">
+                  {currentNode.label} ({currentIdx + 1}/{allIds.length})
                 </span>
-              )}
-              {headerLabel}
-            </Link>
-          )}
+              </Link>
+            ) : (
+              <Link
+                href="/problems"
+                className={
+                  headerClass +
+                  " flex flex-1 min-w-0 items-center justify-center bg-[#2c2d33] hover:bg-[#23242b] hover:scale-105 transition-all duration-200 rounded-lg"
+                }
+                style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
+              >
+                <div
+                  className="
+          flex
+          flex-col sm:flex-row
+          items-center
+          space-y-2 sm:space-y-0 sm:space-x-2
+          truncate w-full
+          py-1
+        "
+                >
+                  <span className="hidden md:inline-flex text-[1.1rem] text-white/70 font-bold mr-3 flex-shrink-0">
+                    ({currentIdx + 1}/{allIds.length})
+                  </span>
+                  {filterDifficulty !== 'All' && (
+                    <span className="ml-1 inline-flex items-center">
+                      <DifficultyBadge difficulty={filterDifficulty} />
+                    </span>
+                  )}
+                  {filterCategory !== 'All' && (
+                    <span className="ml-1 inline-flex items-center">
+                      <CategoryPill category={filterCategory} clickable={false} />
+                    </span>
+                  )}
+                  <span className="ml-1 inline-flex items-center text-fluid-xs font-semibold">
+                    {(filterDifficulty === 'All' && filterCategory === 'All') ? 'All Problems' : 'Problems'}
+                  </span>
+                </div>
+              </Link>
+            )}
+          </div>
+
+
 
           <button
             onClick={goNext}

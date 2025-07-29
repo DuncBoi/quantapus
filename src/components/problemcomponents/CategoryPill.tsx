@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 
 const CATEGORY_PILL_BASE = `
   text-white italic font-semibold
-  transition-all duration-200 mr-2 cursor-pointer
+  transition-all duration-200 cursor-pointer
 `
 
 export default function CategoryPill({
@@ -50,7 +50,7 @@ export default function CategoryPill({
         inline-block select-none
         ${CATEGORY_PILL_BASE}
         ${sizeClass}
-        ${clickable ? 'hover:scale-110': ''}
+        ${clickable ? 'hover:scale-102': ''}
         ${underlineClass}`      
       }
 
