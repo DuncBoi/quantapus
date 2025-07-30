@@ -12,12 +12,15 @@ import {
 import { ChevronDown } from 'lucide-react'
 import DifficultyBadge from '@/components/problemcomponents/DifficultyBadge'
 import CategoryPill from '@/components/problemcomponents/CategoryPill'
+import { RefreshCcw } from 'lucide-react'
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 
 const DIFFICULTY_OPTIONS = ['All', 'Easy', 'Medium', 'Hard'] as const
 type Difficulty = typeof DIFFICULTY_OPTIONS[number]
 
 const CAT_DEFAULT = 'Types Of'
 const STORAGE_KEY = 'problemsFilter'
+
 
 export default function ProblemsPage() {
   const categories = useCategories()
@@ -50,6 +53,12 @@ export default function ProblemsPage() {
     }
     return CAT_DEFAULT
   })
+
+  function resetFilters() {
+    setFilterDifficulty('All')
+    setFilterCategory(CAT_DEFAULT)
+  }
+
 
   // Persist on changes
   useEffect(() => {
@@ -191,6 +200,27 @@ export default function ProblemsPage() {
           <span className="text-white text-fluid-large font-extrabold select-none">
             Problems
           </span>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={resetFilters}
+                aria-label="Reset Filters"
+                className="
+        ml-3 p-2 rounded-full
+        bg-[#61a9f1] hover:bg-[#487EB5]
+        border border-[#3c4250]/40 text-white/80
+        flex items-center justify-center cursor-pointer
+        transition-colors duration-500
+      "
+              >
+                <RefreshCcw size={20} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              Reset Filters
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
 

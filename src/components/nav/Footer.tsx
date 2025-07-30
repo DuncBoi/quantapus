@@ -28,15 +28,15 @@ export default function Footer() {
         <div className="flex gap-6 text-base font-semibold">
           <Link
             href="/privacy"
-            className="hover:text-[#61a9f1] hover:underline underline-offset-4 transition"
+            className="hover:text-[#61a9f1] transition"
           >Privacy Policy</Link>
           <Link
             href="/terms"
-            className="hover:text-[#61a9f1] hover:underline underline-offset-4 transition"
+            className="hover:text-[#61a9f1] transition"
           >Terms of Service</Link>
           <Link
             href="/contact"
-            className="hover:text-[#61a9f1] hover:underline underline-offset-4 transition"
+            className="hover:text-[#61a9f1] transition"
           >Contact</Link>
         </div>
       </div>

@@ -84,26 +84,26 @@ export default function NodeModal({
 
   return (
     <div
-  className={`
+      className={`
     fixed inset-0 flex justify-center items-end z-[1000] bg-black/50 pb-8 modal-overlay backdrop-blur-lg
     sm:items-end
   `}
-  onClick={handleClose}
->
-  <div
-    className={`
+      onClick={handleClose}
+    >
+      <div
+        className={`
       relative bg-[#24252A] p-4 sm:p-8 rounded-none sm:rounded-lg
       w-full h-full
       sm:w-[85vw] sm:h-[90vh]
       overflow-y-auto modal-content animate-in
       max-w-[100vw] max-h-[100vh]
     `}
-    onClick={e => e.stopPropagation()}
-  >
+        onClick={e => e.stopPropagation()}
+      >
 
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 bg-[#f20404] text-white px-4 py-2 rounded modal-close cursor-pointer"
+          className="absolute top-4 right-4 bg-[#f20404] text-white z-[30] px-4 py-2 rounded modal-close cursor-pointer"
         >
           x
         </button>
