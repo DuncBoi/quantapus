@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { Flame } from 'lucide-react'
 import { useData } from '@/context/DataContext'
 import { useCompleted } from '@/context/CompletedContext'
@@ -29,6 +29,16 @@ export default function RoadmapProgressDashboard() {
       percent: all.length ? Math.round((done / all.length) * 100) : 0,
     }
   }, [roadmap, completedIds])
+
+  const [animatedPercent, setAnimatedPercent] = useState(0)
+
+  useEffect(() => {
+    setAnimatedPercent(0)
+    const id = requestAnimationFrame(() => {
+      setAnimatedPercent(percent)
+    })
+    return () => cancelAnimationFrame(id)
+  }, [percent])
 
   return (
     <div
@@ -77,7 +87,7 @@ export default function RoadmapProgressDashboard() {
             transition-[width] duration-700 ease-out
             rounded-[12px]
           "
-          style={{ width: `${percent}%` }}
+          style={{ width: `${animatedPercent}%` }}
         />
         {/* centered % label */}
         <span

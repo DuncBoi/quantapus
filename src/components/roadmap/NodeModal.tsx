@@ -85,7 +85,7 @@ export default function NodeModal({
   return (
     <div
       className={`
-    fixed inset-0 flex justify-center items-end z-[1000] bg-black/50 pb-8 modal-overlay backdrop-blur-lg
+    fixed inset-0 flex justify-center items-end z-[1000] bg-black/50 pb-0 sm:pb-8 modal-overlay backdrop-blur-sm
     sm:items-end
   `}
       onClick={handleClose}
@@ -118,7 +118,7 @@ export default function NodeModal({
           </div>
         ) : (
           <>
-            <h1 className="text-center text-fluid-xl font-bold mb-3">
+            <h1 className="text-center text-fluid-xl font-bold mb-3 px-12 break-words">
               {node.data.label}
             </h1>
             <ProgressBar nodeId={node.id} showFraction={true} />

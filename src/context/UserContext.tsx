@@ -70,7 +70,6 @@ export function UserProvider({ children, initialUser }: { children: React.ReactN
       console.error(error)
       badToast('Google sign-in failed')
     }
-    // don't close; redirect will wipe anyway
   }
 
   return (

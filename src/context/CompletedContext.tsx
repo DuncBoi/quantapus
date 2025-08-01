@@ -129,18 +129,38 @@ export function CompletedProvider({
 
   const toggleCompleted = (id: number) => {
     if (!user) return
-    setCompletedIds((prev) => {
+
+    // Determine whether we’re marking it complete or un-complete
+    const newState = !completedIds.has(id)
+
+    // 1. Update completedIds immediately
+    setCompletedIds(prev => {
       const next = new Set(prev)
-      const newState = !next.has(id)
-      if (newState) {
-        next.add(id)
-      } else {
-        next.delete(id)
-      }
-      pendingOpsRef.current.set(id, newState)
-      scheduleFlush()
+      if (newState) next.add(id)
+      else next.delete(id)
       return next
     })
+
+    // 2. Immediately update streakInfo if it’s a new completion
+    if (newState) {
+      const today = new Date().toISOString().slice(0, 10)
+      let nextStreak = 1
+      if (streakInfo?.last_completed_at === today) {
+        nextStreak = streakInfo.streak
+      } else {
+        const yesterday = new Date(Date.now() - 86400000)
+          .toISOString()
+          .slice(0, 10)
+        if (streakInfo?.last_completed_at === yesterday) {
+          nextStreak = streakInfo.streak + 1
+        }
+      }
+      setStreakInfo({ streak: nextStreak, last_completed_at: today })
+    }
+
+    // 3. Queue the DB write
+    pendingOpsRef.current.set(id, newState)
+    scheduleFlush()
   }
 
   const clearCompleted = () => {

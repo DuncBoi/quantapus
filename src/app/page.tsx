@@ -24,6 +24,17 @@ export default function Home() {
   const vantaEffect = useRef<{ destroy: () => void } | null>(null)
 
   useEffect(() => {
+    function updateVh() {
+      // 1vh = 1% of the viewport height at load time
+      document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`)
+    }
+    updateVh()
+    window.addEventListener('resize', updateVh)
+    return () => window.removeEventListener('resize', updateVh)
+  }, [])
+
+
+  useEffect(() => {
     let cancelled = false
     loadVantaScript().then(() => {
       if (
@@ -57,29 +68,33 @@ export default function Home() {
     }
   }, [])
 
-  return (
-    <div className="relative w-full min-h-screen overflow-x-hidden">
-      {/* VANTA BACKGROUND */}
+    return (
+    <>
       <div
-        ref={vantaRef}
-        className="fixed inset-0 w-full h-full z-0 pointer-events-none"
-        style={{ minHeight: '100vh' }}
-        aria-hidden="true"
-      />
+        className="fixed top-0 left-0 w-full z-0 pointer-events-none"
+        style={{ height: 'calc(var(--vh) * 100)' }}
+      >
+        {/* VANTA BACKGROUND */}
+        <div
+          ref={vantaRef}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          aria-hidden="true"
+        />
+      </div>
 
       {/* BOX */}
-      <div className="fixed inset-0 z-10 flex items-center justify-center pointer-events-none">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
         <div
           className="
-      pointer-events-auto
-      max-w-xl w-[92vw] px-12 py-9
-      rounded-3xl
-      shadow-2xl
-      bg-[#24252ab2]
-      border border-[#61a9f1]/60
-      flex flex-col items-center
-      text-center
-    "
+            pointer-events-auto
+            max-w-xl w-[92vw] px-12 py-9
+            rounded-3xl
+            shadow-2xl
+            bg-[#24252ab2]
+            border border-[#61a9f1]/60
+            flex flex-col items-center
+            text-center
+          "
           style={{
             boxShadow: '0 0 28px 0 #61a9f180',
             borderWidth: '2px',
@@ -94,24 +109,26 @@ export default function Home() {
             The complete{' '}
             <Link
               href="/roadmap"
-              className="inline-flex items-baseline gap-1 font-bold underline decoration-transparent underline-offset-4
-               hover:decoration-current hover:text-white transition-colors"
+              className="
+                inline-flex items-baseline gap-1 font-bold
+                underline decoration-transparent underline-offset-4
+                hover:decoration-current hover:text-white transition-colors
+              "
             >
               <span className="bg-gradient-to-r from-[#48e0ff] to-[#36ffc1] bg-clip-text text-transparent animate-gradient">
                 Roadmap
               </span>
-            </Link> to learning 
-            <span className=" font-extrabold text-white/80"> probability theory</span>
+            </Link>{' '}
+            to learning
+            <span className="font-extrabold text-white/80"> probability theory</span>
           </p>
-
         </div>
       </div>
-
 
       {/* FOOTER */}
       <div className="relative z-9 pt-[92vh]">
         <Footer />
       </div>
-    </div>
+    </>
   )
 }
