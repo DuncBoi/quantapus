@@ -19,7 +19,7 @@ type UserMetadata = { full_name?: string }
 
 export default function AccountPage() {
   const user = useUser()
-  const { clearCompleted } = useCompleted()
+  const { clearCompleted, setStreakInfo } = useCompleted()
   const supabase = createClient()
   const router = useRouter()
 
@@ -39,19 +39,26 @@ export default function AccountPage() {
 
   // Reset progress
   const handleResetProgress = async () => {
-    setShowResetDialog(false)
-    try {
-      clearCompleted()
-      const { error } = await supabase
-        .from('completed_problems')
-        .delete()
-        .eq('user_id', user.id)
-      if (error) throw error
-      goodToast('Progress reset!')
-    } catch {
-      badToast('Failed to reset progress')
-    }
+  setShowResetDialog(false)
+  try {
+    clearCompleted()
+    setStreakInfo({ streak: 0, last_completed_at: null }) // reset locally
+    const { error } = await supabase
+      .from('completed_problems')
+      .delete()
+      .eq('user_id', user.id)
+    // Also reset in DB (if desired)
+    await supabase
+      .from('user_info')
+      .update({ streak: 0, last_completed_at: null })
+      .eq('id', user.id)
+    if (error) throw error
+    goodToast('Progress reset!')
+  } catch {
+    badToast('Failed to reset progress')
   }
+}
+
 
   // Delete Supabase user account
   const handleDeleteAccount = async () => {
@@ -124,7 +131,7 @@ export default function AccountPage() {
             <DialogContent className="bg-[#24252A] text-white border-none">
               <DialogTitle>Reset Progress?</DialogTitle>
               <DialogDescription className="text-[#bbbbbb]">
-                This will permanently remove the status of all completed problems from your account. This cannot be undone.
+                This will permanently remove the status of all completed problems from your Quantapus account. It cannot be undone.
               </DialogDescription>
               <DialogFooter>
                 <button
@@ -165,7 +172,7 @@ export default function AccountPage() {
             <DialogContent className="bg-[#24252A] text-white border-none">
               <DialogTitle>Delete Account?</DialogTitle>
               <DialogDescription className="text-[#bbbbbb]">
-                This will permanently delete your Quantapus account and all your data. This cannot be undone.
+                This will permanently delete all of the data associated with your Quantapus account. It cannot be undone.
               </DialogDescription>
               <DialogFooter>
                 <button

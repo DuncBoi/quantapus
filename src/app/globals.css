@@ -80,15 +80,17 @@ body {
   transform: translateY(0em) !important;
 }
 
-/* display mode */
+/* move fraction line down in display mode (katex)
 .katex-display .mfrac .frac-line {
   transform: translateY(-0.1em) !important;
-}
+} */
 
 .katex-display {
-  display: block;
+  display: block;               
+  white-space: nowrap; 
   overflow-x: auto;
   overflow-y: hidden;
+  padding: 0.5em 0;
 }
 
 /* Custom fluid font utilities */

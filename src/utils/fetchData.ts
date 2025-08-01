@@ -9,6 +9,7 @@ export async function fetchData(): Promise<{
   completedSet: Set<number>
   categories: { id: string }[]
   problemCategories: { problem_id: number, category_id: string }[]
+  streakInfo: { streak: number, last_completed_at: string | null } | null
 }> {
   const supabase = await createClient()
 
@@ -96,12 +97,25 @@ export async function fetchData(): Promise<{
     completedSet = new Set(comp.map((r) => r.problem_id))
   }
 
+  let streakInfo = null
+if (uid) {
+  const { data: streakData, error: streakErr } = await supabase
+    .from('user_info')
+    .select('streak, last_completed_at')
+    .eq('id', uid)
+    .single()
+  if (streakErr) throw streakErr
+  streakInfo = streakData
+}
+
+
   return {
     user: user ?? null,
     problemsById,
     roadmap,
     completedSet,
     categories,
-    problemCategories
+    problemCategories,
+    streakInfo
   }
 }

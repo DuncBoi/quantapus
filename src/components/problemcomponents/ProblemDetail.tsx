@@ -164,7 +164,7 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
           <div
             ref={solRef}
             id="solution-code"
-            className="text-[2rem] font-bold text-white mb-4 shadow-[0_4px_15px_rgba(0,0,0,0.5)] p-[20px] overflow-x-auto rounded-[12px] bg-[linear-gradient(135deg,rgba(30,30,30,0.95),rgba(50,50,60,0.9))] border-[3px] border-[rgba(255,255,255,0.05)]"
+            className="text-[2rem] font-bold text-white mb-4 shadow-[0_4px_15px_rgba(0,0,0,0.5)] rounded-[12px] bg-[linear-gradient(135deg,rgba(30,30,30,0.95),rgba(50,50,60,0.9))] border-[3px] border-[rgba(255,255,255,0.05)]"
           />
         )}
 
@@ -178,7 +178,7 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
         <div
           ref={expRef}
           id="explanation"
-          className="bg-black/20 p-[15px] rounded-[5px] shadow-[0_4px_8px_rgba(0,0,0,0.8)] w-full text-[1.7rem] mt-[2rem] overflow-x-auto overflow-y-hidden"
+          className="bg-black/20 p-[15px] rounded-[5px] shadow-[0_4px_8px_rgba(0,0,0,0.8)] w-full text-fluid-small mt-[2rem]"
         />
       </div>
     </div>

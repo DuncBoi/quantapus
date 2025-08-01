@@ -18,7 +18,7 @@ const roboto = Roboto_Flex({
 
 export const metadata: Metadata = {
   title: "Quantapus",
-  description: "Free Quant Finance Roadmap",
+  description: "Free Quant Finance Interview Roadmap",
   icons: {
     icon: [
       { url: '/logo.svg', type: 'image/svg+xml' }
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
-  const { user, problemsById, roadmap, completedSet, categories, problemCategories } = await fetchData()
+  const { user, problemsById, roadmap, completedSet, categories, problemCategories, streakInfo } = await fetchData()
 
   return (
     <html lang="en" className={roboto.variable}>
@@ -62,7 +62,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       </head>
       <body>
         <UserProvider initialUser={user}>
-          <CompletedProvider initialCompleted={completedSet}>
+          <CompletedProvider initialCompleted={completedSet} initialStreakInfo={streakInfo}>
             <DataProvider
               initialProblems={problemsById}
               initialRoadmap={roadmap}

@@ -4,10 +4,15 @@ import React, { useMemo } from 'react'
 import { Flame } from 'lucide-react'
 import { useData } from '@/context/DataContext'
 import { useCompleted } from '@/context/CompletedContext'
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
 
 export default function RoadmapProgressDashboard() {
   const { roadmap } = useData()
-  const { completedIds } = useCompleted()
+  const { completedIds, streakInfo } = useCompleted()
 
   const { total, completed, percent } = useMemo(() => {
     const ids = new Set<number>()
@@ -41,12 +46,20 @@ export default function RoadmapProgressDashboard() {
         <h2 className="text-[1.35rem] sm:text-xl font-extrabold text-white tracking-wide leading-tight">
           Roadmap Progress
         </h2>
-        <div className="flex items-center gap-2">
-          <Flame size={26} className="text-[#ff6b6b]" />
-          <span className="text-white/90 font-bold text-[1.05rem] tabular-nums">
-            {completed}
-          </span>
-        </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex items-center gap-2">
+              <Flame size={26} className="text-[#ff6b6b]" />
+              <span className="text-white/90 font-bold text-[1.05rem] tabular-nums">
+                {streakInfo ? streakInfo.streak : 0}
+              </span>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            Daily Roadmap Streak
+          </TooltipContent>
+        </Tooltip>
+
       </div>
 
       {/* Fraction */}

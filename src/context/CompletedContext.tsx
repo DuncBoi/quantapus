@@ -8,23 +8,30 @@ type CompletedContextType = {
   completedIds: Set<number>
   toggleCompleted: (id: number) => void
   clearCompleted: () => void
+  streakInfo: { streak: number, last_completed_at: string | null } | null
+  setStreakInfo: React.Dispatch<React.SetStateAction<{ streak: number, last_completed_at: string | null } | null>>
 }
 
 const CompletedContext = createContext<CompletedContextType>({
   completedIds: new Set(),
   toggleCompleted: () => { },
   clearCompleted: () => { },
+  streakInfo: null,
+  setStreakInfo: () => { },
 })
 
 export function CompletedProvider({
   initialCompleted = new Set(),
+  initialStreakInfo = null,
   children,
 }: {
   initialCompleted?: Set<number>
+  initialStreakInfo?: { streak: number, last_completed_at: string | null } | null
   children: ReactNode
 }) {
   const user = useUser()
   const [completedIds, setCompletedIds] = useState<Set<number>>(initialCompleted)
+  const [streakInfo, setStreakInfo] = useState<{ streak: number, last_completed_at: string | null } | null>(initialStreakInfo)
   const pendingOpsRef = useRef<Map<number, boolean>>(new Map())
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const supabase = createClient()
@@ -32,9 +39,9 @@ export function CompletedProvider({
   useEffect(() => {
     if (!user) {
       setCompletedIds(new Set())
+      setStreakInfo(null)
       return
     }
-    // Fetch for new user (after sign-in)
     supabase
       .from('completed_problems')
       .select('problem_id')
@@ -48,6 +55,19 @@ export function CompletedProvider({
           console.error(error)
         }
       })
+
+    supabase
+      .from('user_info')
+      .select('streak, last_completed_at')
+      .eq('id', user.id)
+      .single()
+      .then(({ data, error }) => {
+        if (!error && data) {
+          setStreakInfo(data)
+        } else {
+          setStreakInfo(null)
+        }
+      })
   }, [user, supabase])
 
   // Debounced save to db
@@ -58,9 +78,37 @@ export function CompletedProvider({
       if (!user) return
       const q = supabase.from('completed_problems')
       if (shouldComplete) {
-        q.insert({ user_id: user.id, problem_id: id }).then(({ error }) => {
+        q.insert({ user_id: user.id, problem_id: id }).then(async ({ error }) => {
           if (error) {
             console.error(error)
+          } else {
+            const today = new Date().toISOString().slice(0, 10)
+            const { data: userInfo, error: infoErr } = await supabase
+              .from('user_info')
+              .select('streak,last_completed_at')
+              .eq('id', user.id)
+              .single()
+            if (infoErr || !userInfo) {
+              console.error(infoErr || 'No user_info')
+              return
+            }
+            let newStreak = 1
+            if (userInfo.last_completed_at === today) {
+              newStreak = userInfo.streak
+            } else {
+              const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+              if (userInfo.last_completed_at === yesterday) {
+                newStreak = userInfo.streak + 1
+              }
+            }
+            // 3. Update user_info
+            const { error: updateErr } = await supabase
+              .from('user_info')
+              .update({ streak: newStreak, last_completed_at: today })
+              .eq('id', user.id)
+            if (updateErr) {
+              console.error(updateErr)
+            }
           }
         })
       } else {
@@ -95,15 +143,13 @@ export function CompletedProvider({
     })
   }
 
-  // <--- ADDED: clearCompleted
   const clearCompleted = () => {
     setCompletedIds(new Set())
     pendingOpsRef.current = new Map()
-    // optionally, flush() if you want to push deletes to db immediately
   }
 
   return (
-    <CompletedContext.Provider value={{ completedIds, toggleCompleted, clearCompleted }}>
+    <CompletedContext.Provider value={{ completedIds, toggleCompleted, clearCompleted, streakInfo, setStreakInfo }}>
       {children}
     </CompletedContext.Provider>
   )

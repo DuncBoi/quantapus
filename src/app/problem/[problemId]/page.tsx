@@ -146,7 +146,7 @@ export default function ProblemPage() {
           <button
             onClick={goPrev}
             disabled={currentIdx === 0}
-            className="bg-transparent border-none mx-3 p-1 transition-transform duration-200 nav-arrow cursor-pointer hover:scale-125"
+            className="bg-[#2c2d33] rounded-md mr-5 p-3 transition-transform duration-200 hover:scale-120 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -218,10 +218,11 @@ export default function ProblemPage() {
               </Link>
             )}
           </div>
+
           <button
             onClick={goNext}
             disabled={currentIdx === allIds.length - 1}
-            className="bg-transparent border-none mx-3 p-1 transition-transform duration-200 nav-arrow cursor-pointer hover:scale-125"
+            className="bg-[#2c2d33] rounded-md ml-5 p-3 transition-transform duration-200 hover:scale-120 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -234,7 +235,6 @@ export default function ProblemPage() {
               strokeLinejoin="round"
               className="block mx-auto"
             >
-              {/* extended stem from x=2 all the way to x=16 */}
               <line x1="2" y1="12" x2="16" y2="12" />
               <polyline points="12 18 20 12 12 6" />
             </svg>
