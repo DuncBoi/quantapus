@@ -194,7 +194,7 @@ export default function ProblemsPage() {
           </div>
 
 
-          {/* Static "Problems" label */}
+          {/* "Problems" label */}
           <span className="text-white text-fluid-large font-extrabold select-none">
             Problems
           </span>

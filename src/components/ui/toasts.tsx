@@ -1,3 +1,4 @@
+'use client'
 import { toast } from "sonner"
 import { Check, AlertTriangle } from "lucide-react"
 import React from "react"
