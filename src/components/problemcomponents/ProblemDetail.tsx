@@ -93,21 +93,21 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
   return (
     <div
   className="
-    max-w-[95%] w-full sm:max-w-[95%] sm:w-auto
-    mx-auto my-[10px] p-[30px] bg-[#2c2d33]
+    w-full sm:max-w-[95%] sm:w-auto
+    mx-auto my-2 p-4 sm:p-6 bg-[#2c2d33]
     rounded-[12px] shadow-[0_4px_16px_rgba(0,0,0,0.3)] border-2 border-black
   "
 >
       {/* Title and checkmark */}
       <div className="flex justify-between items-center mb-[10px] title-container">
-        <h1 id="problem-title" className="flex flex-wrap items-center text-fluid-large mb-[15px]">
+        <h1 id="problem-title" className="flex flex-nowrap items-center text-fluid-large mb-2 sm:mb-4">
           <span className="ml-[5px] mr-[15px]">
             <Checkmark problemId={problem.id} size={40} />
           </span>
-          <span className="qp mr-[8px] font-extrabold">QP</span>
+          <span className="qp mr-[8px] font-extrabold hidden sm:inline-block">QP</span>
           <span
             className="
-              inline-flex items-center justify-center
+              hidden sm:inline-flex items-center justify-center
               text-white 
               pt-[6px] pr-[4px] pb-[4px] pl-[6px]
               border-[5px] border-[rgba(72,126,181,0.5)]
@@ -121,18 +121,18 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
           >
             #{problem.id}
           </span>
-          <span className="title-colon ml-[4px] mr-[4px]">:</span>
-          <span className="ml-2 font-extrabold">{problem.title || 'Untitled'}</span>
+          <span className="title-colon ml-[4px] mr-[4px] hidden sm:inline-flex">:</span>
+          <span className="ml-2 text-fluid-large font-extrabold">{problem.title || 'Untitled'}</span>
         </h1>
       </div>
 
       {/* Difficulty & Category */}
-      <div className="mb-[20px] meta-info flex items-center flex-wrap gap-3">
+      <div className="mb-[20px] meta-info flex items-center flex-nowrap gap-2 sm:gap-3">
         <DifficultyBadge difficulty={problem.difficulty} />
         {problemCategoryNames.length > 0 && (
-          <div className="flex gap-2 flex-wrap ml-2">
+          <div className="flex gap-2 flex-nowrap ml-2 overflow-hidden whitespace-nowrap">
             {problemCategoryNames.map(cat => (
-              <CategoryPill key={cat} category={cat} />
+              <CategoryPill key={cat} category={cat}/>
             ))}
           </div>
         )}
@@ -142,7 +142,7 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
       <div
         ref={descRef}
         id="description"
-        className="mb-[30px] text-fluid-small overflow-x-auto description"
+        className="mb-4 sm:mb-8 text-fluid-small description"
       />
 
       {/* Show/Hide Solution Button */}

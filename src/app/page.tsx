@@ -86,7 +86,7 @@ export default function Home() {
             borderStyle: 'solid',
           }}
         >
-          <h1 className="font-extrabold text-white text-fluid-xl drop-shadow-2xl tracking-tight select-none text-center">
+          <h1 className="font-extrabold text-white text-fluid-xl select-none text-center">
             Quantapus
           </h1>
 

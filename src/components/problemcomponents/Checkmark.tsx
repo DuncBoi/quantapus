@@ -59,8 +59,8 @@ export default function Checkmark({
     <>
       <style>{`
         @keyframes pulse {
-          0% { box-shadow: 0 0 10px rgba(56,184,143,0.4); }
-          70% { box-shadow: 0 0 0 10px rgba(56,184,143,0); }
+          0% { box-shadow: 0 0 10px rgba(56,184,143,0.6); }
+          70% { box-shadow: 0 0 0 10px rgba(56,184,143,0.1); }
           100% { box-shadow: 0 0 0 0 rgba(56,184,143,0); }
         }
       `}</style>
@@ -80,21 +80,29 @@ export default function Checkmark({
       relative inline-block border-[3px] border-white rounded-[6px]
       ${completed ? 'bg-gradient-to-br from-[#5dd39e] to-[#38b88f] border-white shadow-[0_0_10px_rgba(56,184,143,0.4)] animate-pulse-custom' : 'bg-[rgba(93,211,158,0.1)]'}
       transition-all duration-300 ease-in-out cursor-pointer
-      group-hover:scale-110                               // <- one-line effect
+      group-hover:scale-110                              
     `}
     style={{ width: size, height: size }}
   >
-          <span
-            className={`
-              absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-              text-white font-bold pointer-events-none
-              transition-transform duration-300 ease-in-out
-              ${completed ? 'scale-[1.2] text-shadow-custom' : 'scale-0'}
-            `}
-            style={{ fontSize: checkmarkFontSize }}
-          >
-            ✓
-          </span>
+          <svg
+  className={`
+    absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+    pointer-events-none
+    transition-transform duration-300 ease-in-out
+    ${completed ? 'scale-[1.2]' : 'scale-0'}
+  `}
+  width={checkmarkFontSize}
+  height={checkmarkFontSize}
+  viewBox="1 1 24 24"
+  fill="none"
+  stroke="white"
+  strokeWidth="4"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+>
+  <path d="M8 13.5 L10 20 L21 6" />
+</svg>
+
         </div>
       </div>
 

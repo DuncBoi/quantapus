@@ -147,7 +147,7 @@ export default function NodeModal({
                     </span>
                   </button>
                   {openMap[sub.id] && (
-                    <div className="mt-4 space-y-2 pl-4">
+                    <div className="mt-4 space-y-2 ml-1">
                       {sub.problemIds.length > 0 ? (
                         sub.problemIds.map(pid => {
                           const problem = problemsById.get(pid)

@@ -35,9 +35,9 @@ export default function ProblemCard({
     return (
       <div
         className="
-          flex items-center gap-[15px] justify-between p-[15px] my-1 mx-auto w-full
+          flex items-center gap-[5px] sm:gap-[15px] justify-between p-[15px] my-1 mx-auto w-full
           bg-[#2c2d33] border-2 border-black rounded-lg
-          transition-all duration-300 ease-in-out
+          transition-all duration-400 ease-in-out
           hover:-translate-y-0.5 hover:shadow-[0_4px_8px_rgba(0,0,0,0.2)]
         "
       >
@@ -48,7 +48,7 @@ export default function ProblemCard({
         >
           <span
             className="
-              inline-flex items-center justify-center
+              hidden sm:inline-flex items-center justify-center
               text-white text-fluid-small font-medium
               pt-[6px] pr-[4px] pb-[4px] pl-[6px]
               border-[5px] border-[rgba(72,126,181,0.5)]
@@ -63,7 +63,7 @@ export default function ProblemCard({
             #{problem.id}
           </span>
           <span
-            className="text-white text-fluid-small font-extrabold max-w-[50vw] truncate min-w-0 ml-[15px]"
+            className="text-white text-fluid-small font-extrabold max-w-[50vw] truncate min-w-0 ml-[5px] sm:ml-[15px]"
             title={problem.title}
           >
             {problem.title}

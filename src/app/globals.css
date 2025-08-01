@@ -85,6 +85,12 @@ body {
   transform: translateY(-0.1em) !important;
 }
 
+.katex-display {
+  display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 /* Custom fluid font utilities */
 .text-fluid-xl {
   font-size: clamp(2.5rem,8vw,6rem);
@@ -92,7 +98,7 @@ body {
 }
 
 .text-fluid-large {
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(1.8rem, 4vw, 3rem);
   line-height: 1.1;
 }
 

@@ -3,20 +3,18 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 
 const CATEGORY_PILL_BASE = `
-  text-white italic font-semibold
-  transition-all duration-200 cursor-pointer
+  inline-block select-none font-semibold cursor-pointer transition-all duration-200
+  bg-gray-600 text-white truncate
 `
 
 export default function CategoryPill({
   category,
   clickable = true,
-  size = "sm",
-  underline = true,
+  size = 'sm',
 }: {
   category: string
   clickable?: boolean
-  size?: "sm" | "lg"
-  underline?: boolean
+  size?: 'sm' | 'lg'
 }) {
   const router = useRouter()
   const handleClick = () => {
@@ -39,21 +37,14 @@ export default function CategoryPill({
 
   const sizeClass =
     size === "lg"
-      ? "text-fluid-large"
-      : "text-fluid-xs leading-tight"
-
-  const underlineClass = underline ? "underline underline-offset-4 decoration-2" : ""
+      ? "text-fluid-large px-[20px] py-[10px] rounded-[18px]"
+      : "text-fluid-xs px-[10px] py-[5px] rounded-[12px]"
 
   return (
     <span
-      className={`
-        inline-block select-none
-        ${CATEGORY_PILL_BASE}
-        ${sizeClass}
-        ${clickable ? 'hover:scale-102': ''}
-        ${underlineClass}`      
-      }
-
+      className={`${CATEGORY_PILL_BASE} ${sizeClass}
+        ${clickable ? 'hover:scale-102' : 'cursor-default'}
+      `}
       tabIndex={clickable ? 0 : -1}
       onClick={clickable ? handleClick : undefined}
       onKeyDown={clickable ? handleKeyDown : undefined}

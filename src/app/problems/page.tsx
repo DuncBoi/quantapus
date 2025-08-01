@@ -157,7 +157,6 @@ export default function ProblemsPage() {
         "
                   aria-label="Filter by category"
                   style={{
-                    textDecoration: 'underline',
                     background: 'transparent',
                   }}
                 >
@@ -187,7 +186,6 @@ export default function ProblemsPage() {
                       category={opt}
                       size="sm"
                       clickable={false}
-                      underline={false}
                     />
                   </DropdownMenuItem>
                 ))}

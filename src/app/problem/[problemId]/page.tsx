@@ -140,15 +140,30 @@ export default function ProblemPage() {
   }
 
   return (
-    <div className="px-4 pt-20">
+    <div className=" pt-20">
       <div className="flex justify-center mt-[10px]" id="problem-header-container">
-        <div className="inline-flex items-center font-bold py-2 px-4 bg-[#2c2d33] border-2 border-black rounded-[12px] cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.6)] min-w-0 ">          <button
-          onClick={goPrev}
-          disabled={currentIdx === 0}
-          className="bg-transparent border-none text-[#f0f2f5] text-[2rem] mx-3 p-1 transition-colors duration-200 nav-arrow cursor-pointer hover:scale-125"
-        >
-          ←
-        </button>
+        <div className="inline-flex items-center font-bold py-2 px-4 bg-[#2c2d33] border-2 border-black rounded-[12px] cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.6)] min-w-0 ">
+          <button
+            onClick={goPrev}
+            disabled={currentIdx === 0}
+            className="bg-transparent border-none mx-3 p-1 transition-transform duration-200 nav-arrow cursor-pointer hover:scale-125"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              stroke="#f0f2f5"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="block mx-auto"
+            >
+              <line x1="8" y1="12" x2="22" y2="12" />
+              <polyline points="12 6 4 12 12 18" />
+            </svg>
+          </button>
+
           {/* Box (hover on scale) */}
           <div className="flex-1 min-w-0">
             {roadmapMode && currentNode ? (
@@ -160,7 +175,7 @@ export default function ProblemPage() {
                 }
                 style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
               >
-                <span className="truncate text-fluid-xs font-semibold">
+                <span className="truncate font-semibold">
                   {currentNode.label} ({currentIdx + 1}/{allIds.length})
                 </span>
               </Link>
@@ -203,16 +218,28 @@ export default function ProblemPage() {
               </Link>
             )}
           </div>
-
-
-
           <button
             onClick={goNext}
             disabled={currentIdx === allIds.length - 1}
-            className="bg-transparent border-none text-[#f0f2f5] text-[2rem] mx-3 p-1 transition-colors duration-200 nav-arrow cursor-pointer hover:scale-125"
+            className="bg-transparent border-none mx-3 p-1 transition-transform duration-200 nav-arrow cursor-pointer hover:scale-125"
           >
-            →
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              stroke="#f0f2f5"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="block mx-auto"
+            >
+              {/* extended stem from x=2 all the way to x=16 */}
+              <line x1="2" y1="12" x2="16" y2="12" />
+              <polyline points="12 18 20 12 12 6" />
+            </svg>
           </button>
+
         </div>
       </div>
       <ProblemDetail problemId={currentId} />
