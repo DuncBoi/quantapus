@@ -24,15 +24,18 @@ export default function ProgressBar({
   const completed = allProblemIds.filter(id => completedIds.has(id)).length
   const percent = total === 0 ? 0 : Math.round((completed / total) * 100)
 
-  const [animatedPercent, setAnimatedPercent] = useState(() => (slim ? percent : 0))
+  const [animatedPercent, setAnimatedPercent] = useState(() => percent)
   const isFirst = useRef(true)
 
   useEffect(() => {
     if (!slim) {
+      console.log("non slim shit")
       if (isFirst.current) {
         isFirst.current = false
+        console.log("isfirst.currnet")
         return
       }
+      console.log("da bess")
       setAnimatedPercent(percent)
     } else {
       setAnimatedPercent(0)
