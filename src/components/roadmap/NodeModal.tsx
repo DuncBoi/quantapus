@@ -118,7 +118,7 @@ export default function NodeModal({
           </div>
         ) : (
           <>
-            <h1 className="text-center text-fluid-xl font-bold mb-3 px-12 break-words">
+            <h1 className="text-center text-fluid-xl font-bold mb-3 mt-10 sm:mt-0 break-words">
               {node.data.label}
             </h1>
             <ProgressBar nodeId={node.id} showFraction={true} />

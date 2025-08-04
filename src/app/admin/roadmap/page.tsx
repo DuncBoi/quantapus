@@ -13,7 +13,6 @@ import ReactFlow, {
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import RoadmapNode from '@/components/roadmap/RoadmapNode'
-import PremiumNode from '@/components/roadmap/PremiumNode'
 import RoadmapProgressDashboard from '@/components/roadmap/RoadmapProgressDashboard'
 import AdminNodeModal from '@/components/admin/AdminNodeModal'
 import { useAdminData } from '@/context/AdminDataContext'
@@ -101,13 +100,22 @@ export default function AdminRoadmapEditor() {
       }}
     />
   ),
-  premium: () => <PremiumNode/>,
+  premium: (props: NodeProps<RoadmapNodeData>) => (
+    <RoadmapNode
+      {...props}
+      data={{
+        ...props.data,
+        onDelete: () => handleNodeDelete(props.id as string),
+      }}
+    />
+  ),
   progressDashboard: () => (
     <div className="w-[350px] min-h-[330px] flex items-center justify-center">
       <RoadmapProgressDashboard />
     </div>
   ),
 }), [handleNodeDelete])
+
 
 
   // --- ReactFlow Events ---

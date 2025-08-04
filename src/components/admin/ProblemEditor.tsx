@@ -9,6 +9,7 @@ import {
   DropdownMenuCheckboxItem
 } from '@/components/ui/dropdown-menu'
 import type { Problem } from '@/types/data'
+import { createClient } from '@/utils/supabase/client'
 
 const initialProblem: Problem = {
   id: 0,
@@ -45,6 +46,8 @@ export default function ProblemEditor({
   const [problemIdInput, setProblemIdInput] = useState<number | "">(initialProblem.id)
   const [idError, setIdError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [updateStatus, setUpdateStatus] = useState<"idle" | "success" | "error">("idle")
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -93,6 +96,60 @@ export default function ProblemEditor({
       setIdError(null)
     }
   }
+
+  async function updateProblemToBackend() {
+    setIsUpdating(true)
+    setUpdateStatus("idle")
+    const supabase = createClient()
+    try {
+      // 1. Upsert the problem itself
+      const { error: problemError } = await supabase
+        .from('problems')
+        .upsert([editProblem])
+      if (problemError) throw new Error(problemError.message)
+
+      // 2. Update problem_categories for just this problem
+      // a. Fetch existing
+      const { data: existingPC, error: pcFetchError } = await supabase
+        .from('problem_categories')
+        .select('category_id')
+        .eq('problem_id', editProblem.id)
+      if (pcFetchError) throw new Error(pcFetchError.message)
+
+      const existingCatIds = (existingPC ?? []).map(pc => pc.category_id)
+      const toAdd = selectedCategoryIds.filter(cid => !existingCatIds.includes(cid))
+      const toRemove = existingCatIds.filter(cid => !selectedCategoryIds.includes(cid))
+
+      // b. Insert new categories
+      if (toAdd.length) {
+        const { error: pcAddError } = await supabase
+          .from('problem_categories')
+          .insert(toAdd.map(category_id => ({
+            problem_id: editProblem.id,
+            category_id
+          })))
+        if (pcAddError) throw new Error(pcAddError.message)
+      }
+
+      // c. Remove unchecked categories
+      if (toRemove.length) {
+        for (const category_id of toRemove) {
+          const { error: pcRemoveError } = await supabase
+            .from('problem_categories')
+            .delete()
+            .eq('problem_id', editProblem.id)
+            .eq('category_id', category_id)
+          if (pcRemoveError) throw new Error(pcRemoveError.message)
+        }
+      }
+
+      setUpdateStatus("success")
+    } catch {
+      setUpdateStatus("error")
+    }
+    setIsUpdating(false)
+  }
+
 
   // Save (to context only!)
   const handleSubmit = () => {
@@ -240,18 +297,18 @@ export default function ProblemEditor({
                     </select>
                   </div>
                   <div>
-  <label className="inline-flex items-center gap-2 font-semibold text-black mb-1">
-    <input
-      type="checkbox"
-      checked={!!editProblem.premium}
-      onChange={e =>
-        setEditProblem({ ...editProblem, premium: e.target.checked })
-      }
-      className="form-checkbox accent-blue-600 h-5 w-5"
-    />
-    Premium problem
-  </label>
-</div>
+                    <label className="inline-flex items-center gap-2 font-semibold text-black mb-1">
+                      <input
+                        type="checkbox"
+                        checked={!!editProblem.premium}
+                        onChange={e =>
+                          setEditProblem({ ...editProblem, premium: e.target.checked })
+                        }
+                        className="form-checkbox accent-blue-600 h-5 w-5"
+                      />
+                      Premium problem
+                    </label>
+                  </div>
 
                   <div>
                     <label className="block font-semibold text-black mb-1">Roadmap Node</label>
@@ -356,7 +413,22 @@ export default function ProblemEditor({
                 className="bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
                 disabled={isSaving}
               >{isSaving ? 'Saving...' : (isNew ? 'Create' : 'Save')}</button>
+              <button
+                type="button"
+                className="bg-green-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-green-700 transition"
+                onClick={updateProblemToBackend}
+                disabled={isUpdating}
+              >
+                {isUpdating ? 'Updating...' : 'Update'}
+                
+              </button>
             </div>
+            {updateStatus === "success" && (
+  <div className="text-green-700 mt-2 font-bold">Update successful!</div>
+)}
+{updateStatus === "error" && (
+  <div className="text-red-600 mt-2 font-bold">Update failed. Try again.</div>
+)}
           </div>
 
           {/* RIGHT SIDE */}

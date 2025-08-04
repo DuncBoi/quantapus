@@ -25,8 +25,8 @@ function injectAndRender(el: HTMLDivElement | null, html: string | undefined) {
 
 function YouTubeWithLoader({ ytLink }: { ytLink: string }) {
   const [loading, setLoading] = useState(true)
-  // For SSR safety, only set origin if window exists
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
+
   return (
     <div className="relative w-full h-[500px] rounded-lg overflow-hidden">
       {loading && (
@@ -71,11 +71,9 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
   const expRef = useRef<HTMLDivElement>(null)
 
   const [showSolution, setShowSolution] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
 
   // reset solution toggle when problem changes
   useEffect(() => setShowSolution(false), [problemId])
-  useEffect(() => setIsMounted(true), [])
 
   useLayoutEffect(() => {
     if (!problem) return
@@ -92,12 +90,12 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
 
   return (
     <div
-  className="
+      className="
     w-full sm:max-w-[95%] sm:w-auto
     mx-auto my-2 p-4 sm:p-6 bg-[#2c2d33]
     rounded-[12px] shadow-[0_4px_16px_rgba(0,0,0,0.3)] border-2 border-black
   "
->
+    >
       {/* Title and checkmark */}
       <div className="flex justify-between items-center mb-[10px] title-container">
         <h1 id="problem-title" className="flex flex-nowrap items-center text-fluid-large mb-2 sm:mb-4">
@@ -132,7 +130,7 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
         {problemCategoryNames.length > 0 && (
           <div className="flex gap-2 flex-nowrap ml-2 overflow-hidden whitespace-nowrap">
             {problemCategoryNames.map(cat => (
-              <CategoryPill key={cat} category={cat}/>
+              <CategoryPill key={cat} category={cat} />
             ))}
           </div>
         )}
@@ -160,26 +158,45 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
         style={{ display: showSolution ? 'block' : 'none' }}
         className="solution space-y-6 text-3xl"
       >
-        {problem.solution && (
+        {problem.solution && problem.solution.trim() !== '' ? (
           <div
             ref={solRef}
             id="solution-code"
-            className="text-[2rem] font-bold text-white mb-4 shadow-[0_4px_15px_rgba(0,0,0,0.5)] rounded-[12px] bg-[linear-gradient(135deg,rgba(30,30,30,0.95),rgba(50,50,60,0.9))] border-[3px] border-[rgba(255,255,255,0.05)]"
+            className="text-[2rem] font-bold text-white px-4 mb-4 shadow-[0_4px_15px_rgba(0,0,0,0.5)] rounded-[12px] bg-[linear-gradient(135deg,rgba(30,30,30,0.95),rgba(50,50,60,0.9))] border-[3px] border-[rgba(255,255,255,0.05)]"
           />
-        )}
-
-        {showSolution && isMounted && problem.yt_link && problem.yt_link.trim() !== '' && (
-          <div id="youtube-link" className="youtube-container mb-4 relative" style={{ minHeight: 300 }}>
-            {/* Loader overlay while iframe loads */}
-            <YouTubeWithLoader ytLink={problem.yt_link} />
+        ) : (
+          <div className="flex items-center gap-3 text-white text-xl font-semibold  bg-[linear-gradient(135deg,rgba(30,30,30,0.95),rgba(50,50,60,0.9))] px-6 py-4 rounded-lg justify-center">
+            <span>Solution under construction</span>
+            <span className="text-3xl">🔨</span>
           </div>
         )}
 
-        <div
-          ref={expRef}
-          id="explanation"
-          className="bg-black/20 p-[15px] rounded-[5px] shadow-[0_4px_8px_rgba(0,0,0,0.8)] w-full text-fluid-small mt-[2rem]"
-        />
+
+        {showSolution &&
+          (problem.yt_link &&
+            problem.yt_link.match(/\/embed\/([a-zA-Z0-9_-]{11,})/) ? (
+            <div id="youtube-link" className="youtube-container mb-4 relative" style={{ minHeight: 300 }}>
+              <YouTubeWithLoader ytLink={problem.yt_link} />
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 text-white text-xl font-semibold bg-black/30 px-6 py-4 rounded-lg justify-center">
+              <span>Video under construction</span>
+              <span className="text-3xl">🔨</span>
+            </div>
+          ))}
+
+        {problem.explanation && problem.explanation.trim() !== '' ? (
+          <div
+            ref={expRef}
+            id="explanation"
+            className="bg-black/20 p-[15px] rounded-[5px] shadow-[0_4px_8px_rgba(0,0,0,0.8)] w-full text-fluid-small mt-[2rem]"
+          />
+        ) : (
+          <div className="flex items-center gap-3 text-white text-xl font-semibold bg-black/30 px-6 py-4 rounded-lg justify-center">
+            <span>Explanation under construction</span>
+            <span className="text-3xl">🔨</span>
+          </div>
+        )}
       </div>
     </div>
   )
