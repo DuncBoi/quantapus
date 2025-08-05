@@ -11,7 +11,8 @@ export default function NavBar() {
 
   const navLinks = [
     { href: '/roadmap', label: 'Roadmap', icon: Map },
-    { href: '/problems', label: 'Problems', icon: ListTodo }
+    { href: '/practice', label: 'Practice', icon: ListTodo },
+    { href: '/problems', label: 'Problems', icon: ListTodo },
   ]
 
   return (
