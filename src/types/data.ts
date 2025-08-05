@@ -16,6 +16,8 @@ export interface SubcategoryRaw {
   id: string
   roadmap_node_id: string
   order_index: number
+  more_info?: string
+  construction: boolean
   problems: { id: number }[]
 }
 
@@ -33,6 +35,8 @@ export interface Subcategory {
   id: string
   orderIndex: number
   problemIds: number[]
+  more_info?: string
+  construction: boolean
 }
 
 export interface RoadmapNode {

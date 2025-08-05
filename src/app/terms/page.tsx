@@ -2,7 +2,7 @@
 
 export default function TermsOfService() {
   return (
-    <div className="max-w-[95%] mx-auto my-30 p-8 bg-[#24252A] text-[#e0e0e0] rounded-[12px] shadow-[0_4px_16px_rgba(0,0,0,0.7)] leading-[1.75]">
+    <div className="max-w-[95%] mx-auto my-20 p-8 bg-[#24252A] text-[#e0e0e0] rounded-[12px] shadow-[0_4px_16px_rgba(0,0,0,0.7)] leading-[1.75]">
       <h1 className="text-[2.5rem] mb-6 text-white border-b-2 border-[#333] pb-2 font-bold">
         Terms of Service
       </h1>

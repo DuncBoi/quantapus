@@ -28,7 +28,7 @@ function YouTubeWithLoader({ ytLink }: { ytLink: string }) {
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
 
   return (
-    <div className="relative w-full h-[500px] rounded-lg overflow-hidden">
+    <div className="relative w-full aspect-[24/9] min-h-[400px] rounded-lg overflow-hidden">
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/60">
           <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-400" />
@@ -36,13 +36,12 @@ function YouTubeWithLoader({ ytLink }: { ytLink: string }) {
       )}
       <iframe
         className="w-full h-full block rounded-lg shadow-lg"
+
         src={`${ytLink}?enablejsapi=1&origin=${origin}`}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
         onLoad={() => setLoading(false)}
-        style={{
-          opacity: loading ? 0 : 1,
-        }}
+        style={{ opacity: loading ? 0 : 1 }}
       />
     </div>
   )
@@ -158,32 +157,22 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
         style={{ display: showSolution ? 'block' : 'none' }}
         className="solution space-y-6 text-3xl"
       >
-        {problem.solution && problem.solution.trim() !== '' ? (
+        {problem.solution && problem.solution.trim() !== '' && (
           <div
             ref={solRef}
             id="solution-code"
             className="text-[2rem] font-bold text-white px-4 mb-4 shadow-[0_4px_15px_rgba(0,0,0,0.5)] rounded-[12px] bg-[linear-gradient(135deg,rgba(30,30,30,0.95),rgba(50,50,60,0.9))] border-[3px] border-[rgba(255,255,255,0.05)]"
           />
-        ) : (
-          <div className="flex items-center gap-3 text-white text-xl font-semibold  bg-[linear-gradient(135deg,rgba(30,30,30,0.95),rgba(50,50,60,0.9))] px-6 py-4 rounded-lg justify-center">
-            <span>Solution under construction</span>
-            <span className="text-3xl">🔨</span>
-          </div>
         )}
 
 
         {showSolution &&
-          (problem.yt_link &&
-            problem.yt_link.match(/\/embed\/([a-zA-Z0-9_-]{11,})/) ? (
+          problem.yt_link &&
+          problem.yt_link.match(/\/embed\/([a-zA-Z0-9_-]{11,})/) && (
             <div id="youtube-link" className="youtube-container mb-4 relative" style={{ minHeight: 300 }}>
               <YouTubeWithLoader ytLink={problem.yt_link} />
             </div>
-          ) : (
-            <div className="flex items-center gap-3 text-white text-xl font-semibold bg-black/30 px-6 py-4 rounded-lg justify-center">
-              <span>Video under construction</span>
-              <span className="text-3xl">🔨</span>
-            </div>
-          ))}
+          )}
 
         {problem.explanation && problem.explanation.trim() !== '' ? (
           <div
@@ -192,7 +181,10 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
             className="bg-black/20 p-[15px] rounded-[5px] shadow-[0_4px_8px_rgba(0,0,0,0.8)] w-full text-fluid-small mt-[2rem]"
           />
         ) : (
-          <div className="flex items-center gap-3 text-white text-xl font-semibold bg-black/30 px-6 py-4 rounded-lg justify-center">
+          <div
+            className="flex items-center gap-3 text-white text-xl font-semibold bg-black/30 px-6 py-10 rounded-lg justify-center"
+            style={{ minHeight: 100 }}
+          >
             <span>Explanation under construction</span>
             <span className="text-3xl">🔨</span>
           </div>

@@ -4,7 +4,7 @@ import { useAdminData } from '@/context/AdminDataContext'
 import ProblemEditor from './ProblemEditor'
 import ProblemCard from '../problemcomponents/ProblemCard'
 import { Node } from 'reactflow'
-import type { Subcategory, Problem} from '@/types/data'
+import type { Subcategory, Problem } from '@/types/data'
 import {
   DndContext,
   closestCenter,
@@ -30,6 +30,65 @@ interface SortableProblemProps {
   problem: Problem
   onEdit: () => void
   onRemove: () => void
+}
+
+function EditSubcatModal({
+  subcategory,
+  onSave,
+  onClose,
+}: {
+  subcategory: Subcategory
+  onSave: (sc: Partial<Subcategory>) => void
+  onClose: () => void
+}) {
+  const [id, setId] = useState(subcategory.id)
+  const [moreInfo, setMoreInfo] = useState(subcategory.more_info || '')
+  const [construction, setConstruction] = useState(!!subcategory.construction)
+
+  return (
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/80"
+      onClick={e => e.stopPropagation()}>
+      <div className="bg-white text-black p-6 rounded-lg shadow-lg w-[95vw] max-w-lg relative">
+        <button
+          className="absolute top-2 right-2 text-black text-2xl"
+          onClick={onClose}
+        >×</button>
+        <h2 className="font-bold text-2xl mb-4">Edit Subcategory</h2>
+        <div className="mb-3">
+          <label className="block mb-1 font-semibold">Subcategory Name</label>
+          <input
+            value={id}
+            onChange={e => setId(e.target.value)}
+            className="border px-2 py-1 rounded w-full"
+            autoFocus
+          />
+        </div>
+        <div className="mb-3">
+          <label className="block mb-1 font-semibold">More Info</label>
+          <textarea
+            value={moreInfo}
+            onChange={e => setMoreInfo(e.target.value)}
+            className="border px-2 py-1 rounded w-full"
+            rows={2}
+          />
+        </div>
+        <label className="flex items-center gap-2 mb-3">
+          <input
+            type="checkbox"
+            checked={construction}
+            onChange={e => setConstruction(e.target.checked)}
+          />
+          Under Construction
+        </label>
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700"
+          onClick={() => onSave({ id, more_info: moreInfo, construction })}
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  )
 }
 
 
@@ -64,9 +123,8 @@ export default function AdminNodeModal({
   const [assigningSubcatId, setAssigningSubcatId] = useState<string | null>(null)
   const [showUnassignedModal, setShowUnassignedModal] = useState(false)
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({})
-  const [editingSubcatId, setEditingSubcatId] = useState<string | null>(null)
-  const [editSubcatValue, setEditSubcatValue] = useState<string>('')
   const [problemSearch, setProblemSearch] = useState('')
+  const [editSubcatIdx, setEditSubcatIdx] = useState<number | null>(null)
 
   // --- Find all problem IDs that are in any subcategory in any roadmap node (global ban list) ---
   const allUsedProblemIds = useMemo(() =>
@@ -126,6 +184,8 @@ export default function AdminNodeModal({
         id: name,
         orderIndex: subcategories.length,
         problemIds: [],
+        more_info: '',
+        construction: false,
       }
     ])
     setOpenMap(m => ({ ...m, [name]: true }))
@@ -140,36 +200,17 @@ export default function AdminNodeModal({
     })
     setIsDirty(true)
   }
-  // --- Edit subcat names (inline) ---
-  const handleStartEditSubcat = (id: string, currentValue: string) => {
-    setEditingSubcatId(id)
-    setEditSubcatValue(currentValue)
-  }
-  const handleChangeSubcatName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditSubcatValue(e.target.value)
-  }
-  const handleSaveEditSubcat = (oldId: string) => {
-    const newId = editSubcatValue
-    if (!newId) return
-    if (subcategories.some(sc => sc.id === newId && sc.id !== oldId)) {
-      alert('Subcategory with that name already exists!')
-      return
-    }
-    setSubcategories(subcategories.map(sc =>
-      sc.id === oldId
-        ? { ...sc, id: newId }
-        : sc
-    ))
-    setOpenMap(map => {
-      const next = { ...map }
-      next[newId] = next[oldId]
-      delete next[oldId]
-      return next
-    })
-    setEditingSubcatId(null)
-    setEditSubcatValue('')
-    setIsDirty(true)
-  }
+
+  const handleEditSubcatSave = (sc: Partial<Subcategory>) => {
+  if (editSubcatIdx === null) return
+  setSubcategories(subs => subs.map((sub, i) =>
+    i === editSubcatIdx ? { ...sub, ...sc } : sub
+  ))
+  setEditSubcatIdx(null)
+  setIsDirty(true)
+}
+
+
 
   // --- Problem assign/remove ---
   const removeProblemFromSubcat = (subIdx: number, pid: number) => {
@@ -198,13 +239,13 @@ export default function AdminNodeModal({
       prev.map(rn =>
         rn.id.toString() === node.id.toString()
           ? {
-              ...rn,
-              subcategories: subcategories.map((sc, idx) => ({
-                ...sc,
-                problemIds: [...sc.problemIds],
-                orderIndex: idx,
-              })),
-            }
+            ...rn,
+            subcategories: subcategories.map((sc, idx) => ({
+              ...sc,
+              problemIds: [...sc.problemIds],
+              orderIndex: idx,
+            })),
+          }
           : rn
       )
     )
@@ -237,8 +278,8 @@ export default function AdminNodeModal({
     return () => { document.body.style.overflow = '' }
   }, [])
 
-  // --- Subcategory Sortable Item ---
-  function SortableSubcategory({ sub, idx }: { sub: Subcategory, idx: number }) {
+
+   function SortableSubcategory({ sub, idx }: { sub: Subcategory, idx: number }) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: sub.id })
     const style = {
       transform: CSS.Transform.toString(transform),
@@ -246,6 +287,7 @@ export default function AdminNodeModal({
       zIndex: isDragging ? 10 : 'auto',
       background: isDragging ? 'rgba(72,126,181,0.25)' : undefined,
     }
+
     return (
       <div
         ref={setNodeRef}
@@ -255,47 +297,29 @@ export default function AdminNodeModal({
         {...listeners}
       >
         <div className="flex items-center mb-2">
-          {editingSubcatId === sub.id ? (
-            <>
-              <input
-                type="text"
-                className="text-2xl font-semibold text-[#edf0f1] bg-[#20232a] border-b-2 border-blue-400 px-2 w-40"
-                value={editSubcatValue}
-                autoFocus
-                onChange={handleChangeSubcatName}
-                onBlur={() => handleSaveEditSubcat(sub.id)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') handleSaveEditSubcat(sub.id)
-                  if (e.key === 'Escape') setEditingSubcatId(null)
-                }}
-              />
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => toggle(sub.id)}
-                className="flex items-center cursor-pointer text-2xl font-semibold text-[#edf0f1] border-l-4 border-[#61a9f1] pl-3 subcategory-header select-none w-full"
-                type="button"
-              >
-                {sub.id}
-                <span className="ml-3 subcategory-check" />
-                <span className={`ml-auto transition-transform ${openMap[sub.id] ? "rotate-180" : ""}`}>
-                  ▼
-                </span>
-              </button>
-              <button
-                onClick={() => handleStartEditSubcat(sub.id, sub.id)}
-                className="ml-4 bg-yellow-400 text-black px-2 py-1 rounded font-semibold text-xs"
-                style={{marginLeft: 8}}
-              >Edit</button>
-              <button
-                onClick={() => handleRemoveSubcat(sub.id)}
-                className="ml-2 bg-red-500 text-white px-2 py-1 rounded font-semibold text-xs"
-              >Delete</button>
-            </>
-          )}
+          <button
+            onClick={() => toggle(sub.id)}
+            className="flex items-center cursor-pointer text-2xl font-semibold text-[#edf0f1] border-l-4 border-[#61a9f1] pl-3 subcategory-header select-none w-full"
+            type="button"
+          >
+            {sub.id}
+            <span className="ml-3 subcategory-check" />
+            <span className={`ml-auto transition-transform ${openMap[sub.id] ? "rotate-180" : ""}`}>
+              ▼
+            </span>
+          </button>
+          <button
+            onClick={() => setEditSubcatIdx(idx)}
+            className="ml-4 bg-yellow-400 text-black px-2 py-1 rounded font-semibold text-xs"
+            style={{ marginLeft: 8 }}
+          >Edit</button>
+          <button
+            onClick={() => handleRemoveSubcat(sub.id)}
+            className="ml-2 bg-red-500 text-white px-2 py-1 rounded font-semibold text-xs"
+          >Delete</button>
           <span className="ml-2 text-sm text-gray-300">(Drag to reorder)</span>
         </div>
+
         {openMap[sub.id] && (
           <DndContext
             sensors={sensors}
@@ -454,21 +478,29 @@ export default function AdminNodeModal({
           100% { transform: scale(1); opacity: 1; }
         }
       `}</style>
+      {editSubcatIdx !== null && (
+  <EditSubcatModal
+    subcategory={subcategories[editSubcatIdx]}
+    onSave={handleEditSubcatSave}
+    onClose={() => setEditSubcatIdx(null)}
+  />
+)}
+
       {/* ProblemEditor modal */}
-        {(editProblemId !== null) && (
-            <div className="bg-white p-4 rounded-lg w-[90vw] max-w-2xl relative">
-              <button
-                className="absolute top-2 right-2 text-black font-bold text-2xl"
-                onClick={() => setEditProblemId(null)}
-              >×</button>
-              <ProblemEditor
-                problemId={editProblemId}
-                isNew={isEditingNew}
-                onClose={() => setEditProblemId(null)}
-              />
-            </div>
-        )}
+      {(editProblemId !== null) && (
+        <div className="bg-white p-4 rounded-lg w-[90vw] max-w-2xl relative">
+          <button
+            className="absolute top-2 right-2 text-black font-bold text-2xl"
+            onClick={() => setEditProblemId(null)}
+          >×</button>
+          <ProblemEditor
+            problemId={editProblemId}
+            isNew={isEditingNew}
+            onClose={() => setEditProblemId(null)}
+          />
+        </div>
+      )}
     </div>
-    
+
   )
 }

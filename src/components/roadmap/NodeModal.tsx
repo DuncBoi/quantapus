@@ -5,6 +5,8 @@ import { useData } from '@/context/DataContext'
 import ProblemCard from '../problemcomponents/ProblemCard'
 import ProgressBar from '../problemcomponents/ProgressBar'
 import type { Subcategory } from '@/types/data'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Info } from "lucide-react"
 
 interface RoadmapNodeData {
   label: string
@@ -141,6 +143,28 @@ export default function NodeModal({
                     type="button"
                   >
                     {sub.id}
+                      {sub.more_info && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span
+                                onClick={e => e.stopPropagation()}
+                                className="ml-2 hidden sm:inline-flex"
+                                tabIndex={0}
+                              >
+                                <Info className="w-5 h-5 text-white opacity-80 hover:opacity-100 transition-opacity cursor-pointer" aria-label="More info" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent
+                              side="top"
+                              className="z-[2000]"
+                            >
+                              {sub.more_info}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+
                     <span className="ml-3 subcategory-check" />
                     <span className={`ml-auto transition-transform ${openMap[sub.id] ? "rotate-180" : ""}`}>
                       ▼
@@ -148,7 +172,12 @@ export default function NodeModal({
                   </button>
                   {openMap[sub.id] && (
                     <div className="mt-4 space-y-2 ml-1">
-                      {sub.problemIds.length > 0 ? (
+                      {sub.construction ? (
+                        <div className="flex flex-col text-fluid-medium font-extrabold text-white mb-2 text-center">
+                          <span className="mr-2">🔨</span>
+                          Under Construction
+                        </div>
+                      ) : sub.problemIds.length > 0 ? (
                         sub.problemIds.map(pid => {
                           const problem = problemsById.get(pid)
                           return problem ? (
@@ -162,6 +191,7 @@ export default function NodeModal({
                       )}
                     </div>
                   )}
+
                 </div>
               ))}
             </div>

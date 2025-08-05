@@ -53,6 +53,8 @@ export async function fetchData(): Promise<{
         id,
         roadmap_node_id,
         order_index,
+        more_info,
+        construction,
         problems ( id )
       ),
       children:roadmap_node_children!rodemap_node_children_parent_id_fkey ( child_id )
@@ -74,6 +76,8 @@ export async function fetchData(): Promise<{
       .map((sc: SubcategoryRaw) => ({
         id: sc.id,
         orderIndex: sc.order_index,
+        more_info: sc.more_info,
+        construction: sc.construction,
         problemIds: sc.problems
           .slice()
           .sort((a, b) => {

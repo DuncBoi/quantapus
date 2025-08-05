@@ -17,9 +17,11 @@ export default function RoadmapProgressDashboard() {
   const { total, completed, percent } = useMemo(() => {
     const ids = new Set<number>()
     roadmap.forEach(node => {
-      node.subcategories?.forEach(sub =>
+      if (node.styling === "premium") return
+      node.subcategories?.forEach(sub => {
+        if (sub.construction) return
         sub.problemIds?.forEach(pid => ids.add(pid))
-      )
+      })
     })
     const all = Array.from(ids)
     const done = all.filter(id => completedIds.has(id)).length
@@ -29,6 +31,7 @@ export default function RoadmapProgressDashboard() {
       percent: all.length ? Math.round((done / all.length) * 100) : 0,
     }
   }, [roadmap, completedIds])
+
 
   const [animatedPercent, setAnimatedPercent] = useState(0)
 

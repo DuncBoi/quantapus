@@ -46,17 +46,21 @@ function TooltipContent({
         data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(
-          "bg-gray-600 text-white font-semibold",
+          "bg-[#e8f6fb] text-[#173753] font-semibold",
           "animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
           "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           "z-50 w-auto max-w-xs",
-          "rounded-md px-4 py-2 shadow-md text-base",
+          "rounded-xl px-4 py-2 shadow-[0_4px_20px_rgba(56,184,143,0.08)] text-base",
+          "border border-[#b6e2fa]",
+          "transition-all duration-150",
+          "backdrop-blur-[1px]",
           className
         )}
+
         {...props}
       >
         {children}
-        <TooltipPrimitive.Arrow className="bg-gray-600 fill-gray-600 z-50 w-3 h-3 -translate-y-2 rotate-45" />
+        <TooltipPrimitive.Arrow className="bg-[#e8f6fb] fill-[#e8f6fb] z-50 w-3 h-3 -translate-y-2 rotate-45" />
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
   )

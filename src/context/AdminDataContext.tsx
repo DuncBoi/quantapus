@@ -72,16 +72,22 @@ export function AdminDataProvider({
                 ...sc,
                 roadmap_node_id: n.id
             })))
-            const subcatKey = (sc: {id: string; roadmap_node_id: string}) => `${sc.id}|${sc.roadmap_node_id}`
+            const subcatKey = (sc: { id: string; roadmap_node_id: string }) => `${sc.id}|${sc.roadmap_node_id}`
             const origSubcatMap = new Map(origSubcats.map(sc => [subcatKey(sc), sc]))
             const changedSubcats = currSubcats.filter(sc => {
                 const orig = origSubcatMap.get(subcatKey(sc))
                 if (!orig) return true
-                return orig.orderIndex !== sc.orderIndex
+                return (
+                    orig.orderIndex !== sc.orderIndex ||
+                    orig.more_info !== sc.more_info ||
+                    orig.construction !== sc.construction
+                )
             }).map(sc => ({
                 id: sc.id,
                 roadmap_node_id: sc.roadmap_node_id,
                 order_index: sc.orderIndex,
+                more_info: sc.more_info,
+                construction: sc.construction
             }))
             if (changedSubcats.length) {
                 const { error } = await supabase.from('roadmap_subcategories').upsert(changedSubcats)
@@ -100,7 +106,7 @@ export function AdminDataProvider({
                     .in('id', toDeleteSubcatIds)
                 if (error) throw new Error(`Subcategory delete: ${error.message}`)
             }
-        
+
             // --- Problems (upsert only changed or new) ---
             const changedProblems: Problem[] = []
             for (const problem of problemsById.values()) {
@@ -142,7 +148,7 @@ export function AdminDataProvider({
             if (changedNodes.length) {
                 const { error } = await supabase.from('roadmap_nodes').upsert(changedNodes)
                 if (error) throw new Error(`Nodes: ${error.message}`)
-            }            
+            }
 
 
             const origIds = new Set(originalRoadmap.map(n => n.id))
@@ -171,7 +177,7 @@ export function AdminDataProvider({
                     child_id,
                 }))
             )
-            const edgeKey = (e: {parent_id: string; child_id: string}) => `${e.parent_id}|${e.child_id}`
+            const edgeKey = (e: { parent_id: string; child_id: string }) => `${e.parent_id}|${e.child_id}`
             const origEdgeSet = new Set(origEdges.map(edgeKey))
             const currEdgeSet = new Set(currEdges.map(edgeKey))
 
@@ -190,7 +196,7 @@ export function AdminDataProvider({
             }
 
             // --- Problem Categories (diff and only insert/delete links) ---
-            const pcKey = (pc: {problem_id: number; category_id: string}) => `${pc.problem_id}|${pc.category_id}`
+            const pcKey = (pc: { problem_id: number; category_id: string }) => `${pc.problem_id}|${pc.category_id}`
             const origPCSet = new Set(originalProblemCategories.map(pcKey))
             const currPCSet = new Set(problemCategories.map(pcKey))
 
