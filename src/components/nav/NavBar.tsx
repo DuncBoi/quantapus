@@ -15,8 +15,8 @@ export default function NavBar() {
   ]
 
   return (
-    <div className="fixed top-0 left-0 w-full z-50 bg-[#24252A] shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
-      <nav className="bg-[#24252A] mx-1 rounded-[12px] shadow-[0_4px_15px_rgba(0,0,0,0.6)]">
+    <div className="fixed top-0 left-0 w-full z-50">
+      <nav className="bg-[#1f1f24] mx-1 rounded-[12px] shadow-[0_4px_15px_rgba(0,0,0,0.6)]">
         <div className="flex flex-wrap items-center justify-between mx-auto p-4">
           <div className="flex items-center space-x-6 md:space-x-12">
             <Link href="/" className="block" prefetch>

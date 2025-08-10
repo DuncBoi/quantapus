@@ -1,80 +1,151 @@
-'use client'
+import Link from 'next/link'
+
+export const metadata = {
+  title: 'Privacy Policy',
+}
 
 export default function PrivacyPolicy() {
   return (
-    <div className="max-w-[95%] mx-auto my-20 p-8 bg-[#24252A] text-[#e0e0e0] rounded-[12px] shadow-[0_4px_16px_rgba(0,0,0,0.7)] leading-[1.75]">
+    <div className="max-w-[95%] mx-auto mt-25 mb-5 p-8 bg-[#1f1f24] text-[#e0e0e0] rounded-[12px] shadow-[0_4px_16px_rgba(0,0,0,0.7)] leading-[1.75]">
       <h1 className="text-[2.5rem] mb-6 text-white border-b-2 border-[#333] pb-2 font-bold">
         Privacy Policy
       </h1>
-      <p className="mb-5">Effective date: April 18, 2025</p>
+      <p className="mb-5">Effective date: August 10, 2025</p>
+
       <p className="mb-5">
-        Quantapus (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) operates the website{' '}
-        <a href="https://quantapus.com" className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition" target="_blank">https://quantapus.com</a>{' '}
-        (the &quot;Service&quot;). This page explains how we handle personal data in compliance with the General Data Protection Regulation (GDPR).
+        Quantapus (“we”, “us”, “our”) operates{' '}
+        <Link href="https://quantapus.com" target="_blank" rel="noreferrer"
+          className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition">
+          https://quantapus.com
+        </Link>. This Privacy Policy explains what we collect, why we collect it, how it’s used, and the choices you have. We build on modern, privacy-respecting services: the app is hosted on <b>Vercel</b> and data is stored in <b>Supabase</b>. Authentication is via <b>Google Sign-In (OAuth)</b>. We also use <b>Google Analytics</b>, <b>Microsoft Clarity</b>, and <b>Vercel Analytics / Speed Insights</b> to understand product usage and performance.
       </p>
 
-      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">1. What Data We Access and Store</h2>
-      <p className="mb-5">When you use the Service, we access and process limited personal data:</p>
+      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">1. Data We Collect</h2>
       <ul className="list-[square] pl-6 mb-6">
-        <li className="mb-3"><b>Completed Problems</b> – Stored on our servers so that you can track your progress through our content.</li>
-        <li className="mb-3"><b>Name and email address</b> – Accessed via Google Authentication during your session, but <b>not stored</b> by us.</li>
+        <li className="mb-3">
+          <b>Account & Auth</b> — When you sign in with Google, we receive your basic profile info (name and email). We use this to identify your account. We do not sell or rent this data.
+        </li>
+        <li className="mb-3">
+          <b>Progress Data</b> — We store problem completion state and simple progress metrics (e.g., streak counts) tied to your account so you can track your learning over time.
+        </li>
+        <li className="mb-3">
+          <b>Usage & Performance</b> — Analytics tools (Google Analytics, Microsoft Clarity, Vercel Analytics, Vercel Speed Insights) collect pseudonymous data such as page views, navigation events, device/browser info, approximate location derived from IP, referrers, Web Vitals (LCP, FID/INP, CLS, etc.), and session replays/heatmaps (for Clarity). These help us debug UX and improve reliability.
+        </li>
+        <li className="mb-3">
+          <b>Technical Logs</b> — Our hosts and edge network may keep transient logs (e.g., IP address, user-agent, request URLs) for security and debugging. We do not attempt to associate these logs to your learning data except to mitigate abuse or troubleshoot issues.
+        </li>
       </ul>
 
-      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">2. Why We Access Your Data</h2>
-      <p className="mb-5">The personal data accessed via Google Authentication is used only for:</p>
+      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">2. How We Use Data</h2>
       <ul className="list-[square] pl-6 mb-6">
-        <li className="mb-3">Displaying your course progress</li>
-        <li className="mb-3">Identifying your account within the session</li>
+        <li className="mb-3">Authenticate you and keep your session active (Google OAuth via Supabase Auth).</li>
+        <li className="mb-3">Persist your completed problems, streaks, and related learning state in Supabase.</li>
+        <li className="mb-3">Measure product usage and performance (Google Analytics, Vercel Analytics, Vercel Speed Insights).</li>
+        <li className="mb-3">Improve UX via anonymized session analysis (Microsoft Clarity) and Web Vitals diagnostics (Speed Insights).</li>
+        <li className="mb-3">Maintain security, prevent abuse, and debug issues.</li>
       </ul>
 
-      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">3. Legal Basis for Processing</h2>
-      <p className="mb-5">We process your data based on your explicit consent, which you provide when signing up and logging in through Google Authentication. You can withdraw this consent at any time by logging out or deleting your account.</p>
-
-      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">4. Cookies and Analytics</h2>
-      <p className="mb-5">We use cookies and third-party analytics tools to understand how users interact with the platform. These tools collect anonymized usage data:</p>
-      <ul className="list-[square] pl-6 mb-6">
-        <li className="mb-3"><a href="https://policies.google.com/privacy" target="_blank" className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition">Google Analytics</a></li>
-        <li className="mb-3"><a href="https://clarity.microsoft.com/terms" target="_blank" className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition">Microsoft Clarity</a></li>
-      </ul>
-
-      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">5. Data Sharing</h2>
-      <p className="mb-5">We do not share personal data with any third parties for marketing or profiling. The only data accessed is through secure third-party tools for analytics, as listed above.</p>
-
-      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">6. User Rights</h2>
-      <p className="mb-5">Under GDPR, you have the right to:</p>
-      <ul className="list-[square] pl-6 mb-6">
-        <li className="mb-3">Access the data being processed</li>
-        <li className="mb-3">Request deletion of your data</li>
-        <li className="mb-3">Withdraw consent</li>
-      </ul>
+      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">3. Legal Bases</h2>
       <p className="mb-5">
-        You can manage your account or delete your data by visiting <a href="https://quantapus.com/account" className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition" target="_blank">https://quantapus.com/account</a>.
+        We rely on: (a) <b>consent</b> for analytics/telemetry and sign-in; (b) <b>contract/legitimate interests</b> to provide the Service (store progress, maintain security, fix bugs). You can withdraw consent for analytics by using content blockers or disabling cookies; you can withdraw sign-in consent by logging out or deleting your account.
       </p>
 
-      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">7. Security Measures</h2>
-      <p className="mb-5">We protect user data using:</p>
+      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">4. Cookies & Analytics</h2>
+      <p className="mb-5">We use cookies and similar tech for authentication and analytics:</p>
       <ul className="list-[square] pl-6 mb-6">
-        <li className="mb-3">HTTPS encryption</li>
-        <li className="mb-3">Google Authentication</li>
-        <li className="mb-3">Secure cloud infrastructure hosted on Amazon Web Services (AWS)</li>
-        <li className="mb-3">Regular software updates and trusted third-party tools</li>
+        <li className="mb-3">
+          <b>Google Analytics</b> — usage metrics and events.{' '}
+          <Link href="https://policies.google.com/privacy" target="_blank" rel="noreferrer"
+            className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition">Privacy</Link>
+        </li>
+        <li className="mb-3">
+          <b>Microsoft Clarity</b> — anonymized session replays/heatmaps to improve UX.{' '}
+          <Link href="https://clarity.microsoft.com/terms" target="_blank" rel="noreferrer"
+            className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition">Terms</Link>
+        </li>
+        <li className="mb-3">
+          <b>Vercel Analytics & Speed Insights</b> — Web Vitals, performance timings, and aggregated traffic metrics collected on our Vercel deployment.{' '}
+          <Link href="https://vercel.com/docs/analytics" target="_blank" rel="noreferrer"
+            className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition">Learn more</Link>
+        </li>
       </ul>
 
-      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">8. International Data Transfers</h2>
-      <p className="mb-5">Quantapus is based in the United States, and our website is operated from there. If you are accessing the Service from the European Economic Area (EEA), please be aware that your data may be transferred to and processed in the United States.</p>
+      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">5. Where Your Data Lives</h2>
+      <ul className="list-[square] pl-6 mb-6">
+        <li className="mb-3"><b>Hosting</b> — The app runs on <b>Vercel</b>.</li>
+        <li className="mb-3"><b>Database & Auth</b> — <b>Supabase</b> stores your progress (e.g., completed problems, streaks) and manages Google OAuth.</li>
+        <li className="mb-3"><b>Analytics</b> — Google Analytics, Microsoft Clarity, and Vercel Analytics/Speed Insights collect pseudonymous usage/performance data.</li>
+      </ul>
+
+      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">6. Data Sharing</h2>
       <p className="mb-5">
-        We use trusted third-party services (such as Google, Microsoft, and Amazon Web Services) that comply with GDPR requirements for international data transfers, including the use of Standard Contractual Clauses (SCCs) approved by the European Commission.
+        We do not sell your personal data. We share data only with the processors listed above to run the Service (hosting, database, auth, analytics). Access is role-restricted and logged where supported.
       </p>
 
-      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">9. Changes to This Policy</h2>
-      <p className="mb-5">We may update this Privacy Policy. If we do, a notification will be posted on our website. We encourage you to review this page periodically.</p>
+      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">7. Retention</h2>
+      <p className="mb-5">
+        Account and progress data remain until you delete your account or request deletion. Technical logs and analytics are retained according to each provider’s policies. If you want us to remove your account and associated records, see “Your Rights” below.
+      </p>
 
-      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">10. Contact Us</h2>
-      <p className="mb-5">If you have any questions or concerns about this Privacy Policy or wish to make a data request, please contact us at:</p>
+      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">8. International Transfers</h2>
+      <p className="mb-5">
+        Our providers may process data in multiple regions (including the U.S.). Where applicable, transfers rely on safeguards like Standard Contractual Clauses or equivalent mechanisms maintained by our providers.
+      </p>
+
+      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">9. Security</h2>
       <ul className="list-[square] pl-6 mb-6">
-        <li className="mb-3">Email: <a href="mailto:duncquantapus@gmail.com" className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition">duncquantapus@gmail.com</a></li>
-        <li className="mb-3">Contact form: <a href="https://quantapus.com/contact" className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition" target="_blank">https://quantapus.com/contact</a></li>
+        <li className="mb-3">Transport security (HTTPS) and modern TLS.</li>
+        <li className="mb-3">Provider-level controls from Vercel and Supabase (isolation, access controls, managed patches).</li>
+        <li className="mb-3">Least-privilege access to data and operational logs for maintenance and support.</li>
       </ul>
+
+      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">10. Your Rights</h2>
+      <p className="mb-5">
+        Depending on your location, you may have rights to access, correct, export, object to, limit, or delete your data. You can manage most settings in your account page or contact us for specific requests. Deleting your account removes your progress data from Supabase.
+      </p>
+      <p className="mb-5">
+        Manage your account at{' '}
+        <Link href="https://quantapus.com/account" target="_blank" rel="noreferrer"
+          className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition">
+          https://quantapus.com/account
+        </Link>.
+      </p>
+
+      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">11. Open Source & Transparency</h2>
+      <p className="mb-5">
+        Quantapus is open source. You can review our code and file issues here:{' '}
+        <Link href="https://github.com/DuncBoi/quantapus" target="_blank" rel="noreferrer"
+          className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition">
+          GitHub Repository
+        </Link>.
+      </p>
+
+      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">12. Changes to This Policy</h2>
+      <p className="mb-5">
+        We may update this policy as we ship new features or adopt new providers. We’ll update the “Effective date” at the top and, when changes are material, we’ll provide an in-app notice.
+      </p>
+
+      <h2 className="text-[1.75rem] my-8 text-white border-l-4 border-[#61a9f1] pl-3 font-bold">13. Contact</h2>
+      <ul className="list-[square] pl-6 mb-6">
+        <li className="mb-3">
+          Email:{' '}
+          <Link href="mailto:duncquantapus@gmail.com" target="_blank" rel="noreferrer"
+            className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition">
+            duncquantapus@gmail.com
+          </Link>
+        </li>
+        <li className="mb-3">
+          Contact form:{' '}
+          <Link href="https://quantapus.com/contact" target="_blank" rel="noreferrer"
+            className="text-[#61a9f1] border-b border-dashed border-[#61a9f1] hover:text-[#90c7ff] hover:border-b-solid transition">
+            https://quantapus.com/contact
+          </Link>
+        </li>
+      </ul>
+
+      <p className="text-sm text-[#b8c1cc]">
+        This page is for transparency; it is not legal advice. If you have questions about how your data is handled, please reach out.
+      </p>
     </div>
   )
 }

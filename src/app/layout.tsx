@@ -7,6 +7,8 @@ import { fetchData } from "@/utils/fetchData";
 import { Roboto_Flex } from 'next/font/google'
 import { Toaster } from "../components/ui/sonner";
 import { AnalyticsPageView } from "@/components/nav/AnalyticsPageView";
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Analytics } from "@vercel/analytics/next"
 import "./globals.css";
 import Script from "next/script";
 
@@ -72,8 +74,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             <NavBar />
             <AnalyticsPageView />
               {children}
-               <Toaster 
-                       />
+               <Toaster />
+               <SpeedInsights/>
+               <Analytics/>
             </DataProvider>
           </CompletedProvider>
         </UserProvider>

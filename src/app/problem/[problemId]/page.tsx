@@ -119,6 +119,13 @@ export default function ProblemPage() {
   // ---- Render ----
   const currentId = allIds[currentIdx]
   const problem = problemsById.get(Number(currentId))
+
+  useEffect(() => {
+    const t = `${problem?.title}`
+    document.title = t
+  }, [problem?.title, currentId])
+
+  
   if (!problem) return notFound()
   if (
     filteredProblems.length === 0 ||
@@ -140,7 +147,7 @@ export default function ProblemPage() {
   }
 
   return (
-    <div className=" pt-20">
+    <div className="pt-20 min-h-screen bg-[#1f1f24]">
       <div className="flex justify-center mt-[10px]" id="problem-header-container">
         <div className="inline-flex items-center font-bold py-2 px-4 bg-[#2c2d33] border-2 border-black rounded-[12px] cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.6)] min-w-0 ">
           <button

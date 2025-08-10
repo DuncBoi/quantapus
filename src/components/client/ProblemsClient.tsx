@@ -84,9 +84,9 @@ export default function ProblemsClient() {
     }`
 
   return (
-    <main className="min-h-screen bg-[#181a1f] pb-10 pt-20">
+    <main className="min-h-screen bg-[#1f1f24] pb-10 pt-20">
       <div className="w-full flex flex-col items-center justify-center">
-        {/* Glassy Filter Bar */}
+        {/* Filter Bar */}
         <div
           className="
             flex flex-row flex-wrap gap-1 justify-center items-center
@@ -220,7 +220,7 @@ export default function ProblemsClient() {
         </div>
       </div>
 
-      {/* Problems List with linkQuery */}
+      {/* Problems List */}
       <div className="flex flex-col gap-2 items-center w-full mx-auto max-w-[95%]">
         <ProblemsList
           filterDifficulty={filterDifficulty}
