@@ -114,6 +114,7 @@ export default function Home() {
                 underline decoration-transparent underline-offset-4
                 hover:decoration-current hover:text-white transition-colors
               "
+              prefetch
             >
               <span className="bg-gradient-to-r from-[#48e0ff] to-[#36ffc1] bg-clip-text text-transparent animate-gradient">
                 Roadmap

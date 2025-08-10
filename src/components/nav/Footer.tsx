@@ -29,14 +29,17 @@ export default function Footer() {
           <Link
             href="/privacy"
             className="hover:text-[#61a9f1] transition"
+            prefetch
           >Privacy Policy</Link>
           <Link
             href="/terms"
             className="hover:text-[#61a9f1] transition"
+            prefetch
           >Terms of Service</Link>
           <Link
             href="/contact"
             className="hover:text-[#61a9f1] transition"
+            prefetch
           >Contact</Link>
         </div>
       </div>

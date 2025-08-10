@@ -83,7 +83,7 @@ export default function LoginButton() {
         className="bg-[#24252A] text-white border border-gray-700 shadow-lg"
       >
         <DropdownMenuItem asChild className="cursor-pointer focus:outline-none">
-          <Link href="/account">Account</Link>
+          <Link href="/account" prefetch>Account</Link>
         </DropdownMenuItem>
         <DropdownMenuItem
           className="text-red-500 cursor-pointer focus:outline-none"

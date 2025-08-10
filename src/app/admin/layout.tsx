@@ -44,12 +44,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <Link
           href="/admin/roadmap"
           className="text-gray-100 hover:text-blue-400 font-semibold mr-6 transition"
+          prefetch
         >
           Roadmap Editor
         </Link>
         <Link
           href="/admin/problems"
           className="text-gray-100 hover:text-blue-400 font-semibold transition"
+          prefetch
         >
           Problem Editor
         </Link>

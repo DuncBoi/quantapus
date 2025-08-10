@@ -60,6 +60,7 @@ export default function GooglePromptModal({
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#61a9f1] underline hover:text-[#90c7ff] transition"
+            prefetch
           >
             Terms of Service
           </Link>
@@ -69,6 +70,7 @@ export default function GooglePromptModal({
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#61a9f1] underline hover:text-[#90c7ff] transition"
+            prefetch
           >
             Privacy Policy
           </Link>.
