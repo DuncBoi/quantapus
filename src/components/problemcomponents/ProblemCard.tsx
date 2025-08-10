@@ -45,6 +45,7 @@ export default function ProblemCard({
         <Link
           href={href}
           className="flex items-center min-w-0 flex-1"
+          prefetch
         >
           <span
             className="

@@ -10,7 +10,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css'
 
 import RoadmapNode from '@/components/roadmap/RoadmapNode'
-import NodeModal from './NodeModal'
+import NodeModal from '@/components/roadmap/NodeModal'
 import { useData } from '@/context/DataContext'
 import RoadmapProgressDashboard from '@/components/roadmap/RoadmapProgressDashboard'
 

@@ -174,6 +174,7 @@ export default function ProblemPage() {
                   " flex flex-1 min-w-0 items-center justify-center transition-all duration-200 hover:scale-105"
                 }
                 style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
+                prefetch
               >
                 <span className="truncate font-semibold">
                   {currentNode.label} ({currentIdx + 1}/{allIds.length})
@@ -187,6 +188,7 @@ export default function ProblemPage() {
                   " flex flex-1 min-w-0 items-center justify-center bg-[#2c2d33] hover:bg-[#23242b] hover:scale-105 transition-all duration-200 rounded-lg"
                 }
                 style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}
+                prefetch
               >
                 <div
                   className="

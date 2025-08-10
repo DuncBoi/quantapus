@@ -19,7 +19,7 @@ export default function NavBar() {
       <nav className="bg-[#24252A] mx-1 rounded-[12px] shadow-[0_4px_15px_rgba(0,0,0,0.6)]">
         <div className="flex flex-wrap items-center justify-between mx-auto p-4">
           <div className="flex items-center space-x-6 md:space-x-12">
-            <Link href="/" className="block">
+            <Link href="/" className="block" prefetch>
               <Image src="/logo.svg" alt="Quantapus Logo" width={40} height={40} className="logo" />
             </Link>
 
@@ -32,6 +32,7 @@ export default function NavBar() {
                   href={link.href}
                   className="relative font-bold px-1 py-0.5 flex items-center"
                   aria-label={link.label}
+                  prefetch
                 >
                   {/* Icon for mobile */}
                   <Icon className="w-7 h-7 text-white block md:hidden" aria-hidden="true" />
