@@ -152,44 +152,48 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
       </button>
 
       {/* SOLUTION & EXPLANATION */}
-      <div
-        id="solution"
-        style={{ display: showSolution ? 'block' : 'none' }}
-        className="solution space-y-6 text-3xl"
-      >
-        {problem.solution && problem.solution.trim() !== '' && (
-          <div
-            ref={solRef}
-            id="solution-code"
-            className="text-[2rem] font-bold text-white px-4 mb-4 shadow-[0_4px_15px_rgba(0,0,0,0.5)] rounded-[12px] bg-[linear-gradient(135deg,rgba(30,30,30,0.95),rgba(50,50,60,0.9))] border-[3px] border-[rgba(255,255,255,0.05)]"
-          />
-        )}
+      {/* SOLUTION & EXPLANATION */}
+<div
+  id="solution"
+  style={{ display: showSolution ? 'flex' : 'none' }}
+  className="solution flex flex-col gap-6 text-3xl"
+>
+  {/* Solution code */}
+  {problem.solution && problem.solution.trim() !== '' && (
+    <div
+      ref={solRef}
+      id="solution-code"
+      className="text-[2rem] font-bold text-white px-4 shadow-[0_4px_15px_rgba(0,0,0,0.5)] rounded-[12px] bg-[linear-gradient(135deg,rgba(30,30,30,0.95),rgba(50,50,60,0.9))] border-[3px] border-[rgba(255,255,255,0.05)]"
+    />
+  )}
 
-
-        {showSolution &&
-          problem.yt_link &&
-          problem.yt_link.match(/\/embed\/([a-zA-Z0-9_-]{11,})/) && (
-            <div id="youtube-link" className="youtube-container mb-4 relative" style={{ minHeight: 300 }}>
-              <YouTubeWithLoader ytLink={problem.yt_link} />
-            </div>
-          )}
-
-        {problem.explanation && problem.explanation.trim() !== '' ? (
-          <div
-            ref={expRef}
-            id="explanation"
-            className="bg-black/20 p-[15px] rounded-[5px] shadow-[0_4px_8px_rgba(0,0,0,0.8)] w-full text-fluid-small mt-[2rem]"
-          />
-        ) : (
-          <div
-            className="flex items-center gap-3 text-white text-xl font-semibold bg-black/30 px-6 py-10 rounded-lg justify-center"
-            style={{ minHeight: 100 }}
-          >
-            <span>Explanation under construction</span>
-            <span className="text-3xl">🔨</span>
-          </div>
-        )}
+  {/* Video */}
+  {showSolution &&
+    problem.yt_link &&
+    problem.yt_link.match(/\/embed\/([a-zA-Z0-9_-]{11,})/) && (
+      <div id="youtube-link" className="youtube-container relative" style={{ minHeight: 300 }}>
+        <YouTubeWithLoader ytLink={problem.yt_link} />
       </div>
+    )}
+
+  {/* Explanation or placeholder */}
+  {problem.explanation && problem.explanation.trim() !== '' ? (
+    <div
+      ref={expRef}
+      id="explanation"
+      className="bg-black/20 p-[15px] rounded-[5px] shadow-[0_4px_8px_rgba(0,0,0,0.8)] w-full text-fluid-small"
+    />
+  ) : (
+    <div
+      className="flex items-center gap-3 text-white text-xl font-semibold bg-black/30 px-6 py-10 rounded-lg justify-center"
+      style={{ minHeight: 100 }}
+    >
+      <span>Explanation under construction</span>
+      <span className="text-3xl">🔨</span>
+    </div>
+  )}
+</div>
+
     </div>
   )
 }

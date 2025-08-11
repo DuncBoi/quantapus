@@ -20,12 +20,12 @@ export default function Home() {
             rounded-3xl
             shadow-2xl
             bg-[#24252ab2]
-            border border-[#61a9f1]/60
+            border border-[var(--qp1)]/60
             flex flex-col items-center
             text-center
           "
           style={{
-            boxShadow: '0 0 28px 0 #61a9f180',
+            boxShadow: '0 0 28px 0 #var(--qp1)80',
             borderWidth: '2px',
             borderStyle: 'solid',
           }}

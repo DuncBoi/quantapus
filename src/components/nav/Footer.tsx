@@ -32,17 +32,17 @@ export default function Footer() {
           <div className="flex gap-6 text-base font-semibold">
             <Link
               href="/privacy"
-              className="hover:text-[#61a9f1] transition"
+              className="hover:text-[var(--qp1)] transition"
               prefetch
             >Privacy Policy</Link>
             <Link
               href="/terms"
-              className="hover:text-[#61a9f1] transition"
+              className="hover:text-[var(--qp1)] transition"
               prefetch
             >Terms of Service</Link>
             <Link
               href="/contact"
-              className="hover:text-[#61a9f1] transition"
+              className="hover:text-[var(--qp1)] transition"
               prefetch
             >Contact</Link>
           </div>
@@ -53,7 +53,7 @@ export default function Footer() {
               href="https://github.com/DuncBoi/quantapus"
               target="_blank"
               rel="noreferrer"
-              className="hover:text-[#61a9f1] transition"
+              className="hover:text-[var(--qp1)] transition"
             >
               <Github size={20} />
             </Link>
@@ -61,7 +61,7 @@ export default function Footer() {
               href="https://www.linkedin.com"
               target="_blank"
               rel="noreferrer"
-              className="hover:text-[#61a9f1] transition"
+              className="hover:text-[var(--qp1)] transition"
             >
               <Linkedin size={20} />
             </Link>

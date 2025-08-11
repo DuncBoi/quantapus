@@ -11,7 +11,8 @@
   --alt2: #48b5b5;
   --prog1: #5dd39e;
   --prog2: #38b88f;
-  --bg: #24252A;
+  --bg: #1f1f24;
+  --bg2: #24252A;
   --fg: #ffffff;
 
   --gradient-alt: linear-gradient(90deg, var(--alt1), var(--alt2));

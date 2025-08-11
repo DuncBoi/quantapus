@@ -13,7 +13,7 @@ function getNodeColors(styling?: string) {
   }
   return {
     bg: 'bg-[#1e3353]',
-    border: 'border-[#61a9f1]',
+    border: 'border-[var(--qp1)]',
     text: 'text-white',
   }
 }

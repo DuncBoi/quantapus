@@ -94,7 +94,7 @@ export default function NodeModal({
     >
       <div
         className={`
-      relative bg-[#24252A] p-4 sm:p-8 rounded-none sm:rounded-lg
+      relative bg-[var(--bg)] p-4 sm:p-8 rounded-none sm:rounded-lg
       w-full h-full
       sm:w-[85vw] sm:h-[90vh]
       overflow-y-auto modal-content animate-in
@@ -139,7 +139,7 @@ export default function NodeModal({
                 >
                   <button
                     onClick={() => toggle(sub.id.toString())}
-                    className="flex items-center cursor-pointer text-fluid-medium font-bold text-[#edf0f1] border-l-4 border-[#61a9f1] pl-3 subcategory-header select-none w-full"
+                    className="flex items-center cursor-pointer text-fluid-medium font-bold text-[#edf0f1] border-l-4 border-[var(--qp1)] pl-3 subcategory-header select-none w-full"
                     type="button"
                   >
                     {sub.id}

@@ -299,7 +299,7 @@ export default function AdminNodeModal({
         <div className="flex items-center mb-2">
           <button
             onClick={() => toggle(sub.id)}
-            className="flex items-center cursor-pointer text-2xl font-semibold text-[#edf0f1] border-l-4 border-[#61a9f1] pl-3 subcategory-header select-none w-full"
+            className="flex items-center cursor-pointer text-2xl font-semibold text-[#edf0f1] border-l-4 border-[var(--qp1)] pl-3 subcategory-header select-none w-full"
             type="button"
           >
             {sub.id}

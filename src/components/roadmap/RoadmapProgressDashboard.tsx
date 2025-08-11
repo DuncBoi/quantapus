@@ -50,7 +50,7 @@ export default function RoadmapProgressDashboard() {
         rounded-3xl
         px-7 py-7
         bg-[#15161d] b
-        border-2 border-[#61a9f1]
+        border-2 border-[var(--qp1)]
         flex flex-col gap-4
       "
     >

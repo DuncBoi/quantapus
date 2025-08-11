@@ -139,7 +139,7 @@ export default function ProblemPage() {
     'flex-shrink-0 text-center text-fluid-small py-3 px-4 whitespace-nowrap tracking-[0.5px] cursor-pointer'
   if (roadmapMode && currentNode) {
     headerClass +=
-      ' bg-[#1e3353] border-2 border-[#61a9f1] rounded-[8px] text-white hover:scale-105 transition-transform duration-200 ease-in-out'
+      ' bg-[#1e3353] border-2 border-[var(--qp1)] rounded-[8px] text-white hover:scale-105 transition-transform duration-200 ease-in-out'
   } else {
     if (filterDifficulty === 'All' && filterCategory === 'All') {
       headerClass += ' text-white'
@@ -147,7 +147,7 @@ export default function ProblemPage() {
   }
 
   return (
-    <div className="pt-20 min-h-screen bg-[#1f1f24]">
+    <div className="pt-20 min-h-screen bg-[var(--bg)]">
       <div className="flex justify-center mt-[10px]" id="problem-header-container">
         <div className="inline-flex items-center font-bold py-2 px-4 bg-[#2c2d33] border-2 border-black rounded-[12px] cursor-pointer shadow-[0_4px_12px_rgba(0,0,0,0.6)] min-w-0 ">
           <button

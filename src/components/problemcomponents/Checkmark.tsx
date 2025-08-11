@@ -58,11 +58,27 @@ export default function Checkmark({
   return (
     <>
       <style>{`
-        @keyframes pulse {
-          0% { box-shadow: 0 0 10px rgba(56,184,143,0.6); }
-          70% { box-shadow: 0 0 0 10px rgba(56,184,143,0.1); }
-          100% { box-shadow: 0 0 0 0 rgba(56,184,143,0); }
-        }
+       @keyframes pulse {
+  0% {
+    box-shadow:
+      0 0 0px rgba(56,184,143, 0.8),
+      0 0 10px rgba(56,184,143, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 15px rgba(56,184,143, 0.4),
+      0 0 30px rgba(56,184,143, 0.2);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow:
+      0 0 0px rgba(56,184,143, 0),
+      0 0 0px rgba(56,184,143, 0);
+    transform: scale(1);
+  }
+}
+
       `}</style>
 
       <div

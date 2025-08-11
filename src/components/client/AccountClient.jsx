@@ -27,7 +27,7 @@ export default function AccountClient() {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#1f1f24]">
+      <div className="flex items-center justify-center min-h-screen bg-[var(--bg)]">
         <div className="text-white text-2xl font-bold p-8 bg-[#24252A] rounded-2xl shadow-xl">
           You are not signed in.
         </div>
@@ -94,7 +94,7 @@ export default function AccountClient() {
   const displayName = metadata.full_name ?? (user.email ? user.email.split('@')[0] : '')
 
   return (
-    <div className="flex items-start pt-25 justify-center min-h-screen p-8 bg-[#1f1f24]">
+    <div className="flex items-start pt-25 justify-center min-h-screen p-8 bg-[var(--bg)]">
       <div className="w-full max-w-[400px] py-10 px-8 bg-[#24252A] text-[#e0e0e0] rounded-[16px] shadow-[0_8px_24px_rgba(0,0,0,0.7)] text-center">
         <h1 className="text-[2.25rem] font-bold text-white mb-6 border-b-2 border-[#333] pb-2">
           My Account
@@ -119,7 +119,7 @@ export default function AccountClient() {
           <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
             <DialogTrigger asChild>
               <button
-                className="w-full px-5 py-3 text-base font-medium bg-[#61a9f1] text-black
+                className="w-full px-5 py-3 text-base font-medium bg-[var(--qp1)] text-black
                            rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.5)]
                            hover:shadow-[0_6px_16px_rgba(0,0,0,0.6)]
                            active:translate-y-0 active:shadow-[0_3px_8px_rgba(0,0,0,0.4)] cursor-pointer hover:-translate-y-0.5 transition-all duration-500"
@@ -138,7 +138,7 @@ export default function AccountClient() {
                   onClick={() => setShowResetDialog(false)}
                 >Cancel</button>
                 <button
-                  className="px-4 py-2 rounded bg-[#61a9f1] text-black font-semibold cursor-pointer hover:-translate-y-0.5 transition-all duration-500"
+                  className="px-4 py-2 rounded bg-[var(--qp1)] text-black font-semibold cursor-pointer hover:-translate-y-0.5 transition-all duration-500"
                   onClick={handleResetProgress}
                 >Yes, Reset</button>
               </DialogFooter>

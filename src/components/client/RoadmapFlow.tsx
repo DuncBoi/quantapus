@@ -90,7 +90,7 @@ export default function RoadmapFlow() {
     <div className="w-full h-screen pt-16">
       <ReactFlowProvider>
         <ReactFlow
-          className="bg-[#1f1f24]"
+          className="bg-[var(--bg)]"
           nodes={nodes}
           edges={edges}
           nodeTypes={nodeTypes}

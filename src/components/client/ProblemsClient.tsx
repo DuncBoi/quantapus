@@ -84,7 +84,7 @@ export default function ProblemsClient() {
     }`
 
   return (
-    <main className="min-h-screen bg-[#1f1f24] pb-10 pt-20">
+    <main className="min-h-screen bg-[var(--bg)] pb-10 pt-20">
       <div className="w-full flex flex-col items-center justify-center">
         {/* Filter Bar */}
         <div
@@ -204,7 +204,7 @@ export default function ProblemsClient() {
                 aria-label="Reset Filters"
                 className="
         ml-3 p-2 rounded-full
-        bg-[#61a9f1] hover:bg-[#487EB5]
+        bg-[var(--qp1)] hover:bg-[#487EB5]
         border border-[#3c4250]/40 text-white/80
         flex items-center justify-center cursor-pointer
         transition-colors duration-500

@@ -59,7 +59,7 @@ export default function GooglePromptModal({
             href="/terms"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#61a9f1] underline hover:text-[#90c7ff] transition"
+            className="text-[var(--qp1)] underline hover:text-[#90c7ff] transition"
             prefetch
           >
             Terms of Service
@@ -69,7 +69,7 @@ export default function GooglePromptModal({
             href="/privacy"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#61a9f1] underline hover:text-[#90c7ff] transition"
+            className="text-[var(--qp1)] underline hover:text-[#90c7ff] transition"
             prefetch
           >
             Privacy Policy
