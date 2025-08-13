@@ -251,7 +251,7 @@ export default function ProblemPage() {
 
         </div>
       </div>
-      <ProblemDetail problemId={currentId} />
+      <ProblemDetail key={currentId} problemId={currentId} />
     </div>
   )
 }

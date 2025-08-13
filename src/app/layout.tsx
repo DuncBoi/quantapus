@@ -9,6 +9,7 @@ import { Toaster } from "../components/ui/sonner";
 import { AnalyticsPageView } from "@/components/nav/AnalyticsPageView";
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from "@vercel/analytics/next"
+import NextTopLoader from 'nextjs-toploader'
 import "./globals.css";
 import Script from "next/script";
 
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
   description: "Free Quant Finance Interview Roadmap",
   icons: {
     icon: [
+      { url: '/icon.png', type: 'image/png' },
       { url: '/logo.svg', type: 'image/svg+xml' }
     ],
   },
@@ -73,6 +75,14 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             >            
             <NavBar />
             <AnalyticsPageView />
+            <NextTopLoader
+          color="#61a9f1"
+          initialPosition={0}
+          crawlSpeed={200}
+          height={3} 
+          crawl={true}
+          showSpinner={false}
+        />
               {children}
                <Toaster />
                <SpeedInsights/>

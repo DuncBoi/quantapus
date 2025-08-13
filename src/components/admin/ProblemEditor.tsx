@@ -439,7 +439,7 @@ export default function ProblemEditor({
                 className="w-full flex-1 rounded border px-3 py-2 text-black text-base bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 resize-vertical"
                 value={editProblem.description}
                 onChange={e => setEditProblem({ ...editProblem, description: e.target.value })}
-                style={{ minHeight: "12vh", maxHeight: "24vh" }}
+                style={{ minHeight: "40vh", maxHeight: "80vh" }}
               />
             </div>
             <div className="flex-1 flex flex-col justify-between min-h-0">
