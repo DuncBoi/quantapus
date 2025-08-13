@@ -127,7 +127,7 @@ export default function ProblemDetail({ problemId }: ProblemDetailProps) {
       <div className="mb-[20px] meta-info flex items-center flex-nowrap gap-2 sm:gap-3">
         <DifficultyBadge difficulty={problem.difficulty} />
         {problemCategoryNames.length > 0 && (
-          <div className="flex gap-2 flex-nowrap ml-2 overflow-hidden whitespace-nowrap">
+          <div className="flex gap-2 flex-nowrap ml-2 overflow-visible whitespace-nowrap">
             {problemCategoryNames.map(cat => (
               <CategoryPill key={cat} category={cat} />
             ))}
