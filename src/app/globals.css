@@ -77,11 +77,8 @@ body {
   line-height: inherit !important;
 }
 
-.katex .neqfix,
-.katex .neqfix * {
-  font-family: KaTeX_Math, KaTeX_Main, "Times New Roman", serif !important;
-  font-weight: 400 !important;
-  line-height: normal !important;
+.katex .mrel { 
+  font-family: KaTeX_Math, KaTeX_Main, serif !important; 
 }
 
 /* inline mode */

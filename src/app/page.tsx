@@ -19,7 +19,7 @@ export default function Home() {
             max-w-xl w-[92vw] px-12 py-9
             rounded-3xl
             shadow-2xl
-            bg-[#24252ab2]
+            bg-[#24252a]/90
             border border-[var(--qp1)]/60
             flex flex-col items-center
             text-center
