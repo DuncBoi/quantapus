@@ -49,8 +49,8 @@ export default function Home() {
                 Roadmap
               </span>
             </Link>{' '}
-            to learning
-            <span className="font-extrabold text-white/80"> probability theory</span>
+            to the
+            <span className="font-extrabold text-white/90"> <br></br><em>Quantitative Finance Interview</em></span>
           </p>
         </div>
       </div>

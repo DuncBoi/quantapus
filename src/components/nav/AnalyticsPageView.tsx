@@ -14,9 +14,13 @@ export function AnalyticsPageView() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('event', 'page_view', {
-        page_path: pathname + (searchParams?.toString() ? `?${searchParams}` : ''),
-      })
+      const path = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '')
+
+      // GA4 page_view
+      window.gtag('event', 'page_view', { page_path: path })
+
+      // Google Ads page_path
+      window.gtag('config', 'AW-17487789717', { page_path: path })
     }
   }, [pathname, searchParams])
 

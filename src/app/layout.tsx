@@ -50,6 +50,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             window.gtag = gtag;
             gtag('js', new Date());
             gtag('config', 'G-8RD1SC826C', { 'send_page_view': false });
+            gtag('config', 'AW-17487789717');
           `}
         </Script>
 

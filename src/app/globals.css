@@ -15,7 +15,7 @@
   --bg2: #24252A;
   --fg: #ffffff;
 
-  --gradient-alt: linear-gradient(90deg, var(--alt1), var(--alt2));
+  --gradient-alt: lnear-gradient(90deg, var(--alt1), var(--alt2));
   --gradient-prog: linear-gradient(135deg, var(--prog1), var(--prog2));
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -71,9 +71,17 @@ body {
   vector-effect: non-scaling-stroke;
 }
 
-.katex,
-.katex-display {
-  font: inherit !important;
+.katex {
+  font-family: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+}
+
+.katex .neqfix,
+.katex .neqfix * {
+  font-family: KaTeX_Math, KaTeX_Main, "Times New Roman", serif !important;
+  font-weight: 400 !important;
+  line-height: normal !important;
 }
 
 /* inline mode */
@@ -81,10 +89,10 @@ body {
   transform: translateY(0em) !important;
 }
 
-/* move fraction line down in display mode (katex)
+/* Move fraction line up in display mode */
 .katex-display .mfrac .frac-line {
   transform: translateY(-0.1em) !important;
-} */
+}
 
 .katex-display {
   display: block;               
