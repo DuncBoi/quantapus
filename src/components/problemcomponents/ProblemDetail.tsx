@@ -20,7 +20,28 @@ const delimiters = [
 function injectAndRender(el: HTMLDivElement | null, html: string | undefined) {
   if (!el) return
   el.innerHTML = html ?? ''
-  renderMathInElement(el, { delimiters })
+  renderMathInElement(el, {
+    delimiters,
+    preProcess: (src: string) => {
+      src = src.replace(
+        /([_^])\\infty\b/g,
+        (_, op: string) => `${op}{\\htmlClass{inf-styled}{\\infty}}`
+      )
+      src = src.replace(/\\infty\b/g, (m, offset, s) => {
+        const prev = s.slice(Math.max(0, offset - 24), offset)
+        return prev.includes('\\htmlClass{inf-styled}{') ? m
+          : '\\htmlClass{inf-styled}{\\infty}'
+      })
+      src = src.replace(/\\neq\b/g, (m, offset, s) => {
+        const prev = s.slice(Math.max(0, offset - 24), offset)
+        return prev.includes('\\htmlClass{neq-styled}{') ? m
+          : '\\htmlClass{neq-styled}{\\neq}'
+      })
+      return src
+    },
+    trust: (ctx: { command: string }) => ctx.command === '\\htmlClass',
+    strict: 'ignore',
+  })
 }
 
 function YouTubeWithLoader({ ytLink }: { ytLink: string }) {

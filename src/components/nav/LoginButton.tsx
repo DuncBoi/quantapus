@@ -13,6 +13,14 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
 
+const sendConversion = () => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', 'conversion', {
+      send_to: 'AW-17487789717/QnvjCO-61IgbEJX96ZJB',
+    })
+  }
+}
+
 export default function LoginButton() {
   const user = useUser()
   const { openGooglePrompt } = useAuthUI()
@@ -45,6 +53,7 @@ export default function LoginButton() {
   }
 
   const handleSignIn = () => {
+    sendConversion()
     openGooglePrompt()
   }
 

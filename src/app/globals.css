@@ -72,13 +72,19 @@ body {
 }
 
 .katex {
-  font-family: inherit !important;
-  font-weight: inherit !important;
-  line-height: inherit !important;
+  font: inherit !important
 }
 
-.katex .mrel { 
-  font-family: KaTeX_Math, KaTeX_Main, serif !important; 
+.katex-display {
+  font-size: 1.1em !important;
+}
+
+.katex .inf-styled {
+  font-family: KaTeX_Math, KaTeX_Main, serif !important;
+}
+
+.katex .neq-styled {
+  font-family: KaTeX_Math, KaTeX_Main, serif !important;
 }
 
 /* inline mode */
