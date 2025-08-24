@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Github, Linkedin } from 'lucide-react' // Lucide icons
+import { FaRedditAlien } from 'react-icons/fa'
 
 export default function Footer() {
   return (
@@ -58,7 +59,15 @@ export default function Footer() {
               <Github size={20} />
             </Link>
             <Link
-              href="https://www.linkedin.com"
+              href="https://www.reddit.com/r/Quantapus/"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-[var(--qp1)] transition"
+            >
+              <FaRedditAlien size={20} />
+            </Link>
+            <Link
+              href="https://www.linkedin.com/company/quantapus"
               target="_blank"
               rel="noreferrer"
               className="hover:text-[var(--qp1)] transition"
